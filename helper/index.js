@@ -7,4 +7,13 @@ module.exports = {
     get_item : function(obj, key, def = '') {
         return obj ? obj[key] : def;
     },
+
+    convertToSlug : function(Text, id = null)
+    {
+        let text = Text
+            .toLowerCase()
+            .replace(/ /g,'-')
+            .replace(/[^\w-]+/g,'');
+        return text + (id ? '-'+id : '');
+    }
 }

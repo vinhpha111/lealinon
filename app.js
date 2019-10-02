@@ -21,7 +21,7 @@ db.once('open', function() {
   console.log('connected database');
 });
 
-for (const key in helpers = require('./helper/route')) {
+for (const key in helpers = require('./helper')) {
     if (helpers.hasOwnProperty(key)) {
         const func = helpers[key];
         global[key] = func;

@@ -11,7 +11,12 @@ function config($routeProvider, $locationProvider) {
 
     .when('/group/new', {
         templateUrl: 'js/group/new.html',
-        controller: 'newGroup'
+        controller: 'newGroup',
+        resolve : {
+            current_user : async function($auth){
+                return await $auth.getUser();
+            }
+        }
     })
 
     .when('/404.html', {

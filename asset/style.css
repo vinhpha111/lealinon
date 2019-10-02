@@ -1,3 +1,7 @@
 h1 {
     font-size: 100px;
 }
+
+.error-msg {
+    color: red;
+}

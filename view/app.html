@@ -5,14 +5,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="/">
+  <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
   <script src="/js/app.module.js"></script>
+  <script src="/js/app.service.js"></script>
   <script src="/js/app.config.js"></script>
   <script src="/js/group/controller.js"></script>
+  <script src="/js/component/sidebar/index.js"></script>
   <style>
     /* Remove the navbar's default margin-bottom and rounded borders */ 
     .navbar {
@@ -85,11 +88,7 @@
   
 <div class="container-fluid">    
   <div class="row content">
-    <div class="col-sm-2 sidenav text-left">
-      <p class="text-center"><a href="#">Nhóm</a></p>
-      <p><a href="/group/new"><span class="glyphicon glyphicon-plus-sign"></span> Tạo mới</a></p>
-      <p><a href="#">Link</a></p>
-    </div>
+    <left-sidebar></left-sidebar>
     <div class="col-sm-8 text-left">
         <div ng-view></div>
     </div>
