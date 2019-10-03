@@ -19,6 +19,26 @@ function config($routeProvider, $locationProvider) {
         }
     })
 
+    .when('/group/:id', {
+        templateUrl: 'js/group/detail.html',
+        controller: 'detailGroup',
+        resolve : {
+            current_user : async function($auth){
+                return await $auth.getUser();
+            }
+        }
+    })
+
+    .when('/group/:id/new-post', {
+        templateUrl: 'js/group/new_post.html',
+        controller: 'newPost',
+        resolve : {
+            current_user : async function($auth){
+                return await $auth.getUser();
+            }
+        }
+    })
+
     .when('/404.html', {
         templateUrl: 'js/error/404.html'
     })

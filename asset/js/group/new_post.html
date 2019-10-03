@@ -1,0 +1,33 @@
+<h1>New post</h1>
+<ul class="nav nav-tabs">
+    <li class="{{ type === 'exam' ? 'active' : null }}" ng-click="type = 'exam'"><a href="#">Kiểm tra</a></li>
+    <li class="{{ type === 'post' ? 'active' : null }}" ng-click="type = 'post'"><a href="#">Thông báo</a></li>
+</ul>
+<div ng-if="type === 'exam'">
+    <label class="radio-inline"><input type="radio" ng-model="exam_type" value="essay">Tự luận</label>
+    <label class="radio-inline"><input type="radio" ng-model="exam_type" value="quiz">Trắc nghiệm</label>
+    <div ng-if="exam_type === 'essay'">
+        <div class="form-group">
+            <label for="title">Tiêu đề:</label>
+            <input type="text" class="form-control" id="title" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label for="title">Nội dung:</label>
+            <textarea name="content" class="form-control" id="editor1"></textarea>
+        </div>
+        <script>
+            $(document).ready(function(){
+                var editor = CKEDITOR.instances['editor1'];
+                if (editor) { editor.destroy(true); }
+                CKEDITOR.replace('editor1');
+            });        
+        </script>
+    </div>
+    <div ng-if="exam_type === 'quiz'">
+        <h1>quiz</h1>
+    </div>
+    <button type="button" class="btn btn-primary btn-block">Tạo bài</button>
+</div>
+<div ng-if="type === 'post'">
+    <h1>Post</h1>
+</div>
