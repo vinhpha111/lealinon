@@ -15,6 +15,37 @@
             <label for="title">Nội dung:</label>
             <textarea name="content" class="form-control" id="editor1"></textarea>
         </div>
+        <div class="checkbox">
+            <label><input type="checkbox" ng-model="set_time">Set time</label>
+        </div>
+        <div ng-if="set_time" class="form-inline row" style="margin-bottom: 10px;">
+            <div class="form-group col-sm-6">
+              <label for="start-date">Date start:</label>
+              <input type="text" class="form-control" id="start-date">
+            </div>
+            <div class="form-group col-sm-6">
+              <label for="end-date">Date end:</label>
+              <input type="text" class="form-control" id="end-date">
+            </div>
+            <script>
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                var yyyy = today.getFullYear();
+
+                today = dd + '/' + mm + '/' + yyyy;
+
+                $('#start-date').datetimepicker({
+                    defaultDate: today,
+                    format: 'DD/MM/YYYY HH:mm',
+                });
+
+                $('#end-date').datetimepicker({
+                    defaultDate: today,
+                    format: 'DD/MM/YYYY HH:mm'
+                });
+            </script>
+        </div>
         <script>
             $(document).ready(function(){
                 var editor = CKEDITOR.instances['editor1'];

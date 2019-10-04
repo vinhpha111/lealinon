@@ -1,4 +1,4 @@
-app.controller('newGroup', function($scope, $location, $window, $http, current_user) {
+app.controller('newGroup', function($scope, $location, $window, $http, current_user, Scopes) {
     if (!current_user) {
         $window.location.href = '/login';
     }
@@ -13,6 +13,7 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
         })
         .then(function(res){
             $scope.errors = null;
+            Scopes.get('scopeSidebar').getList();
             $location.path("/detail");
 
         }, function(res){
@@ -21,8 +22,18 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
     }
 });
 
-app.controller('detailGroup', function($routeParams, $scope) {
+app.controller('detailGroup', function($routeParams, $scope, $http) {
     $scope.id = $routeParams.id;
+    $scope.notFound = false;
+    $http.get('/api/group/get_by_id/'+$routeParams.id)
+    .then(function(res){
+        $scope.detail = res.data;
+        console.log(res);
+    }, function(res){
+        $scope.detail = null;
+        $scope.notFound = true;
+        console.log(res);
+    });
 });
 
 app.controller('newPost', function($routeParams, $scope, current_user, $location, $window) {
@@ -33,4 +44,8 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
 
     $scope.type = 'exam';
     $scope.exam_type = 'essay';
+
+    $scope.$on('$routeChangeStart', function($event, next, current) { 
+        console.log('route change');
+      });
 });

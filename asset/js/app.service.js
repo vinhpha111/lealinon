@@ -6,11 +6,22 @@ app.service('$auth', function($rootScope, $http) {
             }
             $http.get("api/current_user")
             .then(function(response) {
-                console.log('get user');
                 resolve(response.data);
             }, function(response){
                 resolve(null);
             });
         });
     }
-})
+});
+
+app.factory('Scopes', function(){
+    var item = {};
+    return {
+        store: function(key, value){
+            item[key] = value;
+        },
+        get: function(key){
+            return item[key];
+        }
+    }
+});

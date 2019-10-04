@@ -25,11 +25,24 @@ app.new = async (req, res) => {
 
 app.listInSidebar = async (req, res) => {
     if (!req.user) {
-        return res.send(null, 403);
+        return res.status(403).send(null);
     }
 
-    let list = await Group.find({user_created: req.user._id}, null);
+    let list = await Group.find({user_created: req.user._id});
     return res.json(list)
+}
+
+app.getById = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+
+    let id = req.params.id;
+    let detail = await Group.findOne({_id: id});
+    if (!detail) {
+        return res.status(404).send(null);
+    }
+    return res.send(detail);
 }
 
 module.exports = app;

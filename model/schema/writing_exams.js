@@ -5,7 +5,7 @@ var writing_exams = schema({
     content : String,
     user : [{ type: Schema.Types.ObjectId, ref: 'users' }],
     post : [{ type: Schema.Types.ObjectId, ref: 'post_groups' }],
-    avaluate_user : [{ type: Schema.Types.ObjectId, ref: 'users' }],
+    evaluate_user : [{ type: Schema.Types.ObjectId, ref: 'users' }],
     score : Number,
     created_at : Date,
     updated_at : Date

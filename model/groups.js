@@ -4,17 +4,28 @@ module.exports = {
         return new Promise((resolve, reject)=>{
             let group = new Group(data);
             group.save((err) => {
-                if (err) reject(err);
+                if (err) resolve(null);
                 resolve(group);
             })
         })
     },
 
-    find : (query, field_select) => {
+    find : (query, field_select = null) => {
         return new Promise((resolve, reject) => {
             Group.find(query, field_select, (err, groups) => {
-                if (err) reject(err);
+                if (err) resolve(null);
                 resolve(groups);
+            })
+        });
+    },
+
+    findOne : (query, field_select = null) => {
+        return new Promise((resolve, reject) => {
+            Group.findOne(query, field_select, (err, group) => {
+                if (err) {
+                    resolve(null);
+                }
+                resolve(group);
             })
         });
     },
