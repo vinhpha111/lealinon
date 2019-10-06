@@ -11,39 +11,45 @@
             <label for="title">Tiêu đề:</label>
             <input type="text" class="form-control" id="title" autocomplete="off">
         </div>
+        {{var}}
         <div class="form-group">
             <label for="title">Nội dung:</label>
             <textarea name="content" class="form-control" id="editor1"></textarea>
         </div>
         <div class="checkbox">
-            <label><input type="checkbox" ng-model="set_time">Set time</label>
+            <label><input type="checkbox" ng-model="set_time">Đặt lịch</label>
         </div>
-        <div ng-if="set_time" class="form-inline row" style="margin-bottom: 10px;">
-            <div class="form-group col-sm-6">
-              <label for="start-date">Date start:</label>
-              <input type="text" class="form-control" id="start-date">
+        <div class="form-horizontal" ng-if="set_time">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="start-date">Bắt đầu:</label>
+                <div class="col-sm-10 form-inline">
+                    <input type="datetime-local" class="form-control" id="start-date">
+                    <my-customer ng-model="var" ></my-customer>
+                </div>
             </div>
-            <div class="form-group col-sm-6">
-              <label for="end-date">Date end:</label>
-              <input type="text" class="form-control" id="end-date">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="end-date">Kết thúc:</label>
+                <div class="col-sm-10 form-inline">
+                    <input type="text" class="form-control" id="end-date">
+                    <input type="text" class="form-control" id="end-time" style="width: 100px">
+                </div>
             </div>
+            <p>{{ var }}</p>
             <script>
-                var today = new Date();
-                var dd = String(today.getDate()).padStart(2, '0');
-                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-                var yyyy = today.getFullYear();
-
-                today = dd + '/' + mm + '/' + yyyy;
-
-                $('#start-date').datetimepicker({
-                    defaultDate: today,
-                    format: 'DD/MM/YYYY HH:mm',
+                /* $('#start-date').datetimepicker({
+                    format: 'DD/MM/YYYY',
+                    minDate: new Date()
                 });
-
                 $('#end-date').datetimepicker({
-                    defaultDate: today,
-                    format: 'DD/MM/YYYY HH:mm'
+                    format: 'DD/MM/YYYY',
+                    minDate: new Date()
                 });
+                $('#start-time').datetimepicker({
+                    format: 'HH:mm',
+                });
+                $('#end-time').datetimepicker({
+                    format: 'HH:mm',
+                }); */
             </script>
         </div>
         <script>
