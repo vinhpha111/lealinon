@@ -7,63 +7,39 @@
     <label class="radio-inline"><input type="radio" ng-model="exam_type" value="essay">Tự luận</label>
     <label class="radio-inline"><input type="radio" ng-model="exam_type" value="quiz">Trắc nghiệm</label>
     <div ng-if="exam_type === 'essay'">
-        <div class="form-group">
-            <label for="title">Tiêu đề:</label>
-            <input type="text" class="form-control" id="title" autocomplete="off">
-        </div>
-        {{var}}
-        <div class="form-group">
-            <label for="title">Nội dung:</label>
-            <textarea name="content" class="form-control" id="editor1"></textarea>
-        </div>
-        <div class="checkbox">
-            <label><input type="checkbox" ng-model="set_time">Đặt lịch</label>
-        </div>
-        <div class="form-horizontal" ng-if="set_time">
+        <form method="POST" ng-submit="addEssay()">
             <div class="form-group">
-                <label class="control-label col-sm-2" for="start-date">Bắt đầu:</label>
-                <div class="col-sm-10 form-inline">
-                    <input type="datetime-local" class="form-control" id="start-date">
-                    <my-customer ng-model="var" ></my-customer>
-                </div>
+                <label for="title">Tiêu đề:</label>
+                <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'title'">{{error.msg}}</p>
+                <input type="text" class="form-control" id="title" ng-model="essay.title" autocomplete="off">
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-2" for="end-date">Kết thúc:</label>
-                <div class="col-sm-10 form-inline">
-                    <input type="text" class="form-control" id="end-date">
-                    <input type="text" class="form-control" id="end-time" style="width: 100px">
+                <label for="title">Nội dung:</label>
+                <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'content'">{{error.msg}}</p>
+                <textarea name="content" class="form-control" ng-model="essay.content" ck-editor></textarea>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" ng-model="essay.setTime">Đặt lịch</label>
+            </div>
+            <div class="row" ng-if="essay.setTime">
+                <div class="form-group col-md-6">
+                    <label for="start-date">Bắt đầu:</label>
+                    <input type="text" id="start-date" datetime="dd-MM-yyyy HH:mm" datetime-model="yyyy-MM-dd HH:mm:ss" class="form-control" ng-model="essay.startDate">
+                    <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'startDate'">{{error.msg}}</p>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="end-date">Kết thúc:</label>
+                    <input type="text" datetime="dd-MM-yyyy HH:mm" datetime-model="yyyy-MM-dd HH:mm:ss" class="form-control" id="end-date" ng-model="essay.endDate">
+                    <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'endDate'">{{error.msg}}</p>
                 </div>
             </div>
-            <p>{{ var }}</p>
-            <script>
-                /* $('#start-date').datetimepicker({
-                    format: 'DD/MM/YYYY',
-                    minDate: new Date()
-                });
-                $('#end-date').datetimepicker({
-                    format: 'DD/MM/YYYY',
-                    minDate: new Date()
-                });
-                $('#start-time').datetimepicker({
-                    format: 'HH:mm',
-                });
-                $('#end-time').datetimepicker({
-                    format: 'HH:mm',
-                }); */
-            </script>
-        </div>
-        <script>
-            $(document).ready(function(){
-                var editor = CKEDITOR.instances['editor1'];
-                if (editor) { editor.destroy(true); }
-                CKEDITOR.replace('editor1');
-            });        
-        </script>
+            <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'errorSelectDate'">{{error.msg}}</p>
+            <button type="submit" class="btn btn-primary btn-block">Tạo bài</button>
+        </form>
     </div>
     <div ng-if="exam_type === 'quiz'">
         <h1>quiz</h1>
     </div>
-    <button type="button" class="btn btn-primary btn-block">Tạo bài</button>
 </div>
 <div ng-if="type === 'post'">
     <h1>Post</h1>

@@ -36,27 +36,25 @@ app.controller('detailGroup', function($routeParams, $scope, $http) {
     });
 });
 
-app.controller('newPost', function($routeParams, $scope, current_user, $location, $window) {
+app.controller('newPost', function($routeParams, $scope, current_user, $location, $window, $http) {
     if (!current_user) {
         $window.location.href = 'login?redirect='+$location.$$absUrl
     }
-    $scope.id = $routeParams.id;
-
+    var id = $routeParams.id;
+    $scope.id = id;
     $scope.type = 'exam';
     $scope.exam_type = 'essay';
 
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    var yyyy = today.getFullYear();
-    today = mm + '/' + dd + '/' + yyyy;
-    $scope.schedule_date_start = today;
-    $scope.schedule_time_start = '00:00';
-    $scope.time_between = $scope.schedule_date_start + $scope.schedule_time_start;
-
-    var scheduleDateStartArray = $scope.schedule_date_start.split('/');
-    $scope.get_time_between = function(){
-        $scope.time_between = $scope.schedule_date_start + $scope.schedule_time_start;
+    $scope.essay = {};
+    $scope.addEssay = () => {
+        $http.post('/api/group/'+id+'/new_essay', $scope.essay)
+        .then(function(res){
+            $scope.errors = null;
+            console.log(res);
+        }, function(res){
+            console.log(res);
+            $scope.errors = res.data.errors
+        });
     }
 
     $scope.$on('$routeChangeStart', function($event, next, current) { 

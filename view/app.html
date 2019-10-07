@@ -14,9 +14,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-animate.js"></script>
   <script src="/js/framework/ui-bootstrap-tpls-2.5.0.min.js"></script>
+  <script src="https://unpkg.com/angular-datetime-input"></script>
   <script src="/js/app.module.js"></script>
   <script src="/js/app.service.js"></script>
+  <script src="/js/app.directive.js"></script>
   <script src="/js/app.validation.js"></script>
   <script src="/js/app.config.js"></script>
   <script src="/js/group/controller.js"></script>
@@ -52,14 +55,6 @@
       background-color: #555;
       color: white;
       padding: 15px;
-    }
-
-    my-customer {
-      display: inline-block;
-    }
-
-    my-customer input {
-      width: 100px !important;
     }
     
     /* On small screens, set height to 'auto' for sidenav and grid */
@@ -135,6 +130,11 @@
 <footer class="container-fluid text-center">
   <p>Footer Text</p>
 </footer>
+<script>
+  $(document).on("keydown", "form", function(event) { 
+      return event.key != "Enter";
+  });
+</script>
 </div>
 </body>
 </html>

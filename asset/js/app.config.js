@@ -1,6 +1,6 @@
 app
-.config(['$routeProvider', '$locationProvider',
-function config($routeProvider, $locationProvider) {
+.config(['$routeProvider', '$locationProvider', 'datetimePlaceholder',
+function config($routeProvider, $locationProvider, datetimePlaceholder) {
     $locationProvider.html5Mode(true);
     $locationProvider.hashPrefix('');
 
@@ -43,5 +43,24 @@ function config($routeProvider, $locationProvider) {
         templateUrl: 'js/error/404.html'
     })
     .otherwise('/404.html');
+
+    var placeholder = {
+        year: "(năm)",
+        yearShort: "(năm)",
+        month: "(tháng)",
+        date: "(ngày)",
+        day: "(ngày)",
+        hour: "(hh)",
+        hour12: "(hh)",
+        minute: "(mm)",
+        second: "(second)",
+        millisecond: "(millisecond)",
+        ampm: "(AM/PM)",
+        week: "(week)"
+    };
+    for (let index in placeholder) {
+        datetimePlaceholder[index] = placeholder[index];
+        
+    }
 }
 ]);

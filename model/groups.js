@@ -1,4 +1,4 @@
-var Group = require('./schema/groups');
+/* var Group = require('./schema/groups');
 module.exports = {
     new : (data) => {
         return new Promise((resolve, reject)=>{
@@ -29,4 +29,12 @@ module.exports = {
             })
         });
     },
+} */
+var baseModel = require('./base');
+class Group extends baseModel {
+    constructor(){
+        super('groups');
+    }
 }
+
+module.exports = Group;

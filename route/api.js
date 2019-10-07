@@ -8,6 +8,7 @@ route.get('/current_user', userController.current_user);
 route.post('/group/new', require('../controller/Request/client/group/new'), groupController.new);
 route.get('/group/list_in_sidebar', groupController.listInSidebar);
 route.get('/group/get_by_id/:id', groupController.getById);
+route.post('/group/:id/new_essay', require('../controller/Request/client/group/newEssay'), groupController.addEssay);
 
 
 route.all('/*', (req, res) => {
