@@ -1,6 +1,6 @@
 class baseModel {
     constructor(model){
-        this.model = require('./schema/'+model);
+        this.model = require('./schema/'+model)(this);
     }
 
     add(data){

@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var schema = mongoose.Schema;
-var groups = schema({
+var group_member = schema({
     group_id : [{ type: schema.Types.ObjectId, ref: 'groups' }],
     user_id : [{ type: schema.Types.ObjectId, ref: 'users' }],
     type : Number, // 1: admin, 2: editor, 3: normal
@@ -8,4 +8,13 @@ var groups = schema({
     created_at : Date,
     updated_at : Number
 }, {collection : 'group_member'});
-module.exports = mongoose.model('group_member', groups);
+
+module.exports = function(Class = null){
+    if (typeof Class['virtual'] === 'function') {
+        let vituals = Class.virtual();
+        for (let nameVirtual in vituals) {
+            group_member.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
+        }
+    }
+    return mongoose.model('group_member', group_member);
+}

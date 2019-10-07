@@ -8,4 +8,12 @@ var groups = schema({
     created_at : Date,
     status : Number
 }, {collection : 'groups'});
-module.exports = mongoose.model('groups', groups);
+module.exports = function(Class = null){
+    if (typeof Class['virtual'] === 'function') {
+        let vituals = Class.virtual();
+        for (let nameVirtual in vituals) {
+            groups.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
+        }
+    }
+    return mongoose.model('groups', groups);
+}

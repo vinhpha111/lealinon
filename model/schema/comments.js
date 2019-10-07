@@ -8,4 +8,13 @@ var comments = schema({
     created_at : Date,
     updated_at : Date
 }, {collection : 'comments'});
-module.exports = mongoose.model('comments', comments);
+
+module.exports = function(Class = null){
+    if (typeof Class['virtual'] === 'function') {
+        let vituals = Class.virtual();
+        for (let nameVirtual in vituals) {
+            comments.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
+        }
+    }
+    return mongoose.model('comments', comments);
+}

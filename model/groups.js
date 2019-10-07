@@ -35,6 +35,16 @@ class Group extends baseModel {
     constructor(){
         super('groups');
     }
+
+    virtual() {
+        return {
+            getname : {
+                get: function(){
+                    return this.name + " this is virtual";
+                }
+            }
+        }
+    }
 }
 
 module.exports = Group;

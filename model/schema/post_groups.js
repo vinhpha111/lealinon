@@ -11,4 +11,13 @@ var post_groups = schema({
     created_at : Date,
     updated_at : Date
 }, {collection : 'post_groups'});
-module.exports = mongoose.model('post_groups', post_groups);
+
+module.exports = function(Class = null){
+    if (typeof Class['virtual'] === 'function') {
+        let vituals = Class.virtual();
+        for (let nameVirtual in vituals) {
+            post_groups.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
+        }
+    }
+    return mongoose.model('post_groups', post_groups);
+}

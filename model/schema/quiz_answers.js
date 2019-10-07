@@ -9,4 +9,13 @@ var quiz_answers = schema({
     created_at : Date,
     updated_at : Date
 }, {collection : 'quiz_answers'});
-module.exports = mongoose.model('quiz_answers', quiz_answers);
+
+module.exports = function(Class = null){
+    if (typeof Class['virtual'] === 'function') {
+        let vituals = Class.virtual();
+        for (let nameVirtual in vituals) {
+            quiz_answers.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
+        }
+    }
+    return mongoose.model('quiz_answers', quiz_answers);
+}

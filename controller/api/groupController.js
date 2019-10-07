@@ -52,6 +52,7 @@ app.getById = async (req, res) => {
     if (!detail) {
         return res.status(404).send(null);
     }
+    console.log(detail.getname)
     return res.send(detail);
 }
 
