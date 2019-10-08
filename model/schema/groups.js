@@ -6,13 +6,19 @@ var groups = schema({
     slug : String,
     description : String,
     created_at : Date,
-    status : Number
-}, {collection : 'groups'});
+    status : Number,
+}, {collection : 'groups', toJSON: { virtuals: true }});
 module.exports = function(Class = null){
     if (typeof Class['virtual'] === 'function') {
         let vituals = Class.virtual();
         for (let nameVirtual in vituals) {
             groups.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
+        }
+    }
+    if (typeof Class['methods'] === 'function') {
+        let methods = Class.methods();
+        for (let name in methods) {
+            groups.methods[name] = methods[name];
         }
     }
     return mongoose.model('groups', groups);

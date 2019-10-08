@@ -3,11 +3,15 @@
     <div>
         {{ detail.description }}
     </div>
-    <div ng-if="current_user">
-        <a href="/group/{{id}}/new-post" class="btn btn-primary btn-block">Tạo bài post mới</a>
+    <div>
+        <a ng-if="detail.role.newPost" href="/group/{{id}}/new-post" class="btn btn-primary btn-block">Tạo bài post mới</a>
+        <a ng-if="!detail.role.joinGroup" href="/group/{{id}}/new-post" class="btn btn-primary btn-block">Tham gia nhóm</a>
         <div class="text-right">
-            <a href="/group/{{id}}/edit"><span class="glyphicon glyphicon-edit"></span> Edit</a>
-            <a href="#" style="color: red;"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+            <button ng-if="detail.role.addMember" type="button" class="btn btn-link" data-toggle="modal" data-target="#addMember">
+                <i class="fa fa-user-plus"></i> Add member
+            </button>
+            <a href="/group/{{id}}/edit" class="btn btn-link" ng-if="detail.role.editGroup"><span class="glyphicon glyphicon-edit"></span> Edit</a>
+            <button ng-if="detail.role.deleteGroup" type="button" class="btn btn-link" style="color: red;"><span class="glyphicon glyphicon-remove"></span> Delete</button>
         </div>
     </div>
     <div class="panel panel-default">
@@ -18,29 +22,24 @@
         <div class="panel-heading">Panel with panel-info class</div>
         <div class="panel-body">Panel Content</div>
     </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Panel with panel-info class</div>
-        <div class="panel-body">Panel Content</div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Panel with panel-info class</div>
-        <div class="panel-body">Panel Content</div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Panel with panel-info class</div>
-        <div class="panel-body">Panel Content</div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Panel with panel-info class</div>
-        <div class="panel-body">Panel Content</div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Panel with panel-info class</div>
-        <div class="panel-body">Panel Content</div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">Panel with panel-info class</div>
-        <div class="panel-body">Panel Content</div>
+    
+    <div ng-if="detail.role.addMember" id="addMember" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Mời thành viên</h4>
+                </div>
+                <div class="modal-body">
+                    <textarea style="width: 100%; resize: none" rows="4" placeholder="Viết gì đó"></textarea>
+                    <input type="text" placeholder="Tìm kiếm" style="width: 100%;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <div ng-if="notFound">

@@ -13,4 +13,13 @@ var users = schema({
     active : Boolean,
     created_at : Date
 }, {collection : 'users'});
-module.exports = mongoose.model('users', users);
+
+module.exports = function(Class = null){
+    if (typeof Class['virtual'] === 'function') {
+        let vituals = Class.virtual();
+        for (let nameVirtual in vituals) {
+            users.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
+        }
+    }
+    return mongoose.model('users', users);
+}

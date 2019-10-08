@@ -1,5 +1,6 @@
 var app = {}
 var model = require('./../../model');
+var Group = model.getInstance('groups');
 const {validationResult} = require('express-validator');
 var datetime = require('node-datetime');
 var pastDateTime = datetime.create();
@@ -16,13 +17,12 @@ app.new = async (req, res) => {
         description: req.body.description,
         slug : convertToSlug(req.body.name)
     }
-    let Group = model.getInstance('groups');
     let group = await Group.add(data);
     let groupMemberModel = model.getInstance('group_member');
     let newMember = await groupMemberModel.add({
         group_id: group._id,
         user_id: req.user._id,
-        type: 1,
+        type: Group.ROLE('ADMIN'),
         user_created: req.user._id,
     });
     if (group && newMember) {
@@ -36,24 +36,19 @@ app.listInSidebar = async (req, res) => {
         return res.status(403).send(null);
     }
 
-    Group = model.getInstance('groups');
     let list = await Group.find({user_created: req.user._id});
     return res.json(list)
 }
 
 app.getById = async (req, res) => {
-    if (!req.user) {
-        return res.status(403).send(null);
-    }
-
-    Group = model.getInstance('groups');
     let id = req.params.id;
     let detail = await Group.findOne({_id: id});
     if (!detail) {
         return res.status(404).send(null);
     }
-    console.log(detail.getname)
-    return res.send(detail);
+    let data = detail.toJSON();
+    data.role = await detail.getRole(req.user ? req.user._id : null);
+    return res.json(data);
 }
 
 app.addEssay = async (req, res) => {

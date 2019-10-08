@@ -1,6 +1,7 @@
 var app = {}
 var jwt = require('jsonwebtoken');
-var User = require('../model/users');
+var model = require('../model');
+var User = model.getInstance('users');
 const {validationResult} = require('express-validator');
 datetime = require('node-datetime');
 var pastDateTime = datetime.create();

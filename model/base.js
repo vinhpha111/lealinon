@@ -13,6 +13,10 @@ class baseModel {
         })
     }
 
+    update(filter, data, callback = null) {
+        return this.model.update(filter, data, callback);
+    }
+
     find(query, field_select = null){
         return new Promise((resolve, reject) => {
             this.model.find(query, field_select, (err, items) => {

@@ -16,5 +16,11 @@ module.exports = function(Class = null){
             group_member.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
         }
     }
+    if (typeof Class['methods'] === 'function') {
+        let methods = Class.methods();
+        for (let name in methods) {
+            group_member.methods[name] = methods[name];
+        }
+    }
     return mongoose.model('group_member', group_member);
 }
