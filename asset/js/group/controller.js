@@ -25,15 +25,39 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
 app.controller('detailGroup', function($routeParams, $scope, $http) {
     $scope.id = $routeParams.id;
     $scope.notFound = false;
+    $scope.exceptIds = [];
+    $scope.listPost = [];
+    $scope.loadingPost = false;
     $http.get('/api/group/get_by_id/'+$routeParams.id)
     .then(function(res){
         $scope.detail = res.data;
-        console.log(res);
     }, function(res){
         $scope.detail = null;
         $scope.notFound = true;
         console.log(res);
     });
+
+    $scope.getPost = function(){
+        if ($scope.loadingPost) {
+            return;
+        }
+        $scope.loadingPost = true;
+        $http.get('/api/group/'+$routeParams.id+'/list_post', {
+            params: { exceptIds : $scope.exceptIds }
+        })
+        .then(function(res){
+            for(let i in res.data){
+                $scope.listPost.push(res.data[i]);
+                $scope.exceptIds.push(res.data[i]._id);
+            }
+            $scope.loadingPost = false;
+            console.log(res);
+        }, function(res){
+            console.log(res);
+        })
+    }
+
+    $scope.getPost();
 });
 
 app.controller('newPost', function($routeParams, $scope, current_user, $location, $window, $http) {
@@ -50,10 +74,11 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
         $http.post('/api/group/'+id+'/new_essay', $scope.essay)
         .then(function(res){
             $scope.errors = null;
+            $location.path('/group/'+id);
             console.log(res);
         }, function(res){
             console.log(res);
-            $scope.errors = res.data.errors
+            $scope.errors = res.data.errors;
         });
     }
 

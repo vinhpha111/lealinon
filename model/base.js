@@ -17,9 +17,9 @@ class baseModel {
         return this.model.update(filter, data, callback);
     }
 
-    find(query, field_select = null){
+    find(query, field_select = null, action = null){
         return new Promise((resolve, reject) => {
-            this.model.find(query, field_select, (err, items) => {
+            this.model.find(query, field_select, action, (err, items) => {
                 if (err) resolve(null);
                 resolve(items);
             })

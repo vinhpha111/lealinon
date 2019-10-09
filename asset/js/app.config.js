@@ -23,8 +23,12 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
         templateUrl: 'js/group/detail.html',
         controller: 'detailGroup',
         resolve : {
-            current_user : async function($auth){
+            current_user : async function($auth, $route){
                 return await $auth.getUser();
+            },
+            permission : async function($auth, $route){
+                let roleList = [$auth.role.group.ADMIN, $auth.role.group.EDITOR];
+                return await $auth.checkPermission.group(roleList, $route.current.params.id);
             }
         }
     })
@@ -35,6 +39,10 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
         resolve : {
             current_user : async function($auth){
                 return await $auth.getUser();
+            },
+            permission : async function($auth, $route){
+                let roleList = [$auth.role.group.ADMIN, $auth.role.group.EDITOR];
+                return await $auth.checkPermission.group(roleList, $route.current.params.id, '/group/'+$route.current.params.id);
             }
         }
     })

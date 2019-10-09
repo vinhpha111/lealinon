@@ -1,5 +1,5 @@
 var app = angular.module('app', [
-    'ngRoute', 'ui.bootstrap', 'datetime', 'ngAnimate'
+    'ngRoute', 'ui.bootstrap', 'datetime', 'ngAnimate', 'ngSanitize'
 ]);
 
 app.run(function($rootScope, $http){
