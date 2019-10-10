@@ -42,6 +42,7 @@ app.listInSidebar = async (req, res) => {
 }
 
 app.getById = async (req, res) => {
+    io.sockets.in("room").emit('connectToRoom', "You are in group page");
     let id = req.params.id;
     let detail = await Group.findOne({_id: id});
     if (!detail) {
@@ -80,6 +81,9 @@ app.inviteJoinGroup = async (req, res) => {
     let invites = await groupInviteJoin.insertMany(dataInvites);
     if (invites) {
         let announces = await announce.insertMany(dataAnnounces);
+        for(let i in announces){
+            io.sockets.in(announces[i].user_id).emit('announce', announces[i]);
+        }
         return res.send(announces);
     }
     return res.status(500).send(null);

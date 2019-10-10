@@ -58,3 +58,24 @@ app.factory('Scopes', function(){
         }
     }
 });
+
+app.factory('socket', function(){
+    var socket = null;
+    return {
+        init: function(){
+            socket = io();
+        },
+        join: function(roomName){
+            socket.emit('joinRoom', roomName);
+        },
+        leave: function(roomName) {
+            socket.emit('leaveRoom', roomName);
+        },
+        on: function(eventName, callback){
+            socket.on(eventName, callback);
+        },
+        emit: function(eventName, data){
+            socket.emit(eventName, data);
+        }
+    }
+});

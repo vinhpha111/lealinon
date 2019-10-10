@@ -3,6 +3,7 @@
 
 var express = require('express');
 var app = express();
+var http = require('http').Server(app);
 var session = require('cookie-session');
 var cookieParser = require('cookie-parser');
 var flash = require('express-flash');
@@ -10,6 +11,8 @@ var path = require('path');
 var auth = require('./controller/middleware/authController');
 var apiRoute = require('./route/api');
 var webRoute = require('./route/web');
+// var io = require('socket.io')(http);
+global.io = require('./socket')(http)
 require('dotenv').config();
 
 global.mongoose = require('mongoose');
@@ -73,6 +76,6 @@ app.use('/api', apiRoute);
 
 app.use('/', webRoute);
 
-app.listen(3000, () => {
+http.listen(3000, () => {
     console.log('listening on port 3000');
 });
