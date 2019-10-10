@@ -3,6 +3,10 @@ class baseModel {
         this.model = require('./schema/'+model)(this);
     }
 
+    model(){
+        return this.model;
+    }
+
     add(data){
         return new Promise((resolve, reject)=>{
             let item = new this.model(data);
@@ -15,6 +19,15 @@ class baseModel {
 
     update(filter, data, callback = null) {
         return this.model.update(filter, data, callback);
+    }
+
+    insertMany(data) {
+        return new Promise((resolve, reject) => {
+            this.model.insertMany(data, (err, docs) => {
+                if (err) resolve(null);
+                resolve(docs);
+            })
+        })
     }
 
     find(query, field_select = null, action = null){

@@ -15,4 +15,24 @@ app.current_user = async (req, res) => {
     return res.status(403).send();
 }
 
+app.find = async (req, res) => {
+    if (!req.user) return res.status(404).send("Not found!");
+
+    let str = req.query.string;
+    if (!str) return res.send([]);
+
+    let query = {
+        $or : [
+            { email : new RegExp(str) }
+        ]
+    }
+    let action = {
+        limit:10
+    }
+
+    let listUser = await User.find(query, ['_id', 'email'], action);
+    return res.json(listUser);
+
+}
+
 module.exports = app;

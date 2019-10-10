@@ -12,7 +12,9 @@ route.get('/group/get_by_id/:id', groupController.getById);
 route.get('/group/permission/:id', groupController.getPermission);
 route.post('/group/:id/new_essay', require('../controller/Request/client/group/newEssay'), postController.addEssay);
 route.get('/group/:id/list_post', postController.getListByGroup);
+route.post('/group/:id/invite_member', groupController.inviteJoinGroup);
 
+route.get('/user/find', userController.find);
 
 route.all('/*', (req, res) => {
     res.status(404);

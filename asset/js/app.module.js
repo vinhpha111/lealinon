@@ -7,6 +7,13 @@ app.run(function($rootScope, $http){
     .then(function(response) {
         $rootScope.current_user = response.data;
     });
+
+    $rootScope.alertMessages = [
+        {
+            type: 'info',
+            content: 'this is test'
+        }
+    ]
 });
 
 app.controller('mainCtrl', function($scope, $rootScope, $http) {

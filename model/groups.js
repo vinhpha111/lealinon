@@ -30,6 +30,10 @@ class Group extends baseModel {
                 let typeRole = member ? member.type : null;
                 return self.listRole(typeRole);
             },
+            checkRole : async function(user_id, role){
+                let listRole = await this.getRole(user_id);
+                return self.roleCan(role, listRole);
+            }
         }
     }
 

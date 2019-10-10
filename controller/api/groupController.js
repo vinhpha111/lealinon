@@ -52,6 +52,39 @@ app.getById = async (req, res) => {
     return res.json(data);
 }
 
+app.inviteJoinGroup = async (req, res) => {
+    let groupInviteJoin = model.getInstance('group_invite_join');
+    let announce = model.getInstance('announces');
+    let userIds = req.body.ids;
+    let dataInvites = [];
+    let dataAnnounces = [];
+    for(let i in userIds){
+        dataInvites.push({
+            group_id : req.params.id,
+            user_id : req.user._id,
+            invited_users : userIds[i],
+            message : req.body.introduce,
+            created_at : pastDateTime.now(),
+            updated_at : pastDateTime.now(),
+        });
+
+        dataAnnounces.push({
+            user_id : userIds[i],
+            type : announce.TYPE('INVITED_JOIN_GROUP'),
+            group_id : req.params.id,
+            sender : req.user._id,
+            created_at : pastDateTime.now(),
+            updated_at : pastDateTime.now(),
+        })
+    }
+    let invites = await groupInviteJoin.insertMany(dataInvites);
+    if (invites) {
+        let announces = await announce.insertMany(dataAnnounces);
+        return res.send(announces);
+    }
+    return res.status(500).send(null);
+}
+
 app.getPermission = async (req, res) => {
     if (!req.user) {
         return res.status(403).send(null);

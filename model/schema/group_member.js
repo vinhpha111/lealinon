@@ -6,7 +6,7 @@ var group_member = schema({
     type : Number, // 1: admin, 2: editor, 3: normal
     user_created : [{ type: schema.Types.ObjectId, ref: 'users' }],
     created_at : Date,
-    updated_at : Number
+    updated_at : Date
 }, {collection : 'group_member'});
 
 module.exports = function(Class = null){

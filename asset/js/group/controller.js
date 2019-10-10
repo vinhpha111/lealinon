@@ -22,7 +22,7 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
     }
 });
 
-app.controller('detailGroup', function($routeParams, $scope, $http) {
+app.controller('detailGroup', function($scope, $routeParams, $http, Scopes) {
     $scope.id = $routeParams.id;
     $scope.notFound = false;
     $scope.exceptIds = [];
@@ -53,11 +53,80 @@ app.controller('detailGroup', function($routeParams, $scope, $http) {
             $scope.loadingPost = false;
             console.log(res);
         }, function(res){
+            $scope.loadingPost = false;
+            console.log(res);
+        })
+    }
+    $scope.getPost();
+    
+    $scope.invite = {};
+    $scope.invite.searchingUser = false;
+    $scope.invite.listFindUserInvite = null;
+    $scope.invite.stringFindUserInvite = '';
+    $scope.searchUser = function(){
+        console.log($scope.invite.stringFindUserInvite);
+        if ($scope.invite.searchingUser) {
+            return;
+        }
+        $scope.invite.searchingUser = true;
+        $http.get('/api/user/find', {
+            params: { string : $scope.invite.stringFindUserInvite }
+        })
+        .then(function(res){
+            $scope.invite.listFindUserInvite = res.data;
+            $scope.invite.searchingUser = false;
+            console.log(res);
+        }, function(res){
+            $scope.invite.searchingUser = false;
             console.log(res);
         })
     }
 
-    $scope.getPost();
+    $scope.inviteUserJoinGroup = function(){
+        let ids = [];
+        for(let i in $scope.invite.listFindUserInvite){
+            if ($scope.invite.listFindUserInvite[i].checked) {
+                ids.push($scope.invite.listFindUserInvite[i]._id);
+            }
+        }
+        if (ids.length > 0) {
+            $scope.invite.stringFindUserInvite = null;
+            $scope.invite.listFindUserInvite = null;
+            $scope.invite.introduce = null;
+            $http.post('/api/group/'+$routeParams.id+"/invite_member",{
+                ids : ids,
+                introduce : $scope.invite.introduce
+            })
+            .then(function(res){
+                Scopes.get('scopeMessage').alertMessages = [
+                    {
+                        type: 'success',
+                        content: 'Đã gửi lời mời tham gia nhóm!'
+                    }
+                ];
+            }, function(res){
+                Scopes.get('scopeMessage').alertMessages = [
+                    {
+                        type: 'danger',
+                        content: 'Có lỗi xãy ra, hãy thử lại!'
+                    }
+                ];
+            })
+        }
+    }
+
+    $scope.invite.canSendInvite = false;
+    $scope.checkSendInvite = function(){
+        for(let i in $scope.invite.listFindUserInvite){
+            if ($scope.invite.listFindUserInvite[i].checked) {
+                $scope.invite.canSendInvite = true;
+                console.log($scope.invite.canSendInvite);
+                return;
+            }
+        }
+        $scope.invite.canSendInvite = false;
+    }
+
 });
 
 app.controller('newPost', function($routeParams, $scope, current_user, $location, $window, $http) {

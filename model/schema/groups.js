@@ -6,7 +6,7 @@ var groups = schema({
     slug : String,
     description : String,
     created_at : Date,
-    status : Number,
+    status : Date,
 }, {collection : 'groups', toJSON: { virtuals: true }});
 module.exports = function(Class = null){
     if (typeof Class['virtual'] === 'function') {

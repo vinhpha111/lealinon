@@ -3,6 +3,7 @@
     <div>
         {{ detail.description }}
     </div>
+    <alert-message></alert-message>
     <div>
         <a ng-if="detail.role.newPost" href="/group/{{id}}/new-post" class="btn btn-primary btn-block">Tạo bài post mới</a>
         <a ng-if="!detail.role.joinGroup" href="/group/{{id}}/new-post" class="btn btn-primary btn-block">Tham gia nhóm</a>
@@ -52,8 +53,16 @@
                     <h4 class="modal-title">Mời thành viên</h4>
                 </div>
                 <div class="modal-body">
-                    <textarea style="width: 100%; resize: none" rows="4" placeholder="Viết gì đó"></textarea>
-                    <input type="text" placeholder="Tìm kiếm" style="width: 100%;">
+                    <textarea style="width: 100%; resize: none" rows="4" placeholder="Viết gì đó" ng-model="invite.introduce"></textarea>
+                    <input ng-change="searchUser()" type="text" placeholder="Tìm kiếm" style="width: 100%;" ng-model="invite.stringFindUserInvite">
+                    <form>
+                        <div class="list-user-invite-group">
+                            <div class="checkbox" ng-repeat="user in invite.listFindUserInvite">
+                                <label><input type="checkbox" ng-change="checkSendInvite()" ng-model="user.checked">{{user.email}}</label>
+                            </div>
+                        </div>
+                        <button ng-if="invite.canSendInvite" style="margin-top: 10px;" ng-click="inviteUserJoinGroup()" data-dismiss="modal" class="btn btn-sm btn-info">Mời</button>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
