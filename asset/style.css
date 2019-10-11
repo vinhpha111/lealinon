@@ -31,6 +31,18 @@ footer {
     padding: 15px;
 }
 
+.header-phone{
+    display: none;
+    float: left;
+}
+.announce-web{
+    display: inline-block;
+    float: left;
+}
+#main{
+    margin-top: 50px;
+}
+
 /* On small screens, set height to 'auto' for sidenav and grid */
 @media screen and (max-width: 767px) {
     .sidenav {
@@ -38,6 +50,18 @@ footer {
         padding: 15px;
     }
     .row.content {height:auto;} 
+    .header-phone{
+        display: inline-block;
+    }
+    .announce-web{
+        display: none;
+    }
+    .navbar-header {
+        padding: 5px;
+    }
+    #main{
+        margin-top: 100px;
+    }
 }
 
 h1 {
@@ -85,4 +109,27 @@ h1 {
 .list-user-invite-group {
     max-height: 300px;
     overflow-y: auto;
+}
+
+.has-new {
+    position: relative;
+}
+
+.num {
+    display: none;
+}
+
+.has-new .num {
+    position: absolute;
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-color: rgb(238, 255, 0);
+    border-radius: 50%;
+    bottom: -3px;
+    right: -3px;
+    color: black;
+    padding: 2px 2px;
+    font-size: 12px;
+    font-weight: bold;
 }

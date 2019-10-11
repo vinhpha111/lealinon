@@ -28,26 +28,28 @@
   <script src="/js/group/controller.js"></script>
   <script src="/js/component/sidebar/index.js"></script>
   <script src="/js/component/alertMessage/index.js"></script>
+  <script src="/js/component/announceHeader/index.js"></script>
   <script src="//cdn.ckeditor.com/4.13.0/standard/ckeditor.js"></script>
   <script src = "/socket.io/socket.io.js"></script>
 </head>
 <body ng-app="app" ng-controller="mainCtrl">
-<div class="container">
-<nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>                        
-      </button>
-      <a class="navbar-brand" href="#">Logo</a>
-    </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav">
-        <li style="padding-top: 8px;">
-          <form>
-            <div style="max-width: 300px;" class="input-group">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Logo</a>
+          <announce-header ng-if="current_user" class="header-phone"></announce-header>
+          <div class="dropdown header-phone" ng-if="current_user" style="margin-top: 10px">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{current_user.email}}
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a href="#">Quản lý tài khoản</a></li>
+              <li><a href="#">Đăng xuất</a></li>
+            </ul>
+          </div>
+          <form class="header-phone">
+            <div class="input-group">
               <input type="text" class="form-control" placeholder="Search">
               <div class="input-group-btn">
                 <button class="btn btn-default" type="submit">
@@ -56,49 +58,67 @@
               </div>
             </div>
           </form>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li ng-if="!current_user"><a href="<%= base_url('login') %>" target="_self"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-        <li ng-if="!current_user"><a href="<%= base_url('register') %>" target="_self"></span> Register</a></li>
-        <div class="dropdown" ng-if="current_user" style="margin-top: 7px">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{current_user.email}}
-            <span class="caret"></span></button>
-            <ul class="dropdown-menu">
-                <li><a href="#">Quản lý tài khoản</a></li>
-                <li><a href="#">Đăng xuất</a></li>
-            </ul>
         </div>
-      </ul>
-    </div>
-  </div>
-</nav>
-  
-<div class="container-fluid" style="margin-top: 50px;">    
-  <div class="row content">
-    <left-sidebar></left-sidebar>
-    <div class="col-sm-8 text-left content-center">
-        <div ng-view></div>
-    </div>
-    <div class="col-sm-2 sidenav text-left">
-      <div class="well">
-        <p>ADS</p>
+        <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav">
+            <li style="padding-top: 10px;">
+              <form>
+                <div style="max-width: 300px;" class="input-group">
+                  <input type="text" class="form-control" placeholder="Search">
+                  <div class="input-group-btn">
+                    <button class="btn btn-default" type="submit">
+                      <i class="glyphicon glyphicon-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li ng-if="!current_user"><a href="<%= base_url('login') %>" target="_self"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+            <li ng-if="!current_user"><a href="<%= base_url('register') %>" target="_self"></span> Register</a></li>
+            <announce-header class="header-web" ng-if="current_user"></announce-header>
+            <li class="header-web">
+              <div class="dropdown" ng-if="current_user" style="margin-top: 10px">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{current_user.email}}
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Quản lý tài khoản</a></li>
+                  <li><a href="#">Đăng xuất</a></li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="well">
-        <p>ADS</p>
+    </nav>
+    
+    <div class="container-fluid" id="main">    
+      <div class="row content">
+        <left-sidebar></left-sidebar>
+        <div class="col-sm-8 text-left content-center">
+          <div ng-view></div>
+        </div>
+        <div class="col-sm-2 sidenav text-left">
+          <div class="well">
+            <p>ADS</p>
+          </div>
+          <div class="well">
+            <p>ADS</p>
+          </div>
+        </div>
       </div>
     </div>
+    
+    <footer class="container-fluid text-center">
+      <p>Footer Text</p>
+    </footer>
+    <script>
+      $(document).on("keydown", "form", function(event) { 
+        return event.key != "Enter";
+      });
+    </script>
   </div>
-</div>
-
-<footer class="container-fluid text-center">
-  <p>Footer Text</p>
-</footer>
-<script>
-  $(document).on("keydown", "form", function(event) { 
-      return event.key != "Enter";
-  });
-</script>
-</div>
 </body>
 </html>

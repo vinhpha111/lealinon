@@ -15,6 +15,7 @@ route.get('/group/:id/list_post', postController.getListByGroup);
 route.post('/group/:id/invite_member', groupController.inviteJoinGroup);
 
 route.get('/user/find', userController.find);
+route.get('/user/get_announce', userController.getAnnounce);
 
 route.all('/*', (req, res) => {
     res.status(404);

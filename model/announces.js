@@ -36,6 +36,19 @@ class announce extends baseModel {
             break;
         }
     }
+
+    virtual(){
+        return {
+            check_see : {
+                get: function(){
+                    return this.has_see;
+                },
+                set: function(value){
+                    this.has_see = value;
+                }
+            }
+        }
+    }
 }
 
 module.exports = announce;

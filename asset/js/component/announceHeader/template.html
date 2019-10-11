@@ -1,0 +1,50 @@
+<li class="item">
+    <div class="dropdown" style="margin: 12px;">
+        <i class="fa fa-wechat has-new dropdown-toggle" data-toggle="dropdown" style="font-size:28px;color:rgb(0, 225, 255); cursor: pointer;"></i>
+        <ul class="dropdown-menu">
+            <li><a href="#">HTML HTML HTML HTML HTML HTML HTML HTML</a></li>
+            <li><a href="#">CSS</a></li>
+            <li><a href="#">JavaScript</a></li>
+        </ul>
+    </div>
+</li>
+<li class="item">
+    <div class="dropdown" style="margin: 12px;">
+        <i ng-click="announce.getList()" ng-class="{'has-new':announce.hasNew}" class="fa fa-bell dropdown-toggle" data-toggle="dropdown" style="font-size:28px;color:rgb(0, 225, 255); cursor: pointer;"><span class="num">{{announce.numNew > 5 ? '5+' : announce.numNew}}</span></i>
+        <ul class="dropdown-menu">
+            <li class="text-center" ng-if="!(announce.data.length > 0)"><i class="fa fa-spinner fa-spin"></i></li>
+            <li ng-if="announce.data" ng-repeat="row in announce.data" ng-bind-html="row.html"></li>
+        </ul>
+    </div>
+</li>
+<style>
+    announce-header .item {
+        display: inline-block;
+        float: left;
+    }
+    announce-header .item .dropdown-menu {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    /* width */
+    announce-header .item .dropdown-menu::-webkit-scrollbar {
+    width: 8px;
+    }
+
+    /* Track */
+    announce-header .item .dropdown-menu::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    }
+
+    /* Handle */
+    announce-header .item .dropdown-menu::-webkit-scrollbar-thumb {
+    background: #888;
+    }
+
+    /* Handle on hover */
+    announce-header .item .dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    }
+
+</style>
