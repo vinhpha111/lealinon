@@ -3,7 +3,7 @@ class baseModel {
         this.model = require('./schema/'+model)(this);
     }
 
-    model(){
+    getModel(){
         return this.model;
     }
 

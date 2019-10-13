@@ -3,6 +3,8 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
         $window.location.href = '/login';
     }
 
+    console.log(current_user);
+
     $scope.new = function(){
         let formData = new FormData();
         formData.append('name', $scope.name);
@@ -139,7 +141,7 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
     $scope.exam_type = 'essay';
 
     $scope.essay = {};
-    $scope.addEssay = () => {
+    $scope.addEssay = function() {
         $http.post('/api/group/'+id+'/new_essay', $scope.essay)
         .then(function(res){
             $scope.errors = null;

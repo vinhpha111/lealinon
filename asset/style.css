@@ -31,37 +31,49 @@ footer {
     padding: 15px;
 }
 
-.header-phone{
-    display: none;
-    float: left;
-}
-.announce-web{
-    display: inline-block;
-    float: left;
-}
 #main{
     margin-top: 50px;
 }
 
-/* On small screens, set height to 'auto' for sidenav and grid */
-@media screen and (max-width: 767px) {
-    .sidenav {
-        height: auto;
-        padding: 15px;
-    }
-    .row.content {height:auto;} 
-    .header-phone{
-        display: inline-block;
-    }
-    .announce-web{
-        display: none;
-    }
-    .navbar-header {
-        padding: 5px;
-    }
-    #main{
-        margin-top: 100px;
-    }
+.search-input {
+    max-width: 300px;
+    margin-top: 10px;
+}
+
+.announce-header .dropdown-menu{
+    right: 0px !important;
+    width: 300px;
+    max-height: 200px;
+    overflow-y: auto;
+
+}
+
+.announce-header .dropdown-menu a{
+    white-space: normal;
+}
+
+.announce-header .item {
+    display: inline-block;
+}
+
+/* width */
+announce-header .item .dropdown-menu::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* Track */
+announce-header .item .dropdown-menu::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+announce-header .item .dropdown-menu::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+announce-header .item .dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 h1 {
@@ -132,4 +144,43 @@ h1 {
     padding: 2px 2px;
     font-size: 12px;
     font-weight: bold;
+}
+
+/* On small screens, set height to 'auto' for sidenav and grid */
+@media screen and (max-width: 767px) {
+    .sidenav {
+        height: auto;
+        padding: 15px;
+    }
+
+    .row.content {height:auto;} 
+
+    .navbar-header {
+        padding: 5px;
+    }
+    .search-input {
+        max-width: 100%;
+    }
+    .dropdown-user button {
+        width: 100%;
+    }
+    #main{
+        margin-top: 150px;
+    }
+
+    .announce-header {
+        position: relative;
+        width: 100%;
+    }
+
+    .announce-header .dropdown{
+        position: unset;
+    }
+    
+    .announce-header .dropdown-menu{
+        position: absolute !important;
+        left: 0px;
+        top: 50px;
+        width: 100%;
+    }
 }

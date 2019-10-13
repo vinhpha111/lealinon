@@ -36,7 +36,7 @@ function announceType(name) {
     }
 }
 
-app.controller('announceHeaderController', function($scope, $rootScope, Scopes, $http){
+app.controller('announceHeaderController', function($scope, $rootScope, Scopes, $http, socket, Sound){
     $scope.user = $rootScope.current_user;
     $scope.announce = {};
     $scope.announce.data = [];
@@ -57,20 +57,26 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
                 break;
         }
         return {
+            _id: data._id,
             html: "<a href='"+link+"'>"+content+"</a>"
         }
     }
 
-    $scope.announce.getList = function(){
-        if (!$scope.announce.hasNew) return;
+    function setAnnounceHasSee(ids) {
+        $http.post('/api/announce/set_has_see',{
+            ids: ids
+        }).then();
+    }
 
+    $scope.announce.getList = function(){
+
+        
         $scope.announce.data = [];
         $scope.announce.exceptIds = [];
-        $scope.announce.hasNew = false;
-        $http.get('/api/user/get_announce', {
+        
+        $http.get('/api/announce/find', {
             params: {
                 exceptIds: $scope.announce.exceptIds,
-                checkSee: true,
             }
         })
         .then(function(res){
@@ -85,23 +91,28 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
                 $scope.announce.numNew = 0;
                 $scope.announce.hasNew = false;
             }
+            setAnnounceHasSee($scope.announce.exceptIds);
         }, function(res){
         })
     }
 
-    $http.get('/api/user/get_announce')
+    $http.get('/api/announce/get_not_see')
     .then(function(res){
         let datas = res.data;
-        console.log(datas);
-        for(let i in datas){
-            if(!datas[i].has_see) {
-                $scope.announce.hasNew = true;
-                $scope.announce.numNew++;
-            }
+        $scope.announce.numNew = res.data.countNotSee;
+        if ($scope.announce.numNew > 0) {
+            $scope.announce.hasNew = true;
         }
     }, function(res){
     })
     
+    socket.on('announceHeader', function(data){
+        console.log(data);
+        $scope.$apply(function() { 
+            $scope.announce.numNew += 1;
+            $scope.announce.hasNew = true;
+        });
+        Sound.notification();
+    });
 
-    Scopes.store('scopeMessage', $scope);
 });

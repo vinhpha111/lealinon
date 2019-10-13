@@ -82,7 +82,7 @@ app.inviteJoinGroup = async (req, res) => {
     if (invites) {
         let announces = await announce.insertMany(dataAnnounces);
         for(let i in announces){
-            io.sockets.in(announces[i].user_id).emit('announce', announces[i]);
+            io.sockets.in(announces[i].user_id).emit('announceHeader', announces[i]);
         }
         return res.send(announces);
     }

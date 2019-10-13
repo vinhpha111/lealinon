@@ -3,6 +3,7 @@ var route = express.Router();
 var userController = require('../controller/api/userController')
 var groupController = require('../controller/api/groupController')
 var postController = require('../controller/api/postController')
+var announceController = require('../controller/api/announceController')
 
 route.get('/current_user', userController.current_user);
 
@@ -15,7 +16,10 @@ route.get('/group/:id/list_post', postController.getListByGroup);
 route.post('/group/:id/invite_member', groupController.inviteJoinGroup);
 
 route.get('/user/find', userController.find);
-route.get('/user/get_announce', userController.getAnnounce);
+
+// announce
+route.get('/announce/find', announceController.getAnnounce);
+route.get('/announce/get_not_see', announceController.getAnnounceNotSee);
 
 route.all('/*', (req, res) => {
     res.status(404);

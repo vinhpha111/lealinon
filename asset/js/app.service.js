@@ -22,7 +22,7 @@ app.service('$auth', function($rootScope, $http, $location, $window) {
     }
 
     this.checkPermission = {
-        group : function(listRole, groupId, redirect = null){
+        group : function(listRole, groupId, redirect) {
             return new Promise(function(resolve, reject){
                 $http.get("api/group/permission/"+groupId)
                 .then(function(res){
@@ -79,3 +79,16 @@ app.factory('socket', function(){
         }
     }
 });
+
+app.factory('Sound', function(){
+    return {
+        notification: function(){
+            return new Promise(function(resolve, reject){
+                var audio = new Audio('audio/notification.mp3');
+                audio.play().then(function () {
+                    resolve(audio);                
+                })
+            })
+        }
+    }
+})
