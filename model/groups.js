@@ -37,6 +37,21 @@ class Group extends baseModel {
         }
     }
 
+    postMiddleware(){
+        return {
+            save: async function(doc){
+                console.log('%s has been saved', doc._id);
+                try {
+                    var model = require('./index');
+                    var searchModel = model.getInstance('searches');
+                    var result = await searchModel.add({group_id: doc._id});
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        }
+    }
+
     listRole(typeRole){
         switch (typeRole) {
             case this.ROLE('ADMIN'):

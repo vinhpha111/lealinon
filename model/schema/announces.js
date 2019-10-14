@@ -27,5 +27,11 @@ module.exports = function(Class = null){
             announces.methods[name] = methods[name];
         }
     }
+    if (typeof Class['postMiddleware'] === 'function') {
+        let postMiddlewares = Class.postMiddleware();
+        for (let type in postMiddlewares) {
+            announces.post(type, postMiddlewares[type]);
+        }
+    }
     return mongoose.model('announces', announces);
 }

@@ -14,6 +14,10 @@ app.run(function($rootScope, $http, socket){
     })
 });
 
-app.controller('mainCtrl', function($scope, $rootScope, $http) {
-    
+app.controller('mainCtrl', function($scope, $location, Scopes) {
+    $scope.stringSearch = "";
+    $scope.search = function(string){
+        $location.path('/search').search({string: string});
+    }
+    Scopes.store('scopeMainCtrl', $scope);
 });

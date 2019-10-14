@@ -1,4 +1,5 @@
 var baseModel = require('./base');
+var model = require('./index');
 class announce extends baseModel {
     constructor(){
         super('announces');

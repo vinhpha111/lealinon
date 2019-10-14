@@ -49,8 +49,10 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         let content = null;
         switch (data.type) {
             case announceType('INVITED_JOIN_GROUP'):
-                link = "/group/"+data.group_id;
-                content = data.sender.email + " mời bạn tham gia nhóm";
+                link = "/group/"+data.group_id._id;
+                content = "<strong>"+data.sender.email+"</strong>"
+                        + " mời bạn tham gia nhóm " 
+                        + "<strong>"+data.group_id.name+"</strong>";
                 break;
         
             default:
@@ -63,7 +65,7 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
     }
 
     function setAnnounceHasSee(ids) {
-        $http.post('/api/announce/set_has_see',{
+        $http.put('/api/announce/set_has_see',{
             ids: ids
         }).then();
     }
@@ -73,6 +75,7 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         
         $scope.announce.data = [];
         $scope.announce.exceptIds = [];
+        $scope.announce.load = true;
         
         $http.get('/api/announce/find', {
             params: {
@@ -91,8 +94,36 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
                 $scope.announce.numNew = 0;
                 $scope.announce.hasNew = false;
             }
+            $scope.announce.load = false;
             setAnnounceHasSee($scope.announce.exceptIds);
         }, function(res){
+            $scope.announce.load = false;
+        })
+    }
+
+    $scope.announce.loadMore = function(){
+        $scope.announce.load = true;
+        $http.get('/api/announce/find', {
+            params: {
+                exceptIds: $scope.announce.exceptIds,
+            }
+        })
+        .then(function(res){
+            let datas = res.data;
+            console.log(datas);
+            for(let i in datas){
+                $scope.announce.numNew--;
+                $scope.announce.exceptIds.push(datas[i]._id)
+                $scope.announce.data.push(convertAnnounce(datas[i]));
+            }
+            if ($scope.announce.numNew <= 0) {
+                $scope.announce.numNew = 0;
+                $scope.announce.hasNew = false;
+            }
+            $scope.announce.load = false;
+            setAnnounceHasSee($scope.announce.exceptIds);
+        }, function(res){
+            $scope.announce.load = false;
         })
     }
 

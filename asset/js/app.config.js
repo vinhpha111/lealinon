@@ -9,6 +9,16 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
         templateUrl: 'js/detail/detail.html'
     })
 
+    .when('/search', {
+        templateUrl: 'js/search/index.html',
+        controller: 'searchController',
+        resolve : {
+            current_user : function($auth){
+                return $auth.getUser();
+            },
+        }
+    })
+
     .when('/group/new', {
         templateUrl: 'js/group/new.html',
         controller: 'newGroup',
@@ -28,7 +38,7 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
             },
             permission : function($auth, $route){
                 let roleList = [$auth.role.group.ADMIN, $auth.role.group.EDITOR];
-                return $auth.checkPermission.group([], $route.current.params.id);
+                return $auth.checkPermission.group(roleList, $route.current.params.id);
             }
         }
     })

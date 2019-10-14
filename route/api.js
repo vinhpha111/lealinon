@@ -20,6 +20,7 @@ route.get('/user/find', userController.find);
 // announce
 route.get('/announce/find', announceController.getAnnounce);
 route.get('/announce/get_not_see', announceController.getAnnounceNotSee);
+route.put('/announce/set_has_see', announceController.setAnnounceHasSee);
 
 route.all('/*', (req, res) => {
     res.status(404);

@@ -21,5 +21,11 @@ module.exports = function(Class = null){
             groups.methods[name] = methods[name];
         }
     }
+    if (typeof Class['postMiddleware'] === 'function') {
+        let postMiddlewares = Class.postMiddleware();
+        for (let type in postMiddlewares) {
+            groups.post(type, postMiddlewares[type]);
+        }
+    }
     return mongoose.model('groups', groups);
 }
