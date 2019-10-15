@@ -16,7 +16,8 @@ app.new = async (req, res) => {
         user_created : req.user._id,
         name : req.body.name,
         description: req.body.description,
-        slug : convertToSlug(req.body.name)
+        slug : convertToSlug(req.body.name),
+        created_at : pastDateTime.now()
     }
     let group = await Group.add(data);
 

@@ -5,3 +5,12 @@
     <li ng-click="changeType('user')" ng-class="{active: type==='user'}"><a href="#">Người dùng</a></li>
     <li ng-click="changeType('post')" ng-class="{active: type==='post'}"><a href="#">Bài post</a></li>
 </ul>
+<div style="padding-top: 10px;">
+    <h1 ng-if="loading" class="text-center"><i class="fa fa-spinner fa-spin"></i></h1>
+    <div ng-repeat="data in datas">
+        <div ng-if="data.table==='group'" ng-include="'js/search/row_group.html'"></div>
+        <div ng-if="data.table==='user'" ng-include="'js/search/row_user.html'"></div>
+        <div ng-if="data.table==='post'" ng-include="'js/search/row_post.html'"></div>
+    </div>
+    <h1 class="text-center" ng-if="!loading && datas.length===0">Không có data</h1>
+</div>

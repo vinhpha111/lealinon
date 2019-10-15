@@ -37,21 +37,6 @@ class Group extends baseModel {
         }
     }
 
-    postMiddleware(){
-        return {
-            save: async function(doc){
-                console.log('%s has been saved', doc._id);
-                try {
-                    var model = require('./index');
-                    var searchModel = model.getInstance('searches');
-                    var result = await searchModel.add({group_id: doc._id});
-                } catch (error) {
-                    console.log(error);
-                }
-            }
-        }
-    }
-
     listRole(typeRole){
         switch (typeRole) {
             case this.ROLE('ADMIN'):
@@ -99,6 +84,44 @@ class Group extends baseModel {
 
     roleCan(type, listRole){
         return listRole[type] ? true : false; 
+    }
+
+    findByString(query){
+        let list = this.getModel().aggregate()
+        .lookup({
+            from: 'users',
+            localField: 'user_created',
+            foreignField: '_id',
+            as: 'user_created'
+        })
+        .project({
+            user_created: {
+                encrypt_password: 0
+            }
+        })
+        .match({
+            $or: [
+                { name: new RegExp(query.string) },
+                { description: new RegExp(query.string) },
+            ],
+            _id: {
+                $nin: query.exceptIds
+            }
+        })
+        .sort({'created_at': 'desc'})
+        .project({
+            _id: 1,
+            name: 1,
+            slug: 1,
+            description: 1,
+            created_at: 1,
+            status: 1,
+            user_created: 1,
+            table: "group"
+        })
+        .limit(10)
+        .exec();
+        return list;
     }
 }
 

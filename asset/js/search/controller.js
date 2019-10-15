@@ -1,9 +1,10 @@
 app.controller('searchController', function($scope, $location, Scopes, $http){
-    var string = $location.search().string;
+    var string = $location.search().string.toString();
     Scopes.get('scopeMainCtrl').stringSearch = string;
     $scope.string = string;
     $scope.type = 'all';
-    $scope.data = [];
+    $scope.datas = [];
+    $scope.loading = false;
     var type = $location.search().type;
     if (['all', 'group', 'user', 'post'].indexOf(type) !== -1) {
         $scope.type = type;
@@ -16,18 +17,26 @@ app.controller('searchController', function($scope, $location, Scopes, $http){
         }
     }
 
+    let exceptIds = [];
     function search() {
-        $http.get('/api/search', {
+        $scope.loading = true;
+        $http.get('/api/search/by_string', {
             params: {
                 string: $scope.string,
+                exceptIds: exceptIds,
                 type: $scope.type
             }
         })
         .then(function(res){
-            $scope.data = res.data;
+            $scope.datas = $scope.datas.concat(res.data);
+            for(let i in res.data){
+                exceptIds.push(res.data._id);
+            }
+            $scope.loading = false;
         }, function(res){
-            $scope.data = [];
+            $scope.loading = false;
         })
     }
 
+    search();
 })

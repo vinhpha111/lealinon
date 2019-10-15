@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="/">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" />
@@ -81,7 +82,7 @@
       <div class="row content">
         <left-sidebar></left-sidebar>
         <div class="col-sm-8 text-left content-center">
-          <div ng-view></div>
+          <div ng-view autoscroll="true"></div>
         </div>
         <div class="col-sm-2 sidenav text-left">
           <div class="well">
@@ -105,7 +106,6 @@
           $(document).on('click', '.dropdown .dropdown-menu .more', function (e) {
           e.stopPropagation();
           });
-          console.log('sdf');
       });
     </script>
   </div>

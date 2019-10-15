@@ -22,6 +22,34 @@ class User extends baseModel {
             });
         })
     }
+
+    findByString(query){
+        let list = this.getModel().aggregate()
+        .match({
+            $or: [
+                { email: new RegExp(query.string) },
+            ],
+            _id: {
+                $nin: query.exceptIds
+            }
+        })
+        .sort({'created_at': 'desc'})
+        .project({
+            _id: 1,
+            email: 1,
+            name: 1,
+            gender: 1,
+            birthday: 1,
+            job: 1,
+            online_status: 1,
+            active: 1,
+            created_at: 1,
+            table: "user"
+        })
+        .limit(10)
+        .exec();
+        return list;
+    }
 }
 
 module.exports = User;

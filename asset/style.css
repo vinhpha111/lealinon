@@ -146,6 +146,11 @@ h1 {
     font-weight: bold;
 }
 
+.header-link, .header-link:hover, .header-link:active {
+    color: black;
+    text-decoration-line: none;
+}
+
 /* On small screens, set height to 'auto' for sidenav and grid */
 @media screen and (max-width: 767px) {
     .sidenav {
