@@ -45,7 +45,7 @@ app.getListByGroup = async (req, res) => {
         }
     }
     let action = {
-        limit:1,
+        limit:10,
         sort:{
             created_at: -1 //Sort by Date Added DESC
         }

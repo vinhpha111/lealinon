@@ -20,7 +20,7 @@
         <div class="panel-body">
             <h1>{{ post.title }}</h1>
             <div ng-bind-html="post.content" ng-if="post.more"></div>
-            <button ng-if="!post.more" ng-click="post.more = true" class="btn btn-link btn-block">load more</button>
+            <button ng-if="!post.more" ng-click="post.more = true" class="btn btn-link btn-block"><i class="material-icons">more_horiz</i></button>
         </div>
         <div class="panel-footer">
             <button ng-click="post.liked = !post.liked; post.unliked = false" class="btn btn-default">
@@ -42,7 +42,7 @@
         </div>
     </div>
     <h1 class="text-center" ng-if="loadingPost"><i class="fa fa-spinner fa-spin"></i></h1>
-    <button ng-click="getPost()" class="btn btn-primary btn-block">load more</button>
+    <button ng-click="getPost()" class="btn btn-link btn-block">load more</button>
     
     <div ng-if="detail.role.addMember" id="addMember" class="modal fade" role="dialog">
         <div class="modal-dialog modal-sm">

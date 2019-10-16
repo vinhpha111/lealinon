@@ -135,10 +135,21 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
     if (!current_user) {
         $window.location.href = 'login?redirect='+$location.$$absUrl
     }
+    $scope.location = $location;
     var id = $routeParams.id;
     $scope.id = id;
+
+    let type = $location.search().type ? $location.search().type : 'exam';
     $scope.type = 'exam';
+    if (['exam', 'post'].indexOf(type) !== -1) {
+        $scope.type = type;
+    }
+
+    let exam_type = $location.search().exam_type ? $location.search().exam_type : 'essay';
     $scope.exam_type = 'essay';
+    if (['essay', 'quiz'].indexOf(exam_type) !== -1) {
+        $scope.exam_type = exam_type;
+    }
 
     $scope.essay = {};
     $scope.addEssay = function() {
@@ -153,7 +164,13 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
         });
     }
 
+    $scope.quiz = {};
+    $scope.quiz.questions = [{}];
+    $scope.addQuiz = function(){
+
+    }
+
     $scope.$on('$routeChangeStart', function($event, next, current) { 
         console.log('route change');
-      });
+    });
 });

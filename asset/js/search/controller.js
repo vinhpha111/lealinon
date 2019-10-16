@@ -1,5 +1,5 @@
 app.controller('searchController', function($scope, $location, Scopes, $http){
-    var string = $location.search().string.toString();
+    var string = $location.search().string ? $location.search().string.toString() : "";
     Scopes.get('scopeMainCtrl').stringSearch = string;
     $scope.string = string;
     $scope.type = 'all';
@@ -18,7 +18,7 @@ app.controller('searchController', function($scope, $location, Scopes, $http){
     }
 
     let exceptIds = [];
-    function search() {
+    $scope.search = function() {
         $scope.loading = true;
         $http.get('/api/search/by_string', {
             params: {
@@ -30,7 +30,7 @@ app.controller('searchController', function($scope, $location, Scopes, $http){
         .then(function(res){
             $scope.datas = $scope.datas.concat(res.data);
             for(let i in res.data){
-                exceptIds.push(res.data._id);
+                exceptIds.push(res.data[i]._id);
             }
             $scope.loading = false;
         }, function(res){
@@ -38,5 +38,5 @@ app.controller('searchController', function($scope, $location, Scopes, $http){
         })
     }
 
-    search();
+    $scope.search();
 })

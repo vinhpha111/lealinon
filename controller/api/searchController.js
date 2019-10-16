@@ -4,6 +4,7 @@ var groupModel = model.getInstance('groups');
 var userModel = model.getInstance('users');
 var postModel = model.getInstance('post_groups');
 var datetime = require('node-datetime');
+var ObjectId = require('mongodb').ObjectID;
 
 app.searchByString = async (req, res) => {
     if (!req.user) {
@@ -11,7 +12,11 @@ app.searchByString = async (req, res) => {
     }
 
     let string = req.query.string;
+    if (string.length == 0) {
+        return res.json([]);
+    }
     let exceptIds = req.query.exceptIds ? req.query.exceptIds : [];
+    exceptIds = exceptIds.map((id) => new ObjectId(id));
     let type = 'all';
     if (['group', 'user', 'post'].indexOf(req.query.type) !== -1) {
         type = req.query.type;
