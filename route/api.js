@@ -13,6 +13,7 @@ route.get('/group/list_in_sidebar', groupController.listInSidebar);
 route.get('/group/get_by_id/:id', groupController.getById);
 route.get('/group/permission/:id', groupController.getPermission);
 route.post('/group/:id/new_essay', require('../controller/Request/client/group/newEssay'), postController.addEssay);
+route.post('/group/:id/new_quiz', require('../controller/Request/client/group/newQuiz'), postController.addQuiz);
 route.get('/group/:id/list_post', postController.getListByGroup);
 route.post('/group/:id/invite_member', groupController.inviteJoinGroup);
 

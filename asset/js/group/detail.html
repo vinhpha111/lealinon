@@ -17,10 +17,10 @@
     </div>
     <div class="panel panel-default" ng-repeat="post in listPost">
         <div class="panel-heading">{{ post.title }}</div>
-        <div class="panel-body">
+        <div class="panel-body" ng-init="post.numLimit = post.content.length > 1000 ? 1000 : null; post.more = post.content.length < 1000;">
             <h1>{{ post.title }}</h1>
-            <div ng-bind-html="post.content" ng-if="post.more"></div>
-            <button ng-if="!post.more" ng-click="post.more = true" class="btn btn-link btn-block"><i class="material-icons">more_horiz</i></button>
+            <div ng-bind-html="post.content | limitTo:post.numLimit"></div>
+            <button ng-if="!post.more" ng-click="post.numLimit = null; post.more = true;" class="btn btn-link btn-block"><i class="material-icons">more_horiz</i></button>
         </div>
         <div class="panel-footer">
             <button ng-click="post.liked = !post.liked; post.unliked = false" class="btn btn-default">

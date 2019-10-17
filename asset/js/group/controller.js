@@ -167,7 +167,16 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
     $scope.quiz = {};
     $scope.quiz.questions = [{}];
     $scope.addQuiz = function(){
-
+        console.log($scope.quiz);
+        $http.post('/api/group/'+id+'/new_quiz', $scope.quiz)
+        .then(function(res){
+            $scope.errors = null;
+            $location.path('/group/'+id);
+            console.log(res);
+        }, function(res){
+            console.log(res);
+            $scope.errors = res.data.errors;
+        })
     }
 
     $scope.$on('$routeChangeStart', function($event, next, current) { 

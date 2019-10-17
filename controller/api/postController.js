@@ -1,17 +1,8 @@
 var app = {};
-const {validationResult} = require('express-validator');
 var datetime = require('node-datetime');
 var pastDateTime = datetime.create();
 var Post = require('../../model').getInstance('post_groups');
 app.addEssay = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({ errors : errors.array() })
-    }
-    if (!req.user) {
-        return res.status(403).send();
-    }
-
     let data = {
         user_created : req.user._id,
         title : req.body.title,
@@ -33,6 +24,10 @@ app.addEssay = async (req, res) => {
     }
 
     return res.status(500).send('Has error!');
+}
+
+app.addQuiz = (req, res) => {
+    return res.send('dfsdf')
 }
 
 app.getListByGroup = async (req, res) => {
