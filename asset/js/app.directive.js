@@ -24,6 +24,9 @@ app.directive('ckEditorQuestionQuiz', function() {
     require: '?ngModel',
     link: function(scope, elm, attr, ngModel) {
       var ck = CKEDITOR.replace(elm[0], {
+        on: { 
+          instanceReady: function(ev) {  }
+        },
         toolbarGroups : [
           { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
           { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },

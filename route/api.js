@@ -5,6 +5,7 @@ var groupController = require('../controller/api/groupController')
 var postController = require('../controller/api/postController')
 var announceController = require('../controller/api/announceController')
 var searchController = require('../controller/api/searchController')
+var imageController = require('../controller/api/imageController')
 
 route.get('/current_user', userController.current_user);
 
@@ -25,6 +26,8 @@ route.get('/search/by_string', searchController.searchByString);
 route.get('/announce/find', announceController.getAnnounce);
 route.get('/announce/get_not_see', announceController.getAnnounceNotSee);
 route.put('/announce/set_has_see', announceController.setAnnounceHasSee);
+
+route.post('/image/upload_in_editor', imageController.uploadInEditor)
 
 route.all('/*', (req, res) => {
     res.status(404);
