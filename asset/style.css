@@ -1,0 +1,191 @@
+/* Remove the navbar's default margin-bottom and rounded borders */ 
+.navbar {
+    margin-bottom: 0 !important;
+    border-radius: 0;
+}
+
+/* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+.row.content {
+    background-color: #f1f1f1;
+}
+
+.content-center {
+    min-height: 100vh !important;
+    padding-bottom: 10px;
+    /* overflow-y: auto; */
+    background-color: white !important;
+}
+
+/* Set gray background color and 100% height */
+.sidenav {
+    padding-top: 20px;
+    height: 100%;
+    position: sticky !important;
+    top: 50px;
+}
+
+/* Set black background color, white text and some padding */
+footer {
+    background-color: #555;
+    color: white;
+    padding: 15px;
+}
+
+#main{
+    margin-top: 50px;
+}
+
+.search-input {
+    max-width: 300px;
+    margin-top: 10px;
+}
+
+.announce-header .dropdown-menu{
+    right: 0px !important;
+    width: 300px;
+    max-height: 200px;
+    overflow-y: auto;
+
+}
+
+.announce-header .dropdown-menu a{
+    white-space: normal;
+}
+
+.announce-header .item {
+    display: inline-block;
+}
+
+/* width */
+announce-header .item .dropdown-menu::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* Track */
+announce-header .item .dropdown-menu::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+announce-header .item .dropdown-menu::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+announce-header .item .dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+h1 {
+    font-size: 100px;
+}
+
+.error-msg {
+    color: red;
+}
+
+@keyframes show {
+    from {
+        opacity: 1;
+    } to {
+        opacity: 0;
+    }
+}
+
+.animation {
+    transition: all linear 0.5s;
+}
+
+.ng-hide {
+    height: 0;
+}
+
+.login-page, .register-page {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    z-index: 10;
+    left: 0px;
+    top: 0px;
+    background-color: rgb(172, 172, 172);
+}
+
+.login-box, .register-box {
+    padding: 20px;
+    background-color: white;
+    max-width: 500px;
+    margin: auto;
+    margin-top: 50px;
+}
+
+.list-user-invite-group {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.has-new {
+    position: relative;
+}
+
+.num {
+    display: none;
+}
+
+.has-new .num {
+    position: absolute;
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-color: rgb(238, 255, 0);
+    border-radius: 50%;
+    bottom: -3px;
+    right: -3px;
+    color: black;
+    padding: 2px 2px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.header-link, .header-link:hover, .header-link:active {
+    color: black;
+    text-decoration-line: none;
+}
+
+/* On small screens, set height to 'auto' for sidenav and grid */
+@media screen and (max-width: 767px) {
+    .sidenav {
+        height: auto;
+        padding: 15px;
+    }
+
+    .row.content {height:auto;} 
+
+    .navbar-header {
+        padding: 5px;
+    }
+    .search-input {
+        max-width: 100%;
+    }
+    .dropdown-user button {
+        width: 100%;
+    }
+    #main{
+        margin-top: 150px;
+    }
+
+    .announce-header {
+        position: relative;
+        width: 100%;
+    }
+
+    .announce-header .dropdown{
+        position: unset;
+    }
+    
+    .announce-header .dropdown-menu{
+        position: absolute !important;
+        left: 0px;
+        top: 50px;
+        width: 100%;
+    }
+}

@@ -1,0 +1,5 @@
+<div class="col-sm-2 sidenav text-left">
+      <p class="text-center"><a href="#">Nhóm</a></p>
+      <p><a href="/group/new"><span class="glyphicon glyphicon-plus-sign"></span> Tạo mới</a></p>
+      <p ng-repeat="group in listGroup"><a href="/group/{{group._id}}">{{ group.name }}</a></p>
+    </div>

@@ -1,0 +1,14 @@
+<h1>New post</h1>
+<ul class="nav nav-tabs">
+    <li class="{{ type === 'exam' ? 'active' : null }}" ng-click="location.search('type', 'exam')"><a href="#">Kiểm tra</a></li>
+    <li class="{{ type === 'post' ? 'active' : null }}" ng-click="location.search('type', 'post')"><a href="#">Thông báo</a></li>
+</ul>
+<div ng-if="type === 'exam'">
+    <label class="radio-inline" ng-click="location.search('exam_type', 'essay')"><input type="radio" ng-model="exam_type" value="essay">Tự luận</label>
+    <label class="radio-inline" ng-click="location.search('exam_type', 'quiz')"><input type="radio" ng-model="exam_type" value="quiz">Trắc nghiệm</label>
+    <div ng-if="exam_type === 'essay'" ng-include="'js/group/new_essay.html'"></div>
+    <div ng-if="exam_type === 'quiz'" ng-include="'js/group/new_quiz.html'"></div>
+</div>
+<div ng-if="type === 'post'">
+    <h1>Post</h1>
+</div>

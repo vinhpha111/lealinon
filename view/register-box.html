@@ -1,0 +1,54 @@
+<div class="register-form">
+    <div class="box">
+        <div class="header-register-form">
+            <img class="logo" src="https://training-wheels.com/wp-content/uploads/2017/04/book-icon-2.png" />
+            <p class="name">Lealinon</p>
+            <h5 class="label">Đăng ký</h5>
+        </div>
+        <div class="content-register">
+            <div class="introduce">
+                <i class="text">* Tại Lealinon.vn chúng tôi giúp mọi người học tập cùng nhau</i>
+            </div>
+            <div class="row-input">
+                <label class="label">Username<i style="color: red">*</i> :</label>
+                <input class="input" placeholder="Username"/>
+            </div>
+            <div class="row-input">
+                <label class="label">Email<i style="color: red">*</i> :</label>
+                <input class="input" placeholder="Email"/>
+            </div>
+            <div class="row-input">
+                <label class="label">Password<i style="color: red">*</i> :</label>
+                <input type="password" class="input" placeholder="Password"/>
+            </div>
+            <div class="row-input">
+                    <label class="label">Nhập lại<i style="color: red">*</i> :</label>
+                    <input type="password" class="input" placeholder="nhập lại password"/>
+                </div>
+            <div class="row-input">
+                <label class="label">Ảnh avatar :</label>
+                <div class="avatar-box">
+                    <input type="file" class="avatar"  onchange="readURL(this);">
+                </div>
+            </div>
+            <div class="row-button">
+                <button>Submit</button>
+            </div>
+            <div class="option">
+                    <div style="margin-bottom: 20px;"><i>Hoặc</i><br></div>
+                    <i>Đã có tài khoản </i><a class="register" href="#">Đăng nhập</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementsByClassName('avatar-box')[0].style.background = "url('"+e.target.result+"')";
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</div>

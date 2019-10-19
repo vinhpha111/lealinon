@@ -8,4 +8,13 @@ var feels = schema({
     created_at : Date,
     updated_at : Date
 }, {collection : 'feels'});
-module.exports = mongoose.model('feels', feels);
+
+module.exports = function(Class = null){
+    if (typeof Class['virtual'] === 'function') {
+        let vituals = Class.virtual();
+        for (let nameVirtual in vituals) {
+            feels.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
+        }
+    }
+    return mongoose.model('feels', feels);
+}

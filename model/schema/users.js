@@ -5,10 +5,21 @@ var users = schema({
     name : String,
     gender : Boolean, // 0: girl, 1: men
     birthday : Date,
+    job : Number,
     introduce : String,
     facebook_token : String,
     encrypt_password : String,
     online_status : Boolean, // 0: offline, 1: online
+    active : Boolean,
     created_at : Date
 }, {collection : 'users'});
-module.exports = mongoose.model('users', users);
+
+module.exports = function(Class = null){
+    if (typeof Class['virtual'] === 'function') {
+        let vituals = Class.virtual();
+        for (let nameVirtual in vituals) {
+            users.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
+        }
+    }
+    return mongoose.model('users', users);
+}

@@ -1,0 +1,7 @@
+listening on port 3000
+connected database
+A user connected
+{ _id: '5d867b86a0cc401ca44d2052',
+  email: 'vinhpha111@gmail.com',
+  iat: 1569433101,
+  exp: 1572025101 }
