@@ -1,0 +1,70 @@
+<form method="POST" ng-submit="addQuiz()">
+    <div class="form-group">
+        <label for="title">Tiêu đề:</label>
+        <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'title'">{{error.msg}}</p>
+        <input type="text" class="form-control" id="title" ng-model="quiz.title" autocomplete="off">
+    </div>
+    <div class="form-group">
+        <label for="title">Nội dung:</label>
+        <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'content'">{{error.msg}}</p>
+        <textarea name="quizContent" class="form-control" ng-model="quiz.content" ck-editor></textarea>
+    </div>
+    
+    <div style="margin-top: 20px;" ng-repeat="(index, question) in quiz.questions">
+        <div class="form-group">
+            <div class="row">
+                <label class="col-sm-5">Câu {{index + 1}}:</label>
+                <div class="col-md-7 text-right">
+                    <button ng-if="quiz.questions.length > 1" ng-click="quiz.questions.splice(index, 1)" type="button" class="btn btn-warning btn-xs"><i class="fa fa-minus"></i></button>
+                </div>
+            </div>
+            <p class="error-msg" ng-repeat="error in errors" ng-if="error.param.indexOf('questions['+index+']') > -1">{{error.msg}}</p>
+            <textarea name="quizQuestion" ng-model="question.content" class="form-control" rows="4" ck-editor-question-quiz></textarea>
+        </div>
+        <div class="row" style="margin-bottom: 5px;">
+            <label class="control-label col-sm-1" for="email">A <input ng-model="question.correctAnswer" value="1" type="radio"></label>
+            <div class="col-sm-11">
+                <textarea name="quizAnswer" ng-model="question.contentAnswer1" rows="4" ck-editor-answer-quiz></textarea>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 5px;">
+            <label class="control-label col-sm-1" for="email">B <input ng-model="question.correctAnswer" value="2" type="radio"></label>
+            <div class="col-sm-11">
+                <textarea name="quizAnswer" ng-model="question.contentAnswer2" rows="4" ck-editor-answer-quiz></textarea>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 5px;">
+            <label class="control-label col-sm-1" for="email">C <input ng-model="question.correctAnswer" value="3" type="radio"></label>
+            <div class="col-sm-11">
+                <textarea name="quizAnswer" ng-model="question.contentAnswer3" rows="4" ck-editor-answer-quiz></textarea>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 5px;">
+            <label class="control-label col-sm-1" for="email">D <input ng-model="question.correctAnswer" value="4" type="radio"></label>
+            <div class="col-sm-11">
+                <textarea name="quizAnswer" ng-model="question.contentAnswer4" rows="4" ck-editor-answer-quiz></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="text-right" style="margin-top: 10px;">
+        <button ng-click="quiz.questions.push({})" type="button" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i></button>
+    </div>
+    
+    <div class="checkbox">
+        <label><input type="checkbox" ng-model="quiz.setTime">Đặt lịch</label>
+    </div>
+    <div class="row" ng-if="quiz.setTime">
+        <div class="form-group col-md-6">
+            <label for="start-date">Bắt đầu:</label>
+            <input type="text" id="start-date" datetime="dd-MM-yyyy HH:mm" datetime-model="yyyy-MM-dd HH:mm:ss" class="form-control" ng-model="quiz.startDate">
+            <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'startDate'">{{error.msg}}</p>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="end-date">Kết thúc:</label>
+            <input type="text" datetime="dd-MM-yyyy HH:mm" datetime-model="yyyy-MM-dd HH:mm:ss" class="form-control" id="end-date" ng-model="quiz.endDate">
+            <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'endDate'">{{error.msg}}</p>
+        </div>
+    </div>
+    <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'errorSelectDate'">{{error.msg}}</p>
+    <button type="submit" class="btn btn-primary btn-block">Tạo bài</button>
+</form>

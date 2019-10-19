@@ -1,0 +1,4 @@
+<div class="alert alert-success alert-dismissible fade in" ng-class="{'alert-success':msg.type==='success' || !msg.type, 'alert-info':msg.type==='info', 'alert-warning':msg.type==='warning', 'alert-danger':msg.type==='danger'}" ng-repeat="msg in alertMessages">
+    <a href="#" ng-click="remove(msg)" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        {{msg.content}}
+</div>
