@@ -4,8 +4,12 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
     $locationProvider.html5Mode(true);
     $locationProvider.hashPrefix('');
 
-    $routeProvider.
-    when('/detail', {
+    $routeProvider
+    .when('/', {
+        template: "<h1>Hello! this is index</h1>"
+    })
+
+    .when('/detail', {
         templateUrl: 'js/detail/detail.html'
     })
 
