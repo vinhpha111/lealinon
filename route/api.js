@@ -17,6 +17,8 @@ route.post('/group/:id/new_essay', require('../controller/Request/client/group/n
 route.post('/group/:id/new_quiz', require('../controller/Request/client/group/newQuiz'), postController.addQuiz);
 route.get('/group/:id/list_post', postController.getListByGroup);
 route.post('/group/:id/invite_member', groupController.inviteJoinGroup);
+route.get('/group/:id/get_member', groupController.getMember);
+route.post('/group/:id/join_group', groupController.joinGroup);
 
 route.get('/user/find', userController.find);
 

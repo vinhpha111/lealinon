@@ -18,23 +18,18 @@
 </table>
 
 <div class="well well-sm list-member-group-manager">
-    <h3>Thành viên <input style="width:300px" type="text"></h3>
+    <h3>Thành viên <input style="width:300px" type="text" ng-model="inputMemberName"></h3>
     <ul class="thin-scrollbar">
-        <li>
-            User 1 
-            <select class="role-member" id="sel1">
-                <option>Admin</option>
-                <option>Editor</option>
-                <option>Normal</option>
+        <li ng-repeat="member in members | filter: inputMemberName">
+            <a href="#">{{ member.user_id.name }}</a>
+            <select ng-if="member.type !== 1" ng-value="member.type" class="role-member">
+                <option value="1">Admin</option>
+                <option value="2">Editor</option>
+                <option value="3">Normal</option>
             </select>
+            <span ng-if="member.type === 1" class="role-member">Admin</span>
+            <i class="fa fa-remove remove-member" style="color:red; cursor: pointer;"></i>
         </li>
-        <li>User 1</li>
-        <li>User 1</li>
-        <li>User 1</li>
-        <li>User 1</li>
-        <li>User 1</li>
-        <li>User 1</li>
-        <li>User 1</li>
     </ul>
 </div>
 
@@ -49,15 +44,15 @@
     }
     
     .list-member-group-manager ul {
-        overflow-y: auto; 
-        height: 150px; 
+        overflow-y: auto;
+        max-height: 150px; 
         list-style: none;
         background-color: white;
         padding-left: 10px;
     }
     
     .list-member-group-manager ul li {
-        padding-right: 40px;
+        padding-right: 120px;
         position: relative;
         height: 30px;
     }
@@ -65,9 +60,15 @@
     .list-member-group-manager ul li .role-member {
         position: absolute;
         top: 5px;
-        right: 5px;
+        right: 50px;
         height: 20px;
         width: 70px;
         background-color: #69a8df;
+    }
+
+    .list-member-group-manager ul li .remove-member {
+        position: absolute;
+        top: 5px;
+        right: 5px;
     }
 </style>

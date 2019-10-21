@@ -1,5 +1,6 @@
 var baseModel = require('./base');
 var groupMember = require('./index').getInstance('group_member');
+var groupAskJoin = require('./index').getInstance('group_ask_join');
 class Group extends baseModel {
     constructor(){
         super('groups');
@@ -28,7 +29,12 @@ class Group extends baseModel {
             getRole : async function(user_id){
                 let member = await groupMember.findOne({group_id: this._id, user_id: user_id});
                 let typeRole = member ? member.type : null;
-                return self.listRole(typeRole, this);
+                let listRole = self.listRole(typeRole, this);
+                let askJoin = await groupAskJoin.getModel().findOne({group_id: this._id, user_id: user_id});
+                if (askJoin) {
+                    listRole.hasAskJoin = true;
+                }
+                return listRole;
             },
             checkRole : async function(user_id, role){
                 let listRole = await this.getRole(user_id);
@@ -47,7 +53,11 @@ class Group extends baseModel {
                     editGroup : true,
                     deletePost : true,
                     addMember : true,
+                    listMember: true,
+                    deleteMember: true,
+                    setRole: true,
                     joinGroup : true,
+                    hasAskJoin : true,
                 }
                 break;
             case this.ROLE('EDITOR'):
@@ -58,18 +68,26 @@ class Group extends baseModel {
                     editGroup : false,
                     deletePost : false,
                     addMember : true,
+                    listMember: true,
+                    deleteMember: false,
+                    setRole: false,
                     joinGroup : true,
+                    hasAskJoin : true,
                 }
                 break;
             case this.ROLE('NORMAL'):
                 return {
-                    newPost : true,
+                    newPost : false,
                     listPost: true,
                     deleteGroup : false,
                     editGroup : false,
                     deletePost : false,
                     addMember : false,
+                    listMember: true,
+                    deleteMember: false,
+                    setRole: false,
                     joinGroup : true,
+                    hasAskJoin : true,
                 }
                 break;
             default:
@@ -80,7 +98,11 @@ class Group extends baseModel {
                     editGroup : false,
                     deletePost : false,
                     addMember : false,
+                    listMember: false,
+                    deleteMember: false,
+                    setRole: false,
                     joinGroup : false,
+                    hasAskJoin : false,
                 }
                 break;
         }

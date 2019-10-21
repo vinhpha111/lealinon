@@ -2,6 +2,8 @@ var app = {}
 var model = require('./../../model');
 var Group = model.getInstance('groups');
 var groupMemberModel = model.getInstance('group_member');
+var groupInviteJoin = model.getInstance('group_invite_join');
+var groupAskJoin = model.getInstance('group_ask_join');
 const {validationResult, check} = require('express-validator');
 var datetime = require('node-datetime');
 var pastDateTime = datetime.create();
@@ -39,7 +41,7 @@ app.listInSidebar = async (req, res) => {
         return res.status(403).send(null);
     }
 
-    let list = await Group.find({user_created: req.user._id});
+    let list = await groupMemberModel.listGroupByMember(req.user._id);
     return res.json(list)
 }
 
@@ -56,7 +58,6 @@ app.getById = async (req, res) => {
 }
 
 app.inviteJoinGroup = async (req, res) => {
-    let groupInviteJoin = model.getInstance('group_invite_join');
     let announce = model.getInstance('announces');
     let userIds = req.body.ids;
     let dataInvites = [];
@@ -80,8 +81,15 @@ app.inviteJoinGroup = async (req, res) => {
             updated_at : pastDateTime.now(),
         })
     }
+    await groupInviteJoin.getModel().deleteMany({
+        group_id: req.params.id, 
+        invited_users: { $in: userIds }, 
+        type : announce.TYPE('INVITED_JOIN_GROUP'),
+        sender : req.user._id,
+    });
     let invites = await groupInviteJoin.insertMany(dataInvites);
     if (invites) {
+        await announce.getModel().deleteMany({group_id: req.params.id, user_id: { $in: userIds }});
         let announces = await announce.insertMany(dataAnnounces);
         for(let i in announces){
             io.sockets.in(announces[i].user_id).emit('announceHeader', announces[i]);
@@ -89,6 +97,35 @@ app.inviteJoinGroup = async (req, res) => {
         return res.send(announces);
     }
     return res.status(500).send(null);
+}
+
+app.joinGroup = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+    let id = req.params.id;
+    let group = await Group.getModel().findOne({_id: id});
+    if (group && ! await group.checkRole(req.user._id, 'joinGroup')) {
+        let inviteJoin = await groupInviteJoin.getModel().findOne({
+            invited_users: req.user._id,
+            group_id: id,
+        });
+        if (inviteJoin) {
+            groupMemberModel.add({
+                group_id: id,
+                user_id: req.user._id,
+                type: Group.ROLE('NORMAL')
+            });
+        } else {
+            await groupAskJoin.add({
+                user_id: req.user._id,
+                group_id: id,
+                message: req.body.message
+            });
+        }
+        return res.send(null);
+    }
+    return res.status(403).send(null);
 }
 
 app.getPermission = async (req, res) => {
@@ -100,8 +137,17 @@ app.getPermission = async (req, res) => {
     res.json({roles: [role ? role.type : null]});
 }
 
-app.getMember = (req, res) => {
-    
+app.getMember = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+    let id = req.params.id;
+    let group = await Group.findOne({_id: id});
+    if (! await group.checkRole(req.user, 'listMember')) {
+        return res.status(403).send(null);
+    }
+    let list = await groupMemberModel.getMember(id);
+    return res.json(list);
 }
 
 module.exports = app;
