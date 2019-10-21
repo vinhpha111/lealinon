@@ -5,14 +5,9 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
 
     console.log(current_user);
 
+    $scope.data = {};
     $scope.new = function(){
-        let formData = new FormData();
-        formData.append('name', $scope.name);
-        formData.append('description', $scope.description);
-        $http.post('/api/group/new', {
-            name : $scope.name,
-            description : $scope.description,
-        })
+        $http.post('/api/group/new', $scope.data)
         .then(function(res){
             $scope.errors = null;
             Scopes.get('scopeSidebar').getList();
@@ -33,6 +28,7 @@ app.controller('detailGroup', function($scope, $routeParams, $http, Scopes) {
     $http.get('/api/group/get_by_id/'+$routeParams.id)
     .then(function(res){
         $scope.detail = res.data;
+        console.log(res.data);
     }, function(res){
         $scope.detail = null;
         $scope.notFound = true;
@@ -129,6 +125,9 @@ app.controller('detailGroup', function($scope, $routeParams, $http, Scopes) {
         $scope.invite.canSendInvite = false;
     }
 
+    $scope.joinGroup = function(){
+    }
+
 });
 
 app.controller('newPost', function($routeParams, $scope, current_user, $location, $window, $http) {
@@ -183,3 +182,15 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
         console.log('route change');
     });
 });
+
+app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
+    $http.get('/api/group/get_by_id/'+$routeParams.id)
+    .then(function(res){
+        $scope.detail = res.data;
+        console.log(res.data);
+    }, function(res){
+        $scope.detail = null;
+        $scope.notFound = true;
+        console.log(res);
+    });
+})

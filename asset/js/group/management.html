@@ -1,0 +1,73 @@
+<h1>Quản lý</h1>
+<h3>Thông tin chung <a style="font-size: 18px;" href="/group/{{ detail._id }}/edit"><i class="fa fa-edit"></i></a></h3>
+<table class="table">
+    <tbody>
+        <tr>
+            <td width="120px">tên</td>
+            <td>
+                {{detail.name}}
+                <lable ng-if="detail.status == 1" style="font-size: 18px;"><i class='fa fa-unlock' style='color: rgb(0, 223, 252);'></i></lable>
+                <lable ng-if="detail.status == 2" style="font-size: 18px;"><i class='fa fa-lock'></i></lable>
+            </td>
+        </tr>
+        <tr>
+            <td>Mô Tả</td>
+            <td ng-bind-html="detail.description"></td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="well well-sm list-member-group-manager">
+    <h3>Thành viên <input style="width:300px" type="text"></h3>
+    <ul class="thin-scrollbar">
+        <li>
+            User 1 
+            <select class="role-member" id="sel1">
+                <option>Admin</option>
+                <option>Editor</option>
+                <option>Normal</option>
+            </select>
+        </li>
+        <li>User 1</li>
+        <li>User 1</li>
+        <li>User 1</li>
+        <li>User 1</li>
+        <li>User 1</li>
+        <li>User 1</li>
+        <li>User 1</li>
+    </ul>
+</div>
+
+<style>
+    .header-link, .header-link:hover, .header-link:active {
+        color: black;
+        text-decoration-line: none;
+    }
+    
+    .list-member-group-manager {
+        max-width: 500px; 
+    }
+    
+    .list-member-group-manager ul {
+        overflow-y: auto; 
+        height: 150px; 
+        list-style: none;
+        background-color: white;
+        padding-left: 10px;
+    }
+    
+    .list-member-group-manager ul li {
+        padding-right: 40px;
+        position: relative;
+        height: 30px;
+    }
+    
+    .list-member-group-manager ul li .role-member {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        height: 20px;
+        width: 70px;
+        background-color: #69a8df;
+    }
+</style>

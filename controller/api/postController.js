@@ -1,7 +1,9 @@
 var app = {};
 var datetime = require('node-datetime');
 var pastDateTime = datetime.create();
-var Post = require('../../model').getInstance('post_groups');
+var model = require('../../model');
+var Post = model.getInstance('post_groups');
+var Group = model.getInstance('groups');
 app.addEssay = async (req, res) => {
     let data = {
         user_created : req.user._id,
@@ -33,6 +35,10 @@ app.addQuiz = (req, res) => {
 app.getListByGroup = async (req, res) => {
     let groupId = req.params.id;
     let exceptIds = req.query.exceptIds;
+    let group = await Group.getModel().findOne({_id: groupId});
+    if (! await group.checkRole(req.user, 'listPost')) {
+        return res.status(403).send(null);
+    }
     let query = {
         group : groupId,
         _id : {
