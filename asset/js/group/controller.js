@@ -19,7 +19,7 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
     }
 });
 
-app.controller('detailGroup', function($scope, $routeParams, $http, Scopes) {
+app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scopes) {
     $scope.id = $routeParams.id;
     $scope.notFound = false;
     $scope.exceptIds = [];
@@ -126,6 +126,19 @@ app.controller('detailGroup', function($scope, $routeParams, $http, Scopes) {
     }
 
     $scope.joinGroup = function(){
+        $http.post('/api/group/'+$routeParams.id+'/join_group', {
+            message: null
+        })
+        .then(function(res){
+            $route.reload();
+        }, function(err){
+            Scopes.get('scopeMessage').alertMessages = [
+                {
+                    type: 'danger',
+                    content: 'Có lỗi xãy ra, hãy thử lại!'
+                }
+            ];
+        })
     }
 
 });
@@ -191,6 +204,15 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
     }, function(res){
         $scope.detail = null;
         $scope.notFound = true;
+        console.log(res);
+    });
+
+    $http.get('/api/group/'+$routeParams.id+'/get_member')
+    .then(function(res){
+        $scope.members = res.data;
+        console.log(res.data);
+    }, function(res){
+        $scope.members = null;
         console.log(res);
     });
 })
