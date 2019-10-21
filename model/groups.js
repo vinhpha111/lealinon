@@ -14,7 +14,7 @@ class Group extends baseModel {
         if (roleList[name]) {
             return roleList[name]
         }
-        return roleList['NORMAL'];
+        return null;
     }
 
     virtual() {
@@ -28,7 +28,7 @@ class Group extends baseModel {
             getRole : async function(user_id){
                 let member = await groupMember.findOne({group_id: this._id, user_id: user_id});
                 let typeRole = member ? member.type : null;
-                return self.listRole(typeRole);
+                return self.listRole(typeRole, this);
             },
             checkRole : async function(user_id, role){
                 let listRole = await this.getRole(user_id);
@@ -37,11 +37,12 @@ class Group extends baseModel {
         }
     }
 
-    listRole(typeRole){
+    listRole(typeRole, group = null){
         switch (typeRole) {
             case this.ROLE('ADMIN'):
                 return {
                     newPost : true,
+                    listPost: true,
                     deleteGroup : true,
                     editGroup : true,
                     deletePost : true,
@@ -52,6 +53,7 @@ class Group extends baseModel {
             case this.ROLE('EDITOR'):
                 return {
                     newPost : true,
+                    listPost: true,
                     deleteGroup : false,
                     editGroup : false,
                     deletePost : false,
@@ -62,6 +64,7 @@ class Group extends baseModel {
             case this.ROLE('NORMAL'):
                 return {
                     newPost : true,
+                    listPost: true,
                     deleteGroup : false,
                     editGroup : false,
                     deletePost : false,
@@ -72,6 +75,7 @@ class Group extends baseModel {
             default:
                 return {
                     newPost : false,
+                    listPost: group ? (group.status !== 2 ? true : false) : false,
                     deleteGroup : false,
                     editGroup : false,
                     deletePost : false,
@@ -105,7 +109,7 @@ class Group extends baseModel {
                 { description: new RegExp(query.string) },
             ],
             _id: {
-                $nin: query.exceptIds
+                $nin: query.exceptIds,
             }
         })
         .sort({'created_at': 'desc'})

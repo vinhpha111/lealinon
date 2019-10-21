@@ -2,7 +2,7 @@ var app = {}
 var model = require('./../../model');
 var Group = model.getInstance('groups');
 var groupMemberModel = model.getInstance('group_member');
-const {validationResult} = require('express-validator');
+const {validationResult, check} = require('express-validator');
 var datetime = require('node-datetime');
 var pastDateTime = datetime.create();
 
@@ -15,6 +15,7 @@ app.new = async (req, res) => {
     let data = {
         user_created : req.user._id,
         name : req.body.name,
+        status : req.body.status,
         description: req.body.description,
         slug : convertToSlug(req.body.name),
         created_at : pastDateTime.now()
@@ -97,6 +98,10 @@ app.getPermission = async (req, res) => {
     let id = req.params.id;
     let role = await groupMemberModel.findOne({group_id: id, user_id: req.user._id});
     res.json({roles: [role ? role.type : null]});
+}
+
+app.getMember = (req, res) => {
+    
 }
 
 module.exports = app;

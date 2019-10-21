@@ -45,7 +45,7 @@ footer {
     width: 300px;
     max-height: 200px;
     overflow-y: auto;
-
+    
 }
 
 .announce-header .dropdown-menu a{
@@ -146,9 +146,24 @@ h1 {
     font-weight: bold;
 }
 
-.header-link, .header-link:hover, .header-link:active {
-    color: black;
-    text-decoration-line: none;
+/* width */
+.thin-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+.thin-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+.thin-scrollbar::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 /* On small screens, set height to 'auto' for sidenav and grid */
@@ -157,9 +172,9 @@ h1 {
         height: auto;
         padding: 15px;
     }
-
+    
     .row.content {height:auto;} 
-
+    
     .navbar-header {
         padding: 5px;
     }
@@ -172,12 +187,12 @@ h1 {
     #main{
         margin-top: 150px;
     }
-
+    
     .announce-header {
         position: relative;
         width: 100%;
     }
-
+    
     .announce-header .dropdown{
         position: unset;
     }

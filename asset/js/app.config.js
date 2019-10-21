@@ -57,6 +57,20 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
         }
     })
 
+    .when('/group/:id/management', {
+        templateUrl: 'js/group/management.html',
+        controller: 'managementGroup',
+        resolve : {
+            current_user : function($auth){
+                return $auth.getUser();
+            },
+            permission : function($auth, $route){
+                let roleList = [$auth.role.group.ADMIN, $auth.role.group.EDITOR];
+                return $auth.checkPermission.group(roleList, $route.current.params.id, '/group/'+$route.current.params.id);
+            }
+        }
+    })
+
     .when('/404.html', {
         templateUrl: 'js/error/404.html'
     })
