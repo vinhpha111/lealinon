@@ -166,6 +166,10 @@ h1 {
     background: #555;
 }
 
+.content-post-group * {
+    max-width: 100%;
+}
+
 /* On small screens, set height to 'auto' for sidenav and grid */
 @media screen and (max-width: 767px) {
     .sidenav {

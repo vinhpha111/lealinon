@@ -1,4 +1,5 @@
 var baseModel = require('./base');
+var ObjectId = require('mongodb').ObjectID;
 
 class GroupMember extends baseModel {
     constructor(){
@@ -11,18 +12,50 @@ class GroupMember extends baseModel {
     }
 
     async listGroupByMember(userId){
-        let list = await this.getModel()
-        .find({
-            user_id: userId
+
+        let list = await this.getModel().aggregate()
+        .lookup({
+            from: "groups",
+            localField: "group_id",
+            foreignField: "_id",
+            as: 'group'
         })
-        .populate("group_id");
-
-        let groups = [];
-        for(let index in list){
-            groups.push(list[index].group_id);
-        }
-
-        return groups;
+        .unwind("group")
+        .group({
+            _id: "$_id",
+            group_id: {
+                $first: "$group._id"
+            },
+            user_id: {
+                $first: "$user_id"
+            },
+            name: {
+                $first: "$group.name"
+            },
+            slug: {
+                $first: "$group.slug"
+            },
+            description: {
+                $first: "$group.description"
+            },
+            status: {
+                $first: "$group.status"
+            },
+            created_at: {
+                $first: "$group.created_at"
+            }
+        })
+        .match({
+            "user_id": new ObjectId(userId)
+        })
+        .addFields({
+            _id: "$group_id",
+            group_id: null,
+        })
+        .sort({
+            created_at: -1,
+        });
+        return list;
     }
 }
 

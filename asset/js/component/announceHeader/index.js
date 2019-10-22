@@ -8,26 +8,35 @@ function announceType(name) {
         case 'INVITED_JOIN_GROUP':
         return 1;
         break;
-        case 'INVITED_MAKE_FRIEND':
+        case 'ASK_JOIN_GROUP':
         return 2;
         break;
-        case 'ACCEPTED_MAKE_FRIEND':
+        case 'ACCEPTED_JOIN_GROUP':
         return 3;
         break;
-        case 'REFUSED_MAKE_FRIEND':
+        case 'REFUSED_JOIN_GROUP':
         return 4;
         break;
-        case 'HAS_ONE_COMMENT_IN_POST':
+        case 'INVITED_MAKE_FRIEND':
         return 5;
         break;
-        case 'HAS_ONE_COMMENT_IN_GROUP':
+        case 'ACCEPTED_MAKE_FRIEND':
         return 6;
         break;
-        case 'HAS_MESSAGE':
+        case 'REFUSED_MAKE_FRIEND':
         return 7;
         break;
-        case 'HAS_FEEL_IN_POST':
+        case 'HAS_ONE_COMMENT_IN_POST':
         return 8;
+        break;
+        case 'HAS_ONE_COMMENT_IN_GROUP':
+        return 9;
+        break;
+        case 'HAS_MESSAGE':
+        return 10;
+        break;
+        case 'HAS_FEEL_IN_POST':
+        return 11;
         break;
         
         default:
@@ -50,8 +59,20 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         switch (data.type) {
             case announceType('INVITED_JOIN_GROUP'):
                 link = "/group/"+data.group_id._id;
-                content = "<strong>"+data.sender.email+"</strong>"
+                content = "<strong>"+data.sender.name+"</strong>"
                         + " mời bạn tham gia nhóm " 
+                        + "<strong>"+data.group_id.name+"</strong>";
+                break;
+            case announceType('ASK_JOIN_GROUP'):
+                link = "/group/"+data.group_id._id+"/management";
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " muốn tham gia nhóm "
+                        + "<strong>"+data.group_id.name+"</strong>";
+                break;
+            case announceType('ACCEPTED_JOIN_GROUP'):
+                link = "/group/"+data.group_id._id;
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " đã cho phép bạn tham gia nhóm "
                         + "<strong>"+data.group_id.name+"</strong>";
                 break;
         

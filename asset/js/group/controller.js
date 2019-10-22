@@ -197,6 +197,7 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
 });
 
 app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
+    $scope.id = $routeParams.id;
     $http.get('/api/group/get_by_id/'+$routeParams.id)
     .then(function(res){
         $scope.detail = res.data;
@@ -215,4 +216,48 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
         $scope.members = null;
         console.log(res);
     });
+
+    $http.get('/api/group/'+$routeParams.id+'/get_member_ask_join')
+    .then(function(res){
+        $scope.memberAskJoin = res.data;
+        console.log(res.data);
+    }, function(res){
+        $scope.memberAskJoin = null;
+        console.log(res);
+    });
+
+    $scope.acceptJoin = function(index){
+        $http.post('/api/group/'+$routeParams.id+'/accept_join', {
+            user_id: $scope.memberAskJoin[index]._id
+        })
+        .then(function(res){
+            $scope.members.unshift(res.data);
+            $scope.memberAskJoin.splice(index, 1);
+        }, function(err){
+            $scope.memberAskJoin[index].activeAskJoinBtn = false;
+            Scopes.get('scopeMessage').alertMessages = [
+                {
+                    type: 'danger',
+                    content: 'Có lỗi xãy ra, hãy thử lại!'
+                }
+            ];
+        });
+    }
+
+    $scope.refuseJoin = function(index){
+        $http.post('/api/group/'+$routeParams.id+'/refuse_join', {
+            user_id: $scope.memberAskJoin[index]._id
+        })
+        .then(function(res){
+            $scope.memberAskJoin.splice(index, 1);
+        }, function(err){
+            $scope.memberAskJoin[index].activeAskJoinBtn = false;
+            Scopes.get('scopeMessage').alertMessages = [
+                {
+                    type: 'danger',
+                    content: 'Có lỗi xãy ra, hãy thử lại!'
+                }
+            ];
+        });
+    }
 })

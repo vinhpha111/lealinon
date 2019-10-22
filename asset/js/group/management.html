@@ -1,4 +1,5 @@
 <h1>Quản lý</h1>
+<alert-message></alert-message>
 <h3>Thông tin chung <a style="font-size: 18px;" href="/group/{{ detail._id }}/edit"><i class="fa fa-edit"></i></a></h3>
 <table class="table">
     <tbody>
@@ -6,7 +7,7 @@
             <td width="120px">tên</td>
             <td>
                 {{detail.name}}
-                <lable ng-if="detail.status == 1" style="font-size: 18px;"><i class='fa fa-unlock' style='color: rgb(0, 223, 252);'></i></lable>
+                <lable ng-if="detail.status == 1" style="font-size: 18px;"><i class='fa fa-globe'></i></lable>
                 <lable ng-if="detail.status == 2" style="font-size: 18px;"><i class='fa fa-lock'></i></lable>
             </td>
         </tr>
@@ -16,6 +17,12 @@
         </tr>
     </tbody>
 </table>
+
+<div class="well well-sm">
+    <a href="/group/{{id}}/new-post?type=post" class="btn btn-primary btn-lg"><i class="fa fa-plus"></i> Tin</a>
+    <a href="/group/{{id}}/new-post?type=exam&exam_type=essay" style="margin-left: 10px;" class="btn btn-primary btn-lg"><i class="fa fa-plus"></i> Kiểm tra</a>
+    <a href="/group/{{id}}/new-post?type=exam&exam_type=quiz" style="margin-left: 10px;" class="btn btn-primary btn-lg"><i class="fa fa-plus"></i> Trắc nghiệm</a>
+</div>
 
 <div class="well well-sm list-member-group-manager">
     <h3>Thành viên <input style="width:300px" type="text" ng-model="inputMemberName"></h3>
@@ -30,6 +37,18 @@
             <span ng-if="member.type === 1" class="role-member">Admin</span>
             <i class="fa fa-remove remove-member" style="color:red; cursor: pointer;"></i>
         </li>
+    </ul>
+</div>
+
+<div class="well well-sm list-member-ask-join-group">
+    <h3>Yêu cầu tham gia</h3>
+    <ul class="thin-scrollbar">
+        <li ng-repeat="(index,member) in memberAskJoin">
+            <a href="#">{{ member.name }}</a>
+            <button ng-click="acceptJoin(index); member.activeAskJoinBtn = true;" ng-class="{disabled: member.activeAskJoinBtn}" type="button" class="btn btn-xs btn-info accept-btn">Đồng ý</button>
+            <button ng-click="refuseJoin(index); member.activeAskJoinBtn = true;" ng-class="{disabled: member.activeAskJoinBtn}" type="button" class="btn btn-xs btn-danger refuse-btn">Từ chối</button>
+        </li>
+        <li ng-if="memberAskJoin.length === 0">Không có yêu cầu nào</li>
     </ul>
 </div>
 
@@ -71,4 +90,35 @@
         top: 5px;
         right: 5px;
     }
+
+    .list-member-ask-join-group {
+        max-width: 500px; 
+    }
+    
+    .list-member-ask-join-group ul {
+        overflow-y: auto;
+        max-height: 150px; 
+        list-style: none;
+        background-color: white;
+        padding-left: 10px;
+    }
+    
+    .list-member-ask-join-group ul li {
+        padding-right: 120px;
+        position: relative;
+        height: 30px;
+    }
+
+    .list-member-ask-join-group ul li .accept-btn {
+        position: absolute;
+        right: 70px;
+        top: 5px;
+    }
+
+    .list-member-ask-join-group ul li .refuse-btn {
+        position: absolute;
+        right: 10px;
+        top: 5px;
+    }
+
 </style>

@@ -19,6 +19,8 @@ route.get('/group/:id/list_post', postController.getListByGroup);
 route.post('/group/:id/invite_member', groupController.inviteJoinGroup);
 route.get('/group/:id/get_member', groupController.getMember);
 route.post('/group/:id/join_group', groupController.joinGroup);
+route.get('/group/:id/get_member_ask_join', groupController.getMemberAskJoin);
+route.post('/group/:id/accept_join', groupController.acceptJoin);
 
 route.get('/user/find', userController.find);
 
