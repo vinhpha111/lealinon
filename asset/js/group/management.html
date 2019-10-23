@@ -27,7 +27,7 @@
 <div class="well well-sm list-member-group-manager">
     <h3>Thành viên <input style="width:300px" type="text" ng-model="inputMemberName"></h3>
     <ul class="thin-scrollbar">
-        <li ng-repeat="member in members | filter: inputMemberName">
+        <li ng-repeat="(index, member) in members | filter: inputMemberName">
             <a href="#">{{ member.user_id.name }}</a>
             <select ng-if="member.type !== 1" ng-value="member.type" class="role-member">
                 <option value="1">Admin</option>
@@ -35,7 +35,7 @@
                 <option value="3">Normal</option>
             </select>
             <span ng-if="member.type === 1" class="role-member">Admin</span>
-            <i class="fa fa-remove remove-member" style="color:red; cursor: pointer;"></i>
+            <i ng-click="openPopupRemoveMember(member);" ng-if="member.type !== 1" class="fa fa-remove remove-member" style="color:red; cursor: pointer;"></i>
         </li>
     </ul>
 </div>
@@ -50,6 +50,14 @@
         </li>
         <li ng-if="memberAskJoin.length === 0">Không có yêu cầu nào</li>
     </ul>
+</div>
+
+<div ng-show="removeMember" class="popup-remove-member">
+    <h4>Bạn có chắc muốn loại {{ removeMember.user_id.name }} ra khỏi nhóm?</h4>
+    <div class="text-center">
+        <button ng-disabled="activeRemoveMember" ng-class="{disabled: activeRemoveMember}" ng-click="activeRemoveMember = true; removeMemberAccept()" ng type="button" class="btn btn-warning btn-xs">Xác nhận</button>
+        <button ng-disabled="activeRemoveMember" ng-click="removeMember = null" type="button" class="btn btn-default btn-xs">Hủy</button>
+    </div>
 </div>
 
 <style>
@@ -119,6 +127,17 @@
         position: absolute;
         right: 10px;
         top: 5px;
+    }
+
+    .popup-remove-member {
+        position: fixed;
+        width: 300px;
+        left: calc(50% - 150px);
+        top: 300px;
+        background-color: white;
+        padding: 20px;
+        border: black solid 1px;
+        z-index: 20;
     }
 
 </style>

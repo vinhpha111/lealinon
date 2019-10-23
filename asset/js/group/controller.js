@@ -232,6 +232,7 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
         })
         .then(function(res){
             $scope.members.unshift(res.data);
+            $scope.memberAskJoin[index].activeAskJoinBtn = false;
             $scope.memberAskJoin.splice(index, 1);
         }, function(err){
             $scope.memberAskJoin[index].activeAskJoinBtn = false;
@@ -249,9 +250,41 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
             user_id: $scope.memberAskJoin[index]._id
         })
         .then(function(res){
+            $scope.memberAskJoin[index].activeAskJoinBtn = false;
             $scope.memberAskJoin.splice(index, 1);
         }, function(err){
             $scope.memberAskJoin[index].activeAskJoinBtn = false;
+            Scopes.get('scopeMessage').alertMessages = [
+                {
+                    type: 'danger',
+                    content: 'Có lỗi xãy ra, hãy thử lại!'
+                }
+            ];
+        });
+    }
+
+    $scope.removeMember = null;
+
+    $scope.openPopupRemoveMember = function(member){
+        $scope.removeMember = member;
+    }
+
+    $scope.removeMemberAccept = function(){
+        console.log('sdfsfsdf');
+        $http.delete('/api/group/'+$routeParams.id+'/remove_member', {
+            params : {
+                user_id: $scope.removeMember.user_id._id
+            }
+        })
+        .then(function(res){
+            for (const i in $scope.members) {
+                if ($scope.members[i] === $scope.removeMember) {
+                    $scope.members.splice(i, 1);
+                }
+            }
+            $scope.removeMember = null;
+        }, function(err){
+            $scope.removeMember = null;
             Scopes.get('scopeMessage').alertMessages = [
                 {
                     type: 'danger',

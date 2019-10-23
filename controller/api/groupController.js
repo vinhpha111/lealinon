@@ -208,7 +208,7 @@ app.acceptJoin = async (req, res) => {
     let id = req.params.id;
     let userId = req.body.user_id;
     let group = await Group.findOne({_id: id});
-    if (! await group.checkRole(req.user, 'joinGroup')) {
+    if (! await group.checkRole(req.user._id, 'addMember')) {
         return res.status(403).send(null);
     }
 
@@ -235,7 +235,8 @@ app.acceptJoin = async (req, res) => {
 
     io.sockets.in(userId).emit('announceHeader', announceData);
 
-    return res.json(newMember);
+    let member = await groupMemberModel.getModel().findOne({group_id: id, user_id: userId}).populate('user_id', '-encrypt_password');
+    return res.json(member);
 }
 
 app.refuseJoin = async (req, res) => {
@@ -245,11 +246,55 @@ app.refuseJoin = async (req, res) => {
     let id = req.params.id;
     let userId = req.body.user_id;
     let group = await Group.findOne({_id: id});
-    if (! await group.checkRole(req.user, 'joinGroup')) {
+    if (! await group.checkRole(req.user._id, 'addMember')) {
         return res.status(403).send(null);
     }
 
+    await groupAskJoin.getModel().deleteOne({
+        group_id: id,
+        user_id: userId
+    });
 
+    let announceData = await announce.add({
+        user_id : userId,
+        type : announce.TYPE('REFUSED_JOIN_GROUP'),
+        group_id : id,
+        sender : req.user._id,
+        created_at : pastDateTime.now(),
+        updated_at : pastDateTime.now(),
+    });
+
+    io.sockets.in(userId).emit('announceHeader', announceData);
+
+    res.send(null);
+}
+
+app.removeFromGroup = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+    let id = req.params.id;
+    let userId = req.query.user_id;
+    console.log(userId);
+    let group = await Group.findOne({_id: id});
+    console.log(await group.checkRole(req.user._id, 'deleteMember'));
+    console.log(await group.checkRole(userId, 'canRemoveFromGroup'));
+    if (! await group.checkRole(req.user._id, 'deleteMember') || ! await group.checkRole(userId, 'canRemoveFromGroup')) {
+        return res.status(403).send(null);
+    }
+
+    await groupMemberModel.getModel().deleteMany({group_id: id, user_id: userId});
+    let announceData = await announce.add({
+        user_id : userId,
+        type : announce.TYPE('REMOVED_FROM_GROUP'),
+        group_id : id,
+        sender : req.user._id,
+        created_at : pastDateTime.now(),
+        updated_at : pastDateTime.now(),
+    });
+    io.sockets.in(userId).emit('announceHeader', announceData);
+
+    res.send(null);
 }
 
 module.exports = app;

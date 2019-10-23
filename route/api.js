@@ -21,6 +21,8 @@ route.get('/group/:id/get_member', groupController.getMember);
 route.post('/group/:id/join_group', groupController.joinGroup);
 route.get('/group/:id/get_member_ask_join', groupController.getMemberAskJoin);
 route.post('/group/:id/accept_join', groupController.acceptJoin);
+route.post('/group/:id/refuse_join', groupController.refuseJoin);
+route.delete('/group/:id/remove_member', groupController.removeFromGroup);
 
 route.get('/user/find', userController.find);
 
