@@ -293,4 +293,8 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
             ];
         });
     }
+
+    $scope.accept = function(){
+        console.log("accept");
+    }
 })

@@ -25,6 +25,7 @@ route.post('/group/:id/refuse_join', groupController.refuseJoin);
 route.delete('/group/:id/remove_member', groupController.removeFromGroup);
 
 route.get('/user/find', userController.find);
+route.get('/user/get_by_id/:id', userController.getById);
 
 route.get('/search/by_string', searchController.searchByString);
 

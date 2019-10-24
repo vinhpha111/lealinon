@@ -117,14 +117,14 @@ app.joinGroup = async (req, res) => {
                 user_id: req.user._id,
                 type: Group.ROLE('NORMAL')
             });
-            groupInviteJoin.deleteOne({_id: inviteJoin._id});
+            groupInviteJoin.getModel().deleteOne({_id: inviteJoin._id});
 
             let memberInGroups = await groupMemberModel.getModel().find({group_id: id});
             for(let index in memberInGroups){
                 if (memberInGroups[index].user_id !== req.user._id) {
                     dataAnnouce.push({
                         user_id : memberInGroups[index].user_id,
-                        type : announce.TYPE('ACCEPTED_JOIN_GROUP'),
+                        type : announce.TYPE('AGREE_JOIN_GROUP'),
                         group_id : id,
                         sender : req.user._id,
                         created_at : pastDateTime.now(),

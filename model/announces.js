@@ -21,26 +21,29 @@ class announce extends baseModel {
             case 'REMOVED_FROM_GROUP':
             return 5;
             break;
-            case 'INVITED_MAKE_FRIEND':
+            case 'AGREE_JOIN_GROUP':
             return 6;
             break;
-            case 'ACCEPTED_MAKE_FRIEND':
+            case 'INVITED_MAKE_FRIEND':
             return 7;
             break;
-            case 'REFUSED_MAKE_FRIEND':
+            case 'ACCEPTED_MAKE_FRIEND':
             return 8;
             break;
-            case 'HAS_ONE_COMMENT_IN_POST':
+            case 'REFUSED_MAKE_FRIEND':
             return 9;
             break;
-            case 'HAS_ONE_COMMENT_IN_GROUP':
+            case 'HAS_ONE_COMMENT_IN_POST':
             return 10;
             break;
-            case 'HAS_MESSAGE':
+            case 'HAS_ONE_COMMENT_IN_GROUP':
             return 11;
             break;
-            case 'HAS_FEEL_IN_POST':
+            case 'HAS_MESSAGE':
             return 12;
+            break;
+            case 'HAS_FEEL_IN_POST':
+            return 13;
             break;
             
             default:

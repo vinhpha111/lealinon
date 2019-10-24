@@ -170,6 +170,30 @@ h1 {
     max-width: 100%;
 }
 
+.panel-body * img {
+    max-width: 100%;
+}
+
+/* popup component */
+.popup-component {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    background-color: rgba(0, 0, 0, 0.205);
+    width: 100%;
+    height: 100vh;
+}
+
+.popup-component .popup-box {
+    margin: auto;
+    margin-top: 300px;
+    width: 200px;
+    height: 80px;
+    background-color: white;
+}
+/* end popup component */
+
 /* On small screens, set height to 'auto' for sidenav and grid */
 @media screen and (max-width: 767px) {
     .sidenav {

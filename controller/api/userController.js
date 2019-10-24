@@ -5,6 +5,7 @@ var User = model.getInstance('users');
 const {validationResult} = require('express-validator');
 datetime = require('node-datetime');
 var pastDateTime = datetime.create();
+var ObjectId = require('mongodb').ObjectID;
 
 app.current_user = async (req, res) => {
     if (req.user) {
@@ -32,7 +33,17 @@ app.find = async (req, res) => {
 
     let listUser = await User.find(query, ['_id', 'email'], action);
     return res.json(listUser);
+}
 
+app.getById = async (req, res) => {
+    let id = req.params.id;
+    let user = await User.getModel().findOne({_id: id}, ["-encrypt_password"]);
+    if (!user) {
+        return res.status(404).send(null);
+    }
+    let data = user.toJSON();
+    data.roles = await user.getRole(req.user ? req.user._id : null);
+    return res.json(data);
 }
 
 module.exports = app;

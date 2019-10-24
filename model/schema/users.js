@@ -21,5 +21,17 @@ module.exports = function(Class = null){
             users.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
         }
     }
+    if (typeof Class['methods'] === 'function') {
+        let methods = Class.methods();
+        for (let name in methods) {
+            users.methods[name] = methods[name];
+        }
+    }
+    if (typeof Class['postMiddleware'] === 'function') {
+        let postMiddlewares = Class.postMiddleware();
+        for (let type in postMiddlewares) {
+            users.post(type, postMiddlewares[type]);
+        }
+    }
     return mongoose.model('users', users);
 }

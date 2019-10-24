@@ -32,9 +32,11 @@
   <script src="/js/app.filter.js"></script>
   <script src="/js/group/controller.js"></script>
   <script src="/js/search/controller.js"></script>
+  <script src="/js/user/controller.js"></script>
   <script src="/js/component/sidebar/index.js"></script>
   <script src="/js/component/alertMessage/index.js"></script>
   <script src="/js/component/announceHeader/index.js"></script>
+  <script src="/js/component/popup/index.js"></script>
   <script src="/js/framework/ckeditor/ckeditor.js"></script>
   <script src = "/socket.io/socket.io.js"></script>
 </head>
@@ -65,7 +67,7 @@
                   <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a href="#">Quản lý tài khoản</a></li>
+                  <li><a href="/user/{{current_user._id}}">Quản lý tài khoản</a></li>
                   <li><a href="#">Đăng xuất</a></li>
                 </ul>
               </div>
