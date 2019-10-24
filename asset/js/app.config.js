@@ -75,6 +75,16 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
         }
     })
 
+    .when('/user/:id', {
+        templateUrl: 'js/user/profile.html',
+        controller: 'profileUser',
+        resolve : {
+            current_user : function($auth){
+                return $auth.getUser();
+            }
+        }
+    })
+
     .when('/404.html', {
         templateUrl: 'js/error/404.html'
     })

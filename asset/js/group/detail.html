@@ -6,7 +6,12 @@
     <alert-message></alert-message>
     <div>
         <a ng-if="detail.role.newPost" href="/group/{{id}}/new-post" class="btn btn-primary btn-block">Tạo bài post mới</a>
-        <button ng-click="joinGroup(); activeJoinGroup=true;" ng-class="{disabled: activeJoinGroup}" ng-if="!detail.role.joinGroup" class="btn btn-primary btn-block">Tham gia nhóm</button>
+        <button ng-click="joinGroup(); activeJoinGroup=true;" ng-class="{disabled: activeJoinGroup}" ng-if="!detail.role.joinGroup && !detail.role.hasAskJoin" class="btn btn-primary btn-block">Tham gia nhóm</button>
+
+        <div ng-if="!detail.role.joinGroup && detail.role.hasAskJoin">
+            <h6 class="text-center"><i>(Bạn đã gửi yêu cầu tham gia nhóm)</i></h6>
+            <button ng-click="joinGroup(); activeJoinGroup=true;" ng-class="{disabled: activeJoinGroup}" class="btn btn-primary btn-block">Hủy yêu cầu</button>
+        </div>
         <div class="text-right">
             <button ng-if="detail.role.addMember" type="button" class="btn btn-link" data-toggle="modal" data-target="#addMember">
                 <i class="fa fa-user-plus"></i> Add member
@@ -18,7 +23,7 @@
         <div class="panel panel-default" ng-repeat="post in listPost">
             <div class="panel-heading">{{ post.title }}</div>
             <div class="panel-body" ng-init="post.numLimit = post.content.length > 1000 ? 1000 : null; post.more = post.content.length < 1000;">
-                <div ng-bind-html="post.content | limitTo:post.numLimit"></div>
+                <div class="content-post-group" ng-bind-html="post.content | limitTo:post.numLimit"></div>
                 <button ng-if="!post.more" ng-click="post.numLimit = null; post.more = true;" class="btn btn-link btn-block"><i class="material-icons">more_horiz</i></button>
             </div>
             <div class="panel-footer">

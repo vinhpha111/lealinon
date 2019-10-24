@@ -17,6 +17,7 @@ app.searchByString = async (req, res) => {
     }
     let exceptIds = req.query.exceptIds ? req.query.exceptIds : [];
     exceptIds = exceptIds.map((id) => new ObjectId(id));
+    exceptIds.push(new ObjectId(req.user._id));
     let type = 'all';
     if (['group', 'user', 'post'].indexOf(req.query.type) !== -1) {
         type = req.query.type;
