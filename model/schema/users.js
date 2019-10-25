@@ -3,12 +3,19 @@ var schema = mongoose.Schema;
 var users = schema({
     email : String,
     name : String,
+    avatar_path : {
+        type: String,
+        default: '/image/none-user.png'
+    },
     gender : Boolean, // 0: girl, 1: men
     birthday : Date,
     job : Number,
     introduce : String,
     facebook_token : String,
-    encrypt_password : String,
+    encrypt_password : {
+        type: String,
+        select: false
+    },
     online_status : Boolean, // 0: offline, 1: online
     active : Boolean,
     created_at : Date

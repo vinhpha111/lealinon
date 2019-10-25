@@ -26,6 +26,7 @@ route.delete('/group/:id/remove_member', groupController.removeFromGroup);
 
 route.get('/user/find', userController.find);
 route.get('/user/get_by_id/:id', userController.getById);
+route.post('/user/:id/edit', require('../controller/Request/client/user/edit'), userController.edit);
 
 route.get('/search/by_string', searchController.searchByString);
 

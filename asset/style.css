@@ -194,6 +194,12 @@ h1 {
 }
 /* end popup component */
 
+.icon-user-dropdown {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+}
+
 /* On small screens, set height to 'auto' for sidenav and grid */
 @media screen and (max-width: 767px) {
     .sidenav {

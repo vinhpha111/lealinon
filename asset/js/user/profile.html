@@ -1,11 +1,12 @@
 <h1>Thông tin người dùng</h1>
-<table ng-if="!detail.activeEditProfile" class="table">
+<alert-message></alert-message>
+<table ng-show="detail" ng-if="!detail.activeEditProfile" class="table">
     <tbody>
         <tr>
             <td>Ảnh đại diện:</td>
             <td>
-                <img ng-if="detail.avatar" class="avatar-in-profile" src="{{detail.avatar}}">
-                <i ng-if="!detail.avatar">- Chưa có -</i>
+                <img ng-if="detail.avatar_path" class="avatar-in-profile" src="{{detail.avatar_path}}">
+                <i ng-if="!detail.avatar_path">- Chưa có -</i>
             </td>
         </tr>
         <tr>
@@ -36,30 +37,33 @@
             <tr>
                 <td>Ảnh đại diện:</td>
                 <td>
-                    <input type="file">
+                    <input file-model="userEdit.avatarFile" type="file">
+                    <p class="error-msg" ng-repeat="error in userEdit.errors" ng-if="error.param == 'avatarFile'">{{error.msg}}</p>
                 </td>
             </tr>
             <tr>
                 <td width="120px">tên:</td>
                 <td>
                     <input type="text" ng-model="userEdit.name">
+                    <p class="error-msg" ng-repeat="error in userEdit.errors" ng-if="error.param == 'name'">{{error.msg}}</p>
                 </td>
             </tr>
             <tr>
                 <td>Email:</td>
                 <td>
-                    <input type="text" ng-model="userEdit.email">
+                    {{ userEdit.email }}
                 </td>
             </tr>
             <tr>
                 <td>Giới thiệu:</td>
                 <td>
                     <textarea class="introduce-edit-profile thin-scrollbar" type="text" ng-model="userEdit.introduce"></textarea>
+                    <p class="error-msg" ng-repeat="error in userEdit.errors" ng-if="error.param == 'introduce'">{{error.msg}}</p>
                 </td>
             </tr>
         </tbody>
     </table>
-    <button type="button" class="btn btn-info btn-sm"> Lưu</button>
+    <button ng-click="putEditProfile()" type="button" class="btn btn-info btn-sm"> Lưu</button>
     <button ng-click="detail.activeEditProfile = false" type="button" class="btn btn-default btn-sm"> Hủy</button>
 </div>
 
@@ -69,7 +73,7 @@
 <style>
     .avatar-in-profile {
         width: 80px;
-        height: 120px;
+        height: 80px;
         object-fit: cover;
     }
 
