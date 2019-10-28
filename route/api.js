@@ -7,6 +7,8 @@ var announceController = require('../controller/api/announceController')
 var searchController = require('../controller/api/searchController')
 var imageController = require('../controller/api/imageController')
 
+var chatController = require('../controller/api/chatController')
+
 route.get('/current_user', userController.current_user);
 
 route.post('/group/new', require('../controller/Request/client/group/new'), groupController.new);
@@ -27,6 +29,10 @@ route.delete('/group/:id/remove_member', groupController.removeFromGroup);
 route.get('/user/find', userController.find);
 route.get('/user/get_by_id/:id', userController.getById);
 route.post('/user/:id/edit', require('../controller/Request/client/user/edit'), userController.edit);
+route.post('/user/:id/invite_make_friend', userController.inviteMakeFriend);
+route.post('/user/:id/accept_make_friend', userController.acceptMakeFriend);
+
+route.get('/chat/list_friend', chatController.listFriend);
 
 route.get('/search/by_string', searchController.searchByString);
 

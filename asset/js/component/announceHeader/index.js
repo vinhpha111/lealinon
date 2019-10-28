@@ -99,6 +99,16 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
                         + " đã đồng ý tham gia "
                         + "<strong>"+data.group_id.name+"</strong>";
                 break;
+            case announceType('INVITED_MAKE_FRIEND'):
+                link = "/user/"+data.sender._id;
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " đã gửi lời mời kết bạn đến bạn."
+                break;
+            case announceType('ACCEPTED_MAKE_FRIEND'):
+                link = "/user/"+data.sender._id;
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " đã chấp nhận yêu cầu kết bạn của bạn."
+                break;
         
             default:
                 break;

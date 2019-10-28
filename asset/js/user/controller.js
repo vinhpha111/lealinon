@@ -47,4 +47,33 @@ app.controller('profileUser', function($scope, $routeParams, $http, $route, $roo
             }
         })
     }
+
+    $scope.inviteMakeFriend = function() {
+        $http.post('/api/user/'+id+'/invite_make_friend', {
+            userId: id
+        }).then(function(res){
+            $route.reload();
+        }, function(err){
+            Scopes.get('scopeMessage').alertMessages = [
+                {
+                    type: 'danger',
+                    content: 'Có lỗi xãy ra, hãy thử lại!'
+                }
+            ];
+        });
+    }
+
+    $scope.acceptMakeFriend = function(){
+        $http.post('/api/user/'+id+'/accept_make_friend')
+        .then(function(res){
+            $route.reload();
+        }, function(err){
+            Scopes.get('scopeMessage').alertMessages = [
+                {
+                    type: 'danger',
+                    content: 'Có lỗi xãy ra, hãy thử lại!'
+                }
+            ];
+        })
+    }
 });

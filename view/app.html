@@ -34,6 +34,7 @@
   <script src="/js/search/controller.js"></script>
   <script src="/js/user/controller.js"></script>
   <script src="/js/component/sidebar/index.js"></script>
+  <script src="/js/component/listFriend/index.js"></script>
   <script src="/js/component/alertMessage/index.js"></script>
   <script src="/js/component/announceHeader/index.js"></script>
   <script src="/js/component/popup/index.js"></script>
@@ -88,13 +89,8 @@
         <div class="col-sm-8 text-left content-center">
           <div ng-view autoscroll="true"></div>
         </div>
-        <div class="col-sm-2 sidenav text-left">
-          <div class="well">
-            <p>ADS</p>
-          </div>
-          <div class="well">
-            <p>ADS</p>
-          </div>
+        <div style="padding-left: 0px; padding-right: 0px;" class="col-sm-2 sidenav text-left">
+          <list-friend></list-friend>
         </div>
       </div>
     </div>

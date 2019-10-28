@@ -30,7 +30,7 @@ class User extends baseModel {
                 if (!typeRole && user_id) {
                     typeRole = self.ROLE('HAS_LOGIN');
                 }
-                let listRole = self.listRole(typeRole);
+                let listRole = self.listRole(typeRole, this, user_id);
                 return listRole;
             },
             checkRole : async function(user_id, role){
@@ -40,14 +40,44 @@ class User extends baseModel {
         }
     }
 
-    listRole(typeRole){
+    async listRole(typeRole, user, userIdCheck){
+        let inviteMakeFriendModel = require('./index').getInstance('user_invite_make_friend');
+
+        let listInviteMakeFriend = await inviteMakeFriendModel.getModel().findOne({user: userIdCheck, user_invited: user._id});
+        let hasInviteMakeFriend = false;
+        let inviteMakeFriend = true;
+        if (listInviteMakeFriend) {
+            hasInviteMakeFriend = true;
+            inviteMakeFriend = false;
+        }
+
+        let listsenderMakeFriend = await inviteMakeFriendModel.getModel().findOne({user: user._id, user_invited: userIdCheck});
+        let isSenderMakeFriend = false;
+        if (listsenderMakeFriend) {
+            isSenderMakeFriend = true;
+            inviteMakeFriend = false;
+        }
+
+        let isFriend = false;
+        let userFriend = require('./index').getInstance('user_friend');
+        let friend = await userFriend.getModel().findOne({user: userIdCheck, friend: user._id});
+        if (friend) {
+            isFriend = true;
+            isSenderMakeFriend = false;
+            inviteMakeFriend = false;
+            hasInviteMakeFriend = false;
+        }
+
         switch (typeRole) {
             case this.ROLE('SELF'):
                 return {
                     viewProfile: true,
                     editProfile: true,
                     delete: true,
-                    inviteMakeFriend: false,
+                    inviteMakeFriend: false,//
+                    hasInviteMakeFriend: false,//
+                    isSenderMakeFriend : false,
+                    isFriend : false,
                     hasLogin: true,
                 }
                 break;
@@ -56,7 +86,10 @@ class User extends baseModel {
                     viewProfile: true,
                     editProfile: false,
                     delete: false,
-                    inviteMakeFriend: true,
+                    inviteMakeFriend: inviteMakeFriend,
+                    hasInviteMakeFriend: hasInviteMakeFriend,
+                    isSenderMakeFriend : isSenderMakeFriend,
+                    isFriend : isFriend,
                     hasLogin: true,
                 }
                 break;
@@ -64,8 +97,11 @@ class User extends baseModel {
                 return {
                     viewProfile: true,
                     editProfile: false,
-                    delete: true,
+                    delete: false,
                     inviteMakeFriend: false,
+                    hasInviteMakeFriend: false,
+                    isSenderMakeFriend : false,
+                    isFriend : false,
                     hasLogin: false,
                 }
                 break;
@@ -75,6 +111,9 @@ class User extends baseModel {
                     editProfile: false,
                     delete: false,
                     inviteMakeFriend: false,
+                    hasInviteMakeFriend: false,
+                    isSenderMakeFriend : false,
+                    isFriend : false,
                     hasLogin: false,
                 }
                 break;
