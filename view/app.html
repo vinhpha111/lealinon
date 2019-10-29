@@ -35,6 +35,7 @@
   <script src="/js/user/controller.js"></script>
   <script src="/js/component/sidebar/index.js"></script>
   <script src="/js/component/listFriend/index.js"></script>
+  <script src="/js/component/chatBox/index.js"></script>
   <script src="/js/component/alertMessage/index.js"></script>
   <script src="/js/component/announceHeader/index.js"></script>
   <script src="/js/component/popup/index.js"></script>
@@ -88,6 +89,7 @@
         <left-sidebar></left-sidebar>
         <div class="col-sm-8 text-left content-center">
           <div ng-view autoscroll="true"></div>
+          <chat-box></chat-box>
         </div>
         <div style="padding-left: 0px; padding-right: 0px;" class="col-sm-2 sidenav text-left">
           <list-friend></list-friend>

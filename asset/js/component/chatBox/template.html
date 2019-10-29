@@ -1,0 +1,122 @@
+<div ng-if="show" class="panel panel-primary chat-box">
+    <div class="panel-heading"><a href="#"><img class="avatar" src="{{user.avatar_path}}"> {{user.name}}</a><i ng-click="close()" class="fa fa-close"></i></div>
+    <div class="panel-body thin-scrollbar">
+        <div class="row-message">
+            <img src="{{user.avatar_path}}" alt="Avatar">
+            <p>Hello. How are you today?</p>
+            <span class="time-right">11:00</span>
+        </div>
+        
+        <div class="row-message darker">
+            <img src="{{ current_user.avatar_path }}" alt="Avatar" class="right">
+            <p>Hey! I'm fine. Thanks for asking!</p>
+            <span class="time-left">11:01</span>
+        </div>
+        
+        <div class="row-message">
+            <img src="{{user.avatar_path}}" alt="Avatar">
+            <p>Sweet! So, what do you wanna do today?</p>
+            <span class="time-right">11:02</span>
+        </div>
+        
+        <div class="row-message darker">
+            <img src="{{ current_user.avatar_path }}" alt="Avatar" class="right">
+            <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
+            <span class="time-left">11:05</span>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search">
+            <div class="input-group-btn">
+                <button class="btn btn-default" type="submit">
+                    <span class="glyphicon glyphicon-send"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .chat-box {
+        width: 240px;
+        position: fixed;
+        bottom: 0;
+        right: 30%;
+    }
+    
+    .chat-box .panel-heading {
+        position: relative;
+        padding: 10px 20px 10px 5px;
+    }
+    
+    .chat-box .panel-heading .avatar {
+        width: 20px;
+        height: 20px;
+        object-fit: cover;  
+    }
+    
+    .chat-box .panel-heading a {
+        color: white;
+    }
+    
+    .chat-box .panel-heading .fa-close {
+        position: absolute;
+        top: 10px;
+        right: 5px;
+        cursor: pointer;
+    }
+    
+    .chat-box .panel-body {
+        height: 300px;
+        overflow-y: auto;
+    }
+    
+    .chat-box .panel-footer {
+        padding: 2px;
+    }
+    
+    
+    .row-message {
+        border: 2px solid #dedede;
+        background-color: #f1f1f1;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px 0;
+    }
+    
+    .darker {
+        border-color: #ccc;
+        background-color: #ddd;
+    }
+    
+    .row-message::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+    
+    .row-message img {
+        float: left;
+        width: 20px;
+        height: 20px;
+        object-fit: cover;
+        margin-right: 20px;
+    }
+    
+    .row-message img.right {
+        float: right;
+        margin-left: 20px;
+        margin-right:0;
+    }
+    
+    .time-right {
+        float: right;
+        color: #aaa;
+    }
+    
+    .time-left {
+        float: left;
+        color: #999;
+    }
+</style>

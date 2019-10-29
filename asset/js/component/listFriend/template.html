@@ -1,6 +1,6 @@
 <h4 style="margin-top: 0px;" class="text-center">Bạn</h4>
 <ul class="list-friend-sidebar">
-    <li ng-repeat="friend in listFriend">
+    <li ng-repeat="friend in listFriend" ng-click="showChatBox(friend)">
         {{ friend.name }}
     </li>
     <li ng-if="listFriend.length === 0"><i>chưa có người bạn nào</i></li>

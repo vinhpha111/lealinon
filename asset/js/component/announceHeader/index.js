@@ -51,6 +51,18 @@ function announceType(name) {
     }
 }
 
+function messageType(name) {
+    switch (name) {
+        case 'NEW_MESSAGE':
+            return 1;
+            break;
+    
+        default:
+            return null;
+            break;
+    }
+}
+
 app.controller('announceHeaderController', function($scope, $rootScope, Scopes, $http, socket, Sound){
     $scope.user = $rootScope.current_user;
     $scope.announce = {};
@@ -108,6 +120,25 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
                 link = "/user/"+data.sender._id;
                 content = "<strong>"+data.sender.name+"</strong>"
                         + " đã chấp nhận yêu cầu kết bạn của bạn."
+                break;
+        
+            default:
+                break;
+        }
+        return {
+            _id: data._id,
+            html: "<a href='"+link+"'>"+content+"</a>"
+        }
+    }
+
+    function convertMessage(data){
+        let link = null;
+        let content = null;
+        switch (data.type) {
+            case announceType('NEW_MESSAGE'):
+                link = "#";
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " đã gửi tin nhắn cho bạn ";
                 break;
         
             default:
@@ -200,5 +231,56 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         });
         Sound.notification();
     });
+
+    // notification message
+
+    $scope.message = {};
+    $scope.message.data = [];
+    $scope.message.exceptIds = [];
+    $scope.message.load = false;
+    $scope.message.hasNew = false;
+    $scope.message.numNew = 0;
+
+    $scope.message.getList = function(){
+        $scope.message.load = true;
+        $http.get('/api/announce/get_announce_message', {
+            params: {
+                exceptIds: $scope.message.exceptIds,
+            }
+        })
+        .then(function(res){
+            let datas = res.data;
+            console.log(datas);
+            for(let i in datas){
+                $scope.message.numNew--;
+                $scope.message.exceptIds.push(datas[i]._id)
+                $scope.message.data.push(convertMessage(datas[i]));
+            }
+            if ($scope.message.numNew <= 0) {
+                $scope.message.numNew = 0;
+                $scope.message.hasNew = false;
+            }
+            $scope.message.load = false;
+            setMessageHasSee($scope.message.exceptIds);
+        }, function(err){
+            $scope.message.load = false;
+        })
+    }
+
+    $http.get('/api/announce/get_announce_message_not_see')
+    .then(function(res){
+        let datas = res.data;
+        $scope.message.numNew = res.data.countNotSee;
+        if ($scope.message.numNew > 0) {
+            $scope.message.hasNew = true;
+        }
+    }, function(err){
+    })
+
+    function setMessageHasSee(ids) {
+        $http.put('/api/announce/set_has_see',{
+            ids: ids
+        }).then();
+    }
 
 });
