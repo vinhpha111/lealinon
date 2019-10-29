@@ -55,8 +55,10 @@ app.post_register = async (req, res) => {
     }
 
     var hash = await User.generaEncrypt(req.body.password);
-    var user = await User.insert({
+    let name = req.body.email.substr(0, req.body.email.indexOf('@')); 
+    var user = await User.add({
         email : req.body.email,
+        name: name,
         encrypt_password : hash,
         created_at : pastDateTime.now(),
     });
