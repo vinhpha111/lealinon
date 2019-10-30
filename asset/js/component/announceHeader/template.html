@@ -12,12 +12,12 @@
 </li>
 <li class="item" style="float: right;">
     <div class="dropdown" style="margin: 12px; float: right;">
-        <i ng-click="message.getList()" ng-class="{'has-new':message.hasNew}" class="fa fa-wechat dropdown-toggle" data-toggle="dropdown" style="font-size:28px;color:rgb(0, 225, 255); cursor: pointer;"><span class="num">New</span></i>
+        <i ng-click="message.getList()" ng-class="{'has-new':message.hasNew}" class="fa fa-wechat dropdown-toggle" data-toggle="dropdown" style="font-size:28px;color:rgb(0, 225, 255); cursor: pointer;"><i style="color: red;" class="fa fa-circle icon-new"></i></i>
         <ul class="dropdown-menu">
-            <li ng-if="message.data" ng-repeat="row in message.data" ng-bind-html="row.html"></li>
+            <li ng-if="message.data" ng-repeat="row in message.data" ng-bind-html="row.html" ng-click="row.clickFunc()"></li>
             <li class="text-center" ng-if="message.data.length === 0 && !message.load">Không có gì mới</li>
             <li class="text-center" ng-if="message.load"><i class="fa fa-spinner fa-spin"></i></li>
-            <a href="#" ng-click="message.getList()"><h6 class="text-center more">Xem thêm</h6></a>
+            <a href="#" ng-click="message.loadMore()"><h6 class="text-center more">Xem thêm</h6></a>
         </ul>
     </div>
 </li>

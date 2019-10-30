@@ -26,13 +26,13 @@ app.getAnnounce = async (req, res) => {
     return res.json(listAnnounce);
 }
 
-app.getAnnounceNotSee = async function(req, res){
+app.getAnnounceNotSee = async (req, res) => {
     if (!req.user) return res.status(403).send("Unauthorized!");
     let count = await announce.getModel().countDocuments({user_id: req.user._id, has_see: false});
     return res.json({countNotSee: count});
 }
 
-app.setAnnounceHasSee = async function(req, res){
+app.setAnnounceHasSee = async (req, res) => {
     if (!req.user) return res.status(403).send("Unauthorized!");
     let ids = req.body.ids;
     await announce.getModel().updateMany({_id: { $in: ids}}, {has_see: true});
@@ -62,16 +62,23 @@ app.getAnnounceMessage = async (req, res) => {
     return res.json(listAnnounceMessage);
 }
 
-app.getAnnounceMessageNotSee = async function(req, res){
+app.getAnnounceMessageNotSee = async (req, res) => {
     if (!req.user) return res.status(403).send("Unauthorized!");
     let count = await announceMessage.getModel().countDocuments({user_id: req.user._id, has_see: false});
     return res.json({countNotSee: count});
 }
 
-app.setAnnounceMessageHasSee = async function(req, res){
+app.setAnnounceMessageHasSee = async (req, res) => {
     if (!req.user) return res.status(403).send("Unauthorized!");
     let ids = req.body.ids;
     await announceMessage.getModel().updateMany({_id: { $in: ids}}, {has_see: true});
+    res.status(200).send(null);
+}
+
+app.deleteAnnounceMessage = async (req, res) => {
+    if (!req.user) return res.status(403).send("Unauthorized!");
+    let ids = req.query.ids;
+    await announceMessage.getModel().deleteMany({_id: { $in: ids}});
     res.status(200).send(null);
 }
 

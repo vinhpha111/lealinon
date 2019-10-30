@@ -76,6 +76,9 @@ app.factory('socket', function(){
         },
         emit: function(eventName, data){
             socket.emit(eventName, data);
+        },
+        removeListener: function(event, action){
+            socket.removeListener(event, action);
         }
     }
 });

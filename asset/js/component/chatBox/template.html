@@ -1,35 +1,22 @@
 <div ng-if="show" class="panel panel-primary chat-box">
     <div class="panel-heading"><a href="#"><img class="avatar" src="{{user.avatar_path}}"> {{user.name}}</a><i ng-click="close()" class="fa fa-close"></i></div>
     <div class="panel-body thin-scrollbar">
-        <div class="row-message">
-            <img src="{{user.avatar_path}}" alt="Avatar">
-            <p>Hello. How are you today?</p>
-            <span class="time-right">11:00</span>
-        </div>
-        
-        <div class="row-message darker">
-            <img src="{{ current_user.avatar_path }}" alt="Avatar" class="right">
-            <p>Hey! I'm fine. Thanks for asking!</p>
-            <span class="time-left">11:01</span>
-        </div>
-        
-        <div class="row-message">
-            <img src="{{user.avatar_path}}" alt="Avatar">
-            <p>Sweet! So, what do you wanna do today?</p>
-            <span class="time-right">11:02</span>
-        </div>
-        
-        <div class="row-message darker">
-            <img src="{{ current_user.avatar_path }}" alt="Avatar" class="right">
-            <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
-            <span class="time-left">11:05</span>
+        <button ng-click="loadMore()" class="btn btn-link btn-xs btn-block">Tải thêm</button>
+        <div ng-repeat="(index, message) in listMessage">
+            <h6 class="text-center"><i>{{ message.created_at | dateLineChatBox : index : listMessage }}</i></h6>
+            <div ng-class="{darker: message.from === current_user._id}" class="row-message">
+                <img ng-class="{right: message.from === current_user._id}" 
+                src="{{message.from === current_user._id ? current_user.avatar_path : user.avatar_path}}" alt="Avatar">
+                <p>{{message.message}}</p>
+                <span ng-class="{'time-left': message.from === current_user._id, 'time-right': message.from !== current_user._id}">{{message.created_at | timeChatBox}}</span>
+            </div>
         </div>
     </div>
     <div class="panel-footer">
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search">
+            <input type="text" ng-model="message" class="form-control" placeholder="Search">
             <div class="input-group-btn">
-                <button class="btn btn-default" type="submit">
+                <button ng-click="sendMessage(message); message = ''" class="btn btn-default" type="button">
                     <span class="glyphicon glyphicon-send"></span>
                 </button>
             </div>

@@ -5,7 +5,7 @@ class chatMessage extends baseModel {
         super('chat_messages');
     }
 
-    listMessage(fromId, toId) {
+    listMessage(fromId, toId, exceptIds = []) {
         let list = this.getModel()
         .find({
             $or: [
@@ -16,7 +16,15 @@ class chatMessage extends baseModel {
                     from: toId,
                     to: fromId
                 }
-            ]
+            ],
+            _id: {
+                $nin: exceptIds
+            }
+        }, null, {
+            limit: 10,
+            sort:{
+                created_at: -1
+            }
         });
         return list;
     }

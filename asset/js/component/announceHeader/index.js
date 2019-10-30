@@ -134,9 +134,13 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
     function convertMessage(data){
         let link = null;
         let content = null;
+        let clickFunc = null;
         switch (data.type) {
-            case announceType('NEW_MESSAGE'):
+            case messageType('NEW_MESSAGE'):
                 link = "#";
+                clickFunc = function(){
+                    openChatBox(data.sender);
+                };
                 content = "<strong>"+data.sender.name+"</strong>"
                         + " đã gửi tin nhắn cho bạn ";
                 break;
@@ -146,6 +150,7 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         }
         return {
             _id: data._id,
+            clickFunc : clickFunc,
             html: "<a href='"+link+"'>"+content+"</a>"
         }
     }
@@ -154,6 +159,10 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         $http.put('/api/announce/set_has_see',{
             ids: ids
         }).then();
+    }
+    
+    function openChatBox(user){
+        Scopes.get('scopeChatBox').init(user);
     }
 
     $scope.announce.getList = function(){
@@ -241,7 +250,7 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
     $scope.message.hasNew = false;
     $scope.message.numNew = 0;
 
-    $scope.message.getList = function(){
+    function initListMessage (){
         $scope.message.load = true;
         $http.get('/api/announce/get_announce_message', {
             params: {
@@ -267,6 +276,17 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         })
     }
 
+    $scope.message.getList = function(){
+        $scope.message.data = [];
+        $scope.message.exceptIds = [];
+        $scope.message.load = false;
+        initListMessage();
+    }
+
+    $scope.message.loadMore = function(){
+        initListMessage();
+    }
+
     $http.get('/api/announce/get_announce_message_not_see')
     .then(function(res){
         let datas = res.data;
@@ -278,9 +298,26 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
     })
 
     function setMessageHasSee(ids) {
-        $http.put('/api/announce/set_has_see',{
+        $http.put('/api/announce/set_announce_message_has_see',{
             ids: ids
         }).then();
     }
 
+    socket.on('announceMessage', function(data){
+        console.log(data);
+        let userInChatBox = Scopes.get('scopeChatBox').user;
+        if (!userInChatBox || userInChatBox._id !== data.sender) {
+            $scope.$apply(function() { 
+                $scope.message.numNew += 1;
+                $scope.message.hasNew = true;
+            });
+            Sound.notification();   
+        } else if(userInChatBox && userInChatBox._id === data.sender) {
+            $http.delete('/api/announce/delete_announce_message', {
+                params: {
+                    ids: [data._id]
+                }
+            }).then();
+        }
+    });
 });
