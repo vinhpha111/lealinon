@@ -19,12 +19,13 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
     }
 });
 
-app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scopes) {
+app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scopes, $auth) {
     $scope.id = $routeParams.id;
     $scope.notFound = false;
     $scope.exceptIds = [];
     $scope.listPost = [];
     $scope.loadingPost = false;
+    $scope.typePost = $auth.typePost;
     $http.get('/api/group/get_by_id/'+$routeParams.id)
     .then(function(res){
         $scope.detail = res.data;

@@ -237,6 +237,13 @@ h1 {
     background-color: rgb(189, 252, 252);
 }
 
+
+.do-exam {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+
 /* On small screens, set height to 'auto' for sidenav and grid */
 @media screen and (max-width: 767px) {
     .sidenav {

@@ -1,0 +1,29 @@
+<div class="panel panel-default">
+    <div class="panel-heading" style="position: relative;">
+        {{ post.user_created.name }} đã tạo bài thi trắc nghiệm.
+        <a href="#" class="btn btn-success btn-sm do-exam">Làm bài <i class='fa fa-angle-double-right'></i></a>
+    </div>
+    <div class="panel-body" ng-init="post.numLimit = post.content.length > 1000 ? 1000 : null; post.more = post.content.length < 1000;">
+        <h3><strong>{{ post.title }}</strong></h3>
+        <div class="content-post-group" ng-bind-html="post.content | limitTo:post.numLimit"></div>
+        <button ng-if="!post.more" ng-click="post.numLimit = null; post.more = true;" class="btn btn-link btn-block"><i class="material-icons">more_horiz</i></button>
+    </div>
+    <div class="panel-footer">
+        <button ng-click="post.liked = !post.liked; post.unliked = false" class="btn btn-default">
+            <i ng-class="{'fa-thumbs-up':post.liked, 'fa-thumbs-o-up':!post.liked}" class="fa" style="font-size:26px; color: rgb(10, 115, 236);"></i>
+        </button>
+        <button ng-click="post.liked = false; post.unliked = !post.unliked" class="btn btn-default">
+            <i ng-class="{'fa-thumbs-down':post.unliked, 'fa-thumbs-o-down':!post.unliked}" class="fa" style="font-size:26px; color: rgb(10, 115, 236);"></i>
+        </button>
+        <button ng-click="post.commentBox = true;" class="btn btn-default"><i class="fa fa-commenting-o" style="font-size:26px; color: black;"></i></button>
+    </div>
+    <div ng-if="post.commentBox" class="panel-body">
+        <h3>Comment</h3>
+        <div class="form-group">
+            <textarea class="form-control" rows="3" style="resize: none;"></textarea>
+        </div>
+        <div class="text-right">
+            <button class="btn btn-info text-right">Gửi</button>
+        </div>
+    </div>
+</div>

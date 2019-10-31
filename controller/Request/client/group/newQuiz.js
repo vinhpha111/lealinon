@@ -3,7 +3,12 @@ module.exports = [
     check('title').isLength({min: 1}).withMessage('trường bắt buộc').isLength({max: 150}).withMessage('Ký tự vượt quá 150 từ'),
     check('content').isLength({min: 1}).withMessage('trường bắt buộc'),
     check('questions').isArray(),
-    check('questions.*.content').not().isEmpty().withMessage('Chưa nhập câu hỏi'),
+    check('questions.*.description').not().isEmpty().withMessage('trường bắt buộc'),
+    check('questions.*.contentAnswer1').not().isEmpty().withMessage('trường bắt buộc'),
+    check('questions.*.contentAnswer2').not().isEmpty().withMessage('trường bắt buộc'),
+    check('questions.*.contentAnswer3').not().isEmpty().withMessage('trường bắt buộc'),
+    check('questions.*.contentAnswer4').not().isEmpty().withMessage('trường bắt buộc'),
+    check('questions.*.correctAnswer').isIn([1,2,3,4]).withMessage('Chưa chọn đáp án đúng'),
     body('startDate').custom((value, {req}) => {
         if (!req.body.setTime) {
             return true;
