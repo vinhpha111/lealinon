@@ -43,6 +43,11 @@
   <script src = "/socket.io/socket.io.js"></script>
 </head>
 <body ng-app="app" ng-controller="mainCtrl">
+  <div ng-bind="htmlSeo">
+    <% if(typeof htmlSeo !== 'undefined'){ %> 
+    <%- htmlSeo %> 
+    <% } %>
+  </div>
   <div class="container">
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -89,9 +94,11 @@
         <left-sidebar></left-sidebar>
         <div class="col-sm-8 text-left content-center">
           <div ng-view autoscroll="true"></div>
-          <chat-box></chat-box>
         </div>
         <div style="padding-left: 0px; padding-right: 0px;" class="col-sm-2 sidenav text-left">
+          <div style="position: relative;">
+              <chat-box></chat-box>
+          </div>
           <list-friend></list-friend>
         </div>
       </div>

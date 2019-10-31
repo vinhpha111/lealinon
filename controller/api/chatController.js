@@ -8,6 +8,9 @@ var pastDateTime = datetime.create();
 var ObjectId = require('mongodb').ObjectID;
 
 app.listFriend = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
     let listFriend = await friendModel.listFriend(req.user._id);
     return res.json(listFriend);
 }

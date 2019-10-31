@@ -11,6 +11,12 @@ route.post('/register', require('../controller/Request/client/user/register'), u
 
 route.get('/user/active', userController.active);
 
+route.get('/test-seo', (req, res) => {
+    res.render('app', {
+        htmlSeo: "<h1>this is page test seo</h1>"
+    })
+})
+
 route.get('/*', homeController.index);
 
 module.exports = route;

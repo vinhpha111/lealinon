@@ -9,6 +9,10 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
         template: "<h1>Hello! this is index</h1>"
     })
 
+    .when('/test-seo', {
+        template: "<h1>Hello! this is index</h1>"
+    })
+
     .when('/detail', {
         templateUrl: 'js/detail/detail.html'
     })

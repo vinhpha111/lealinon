@@ -5,7 +5,7 @@
         <input type="text" class="form-control" id="title" ng-model="quiz.title" autocomplete="off">
     </div>
     <div class="form-group">
-        <label for="title">Nội dung:</label>
+        <label for="title">Mô tả:</label>
         <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'content'">{{error.msg}}</p>
         <textarea name="quizContent" class="form-control" ng-model="quiz.content" ck-editor></textarea>
     </div>
@@ -18,30 +18,35 @@
                     <button ng-if="quiz.questions.length > 1" ng-click="quiz.questions.splice(index, 1)" type="button" class="btn btn-warning btn-xs"><i class="fa fa-minus"></i></button>
                 </div>
             </div>
-            <p class="error-msg" ng-repeat="error in errors" ng-if="error.param.indexOf('questions['+index+']') > -1">{{error.msg}}</p>
-            <textarea name="quizQuestion" ng-model="question.content" class="form-control" rows="4" ck-editor-question-quiz></textarea>
+            <p class="error-msg" ng-repeat="error in errors" ng-if="error.param.indexOf('questions['+index+'].description') > -1">{{error.msg}}</p>
+            <textarea name="quizQuestion" ng-model="question.description" class="form-control" rows="4" ck-editor-question-quiz></textarea>
         </div>
+        <p class="error-msg" ng-repeat="error in errors" ng-if="error.param.indexOf('questions['+index+'].correctAnswer') > -1">{{error.msg}}</p>
         <div class="row" style="margin-bottom: 5px;">
             <label class="control-label col-sm-1" for="email">A <input ng-model="question.correctAnswer" value="1" type="radio"></label>
             <div class="col-sm-11">
+                <p class="error-msg" ng-repeat="error in errors" ng-if="error.param.indexOf('questions['+index+'].contentAnswer1') > -1">{{error.msg}}</p>
                 <textarea name="quizAnswer" ng-model="question.contentAnswer1" rows="4" ck-editor-answer-quiz></textarea>
             </div>
         </div>
         <div class="row" style="margin-bottom: 5px;">
             <label class="control-label col-sm-1" for="email">B <input ng-model="question.correctAnswer" value="2" type="radio"></label>
             <div class="col-sm-11">
+                <p class="error-msg" ng-repeat="error in errors" ng-if="error.param.indexOf('questions['+index+'].contentAnswer2') > -1">{{error.msg}}</p>
                 <textarea name="quizAnswer" ng-model="question.contentAnswer2" rows="4" ck-editor-answer-quiz></textarea>
             </div>
         </div>
         <div class="row" style="margin-bottom: 5px;">
             <label class="control-label col-sm-1" for="email">C <input ng-model="question.correctAnswer" value="3" type="radio"></label>
             <div class="col-sm-11">
+                <p class="error-msg" ng-repeat="error in errors" ng-if="error.param.indexOf('questions['+index+'].contentAnswer3') > -1">{{error.msg}}</p>
                 <textarea name="quizAnswer" ng-model="question.contentAnswer3" rows="4" ck-editor-answer-quiz></textarea>
             </div>
         </div>
         <div class="row" style="margin-bottom: 5px;">
             <label class="control-label col-sm-1" for="email">D <input ng-model="question.correctAnswer" value="4" type="radio"></label>
             <div class="col-sm-11">
+                <p class="error-msg" ng-repeat="error in errors" ng-if="error.param.indexOf('questions['+index+'].contentAnswer4') > -1">{{error.msg}}</p>
                 <textarea name="quizAnswer" ng-model="question.contentAnswer4" rows="4" ck-editor-answer-quiz></textarea>
             </div>
         </div>

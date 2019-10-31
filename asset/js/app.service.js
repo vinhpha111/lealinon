@@ -21,6 +21,23 @@ app.service('$auth', function($rootScope, $http, $location, $window) {
         }
     }
 
+    this.typePost = function(name) {
+        switch (name) {
+            case 'ESSAY':
+                return 1;
+                break;
+            case 'QUIZ':
+                return 2;
+                break;
+            case 'ANNOUNCE':
+                return 3;
+                break;
+            default:
+                return 3;
+                break;
+        }
+    }
+
     this.checkPermission = {
         group : function(listRole, groupId, redirect) {
             return new Promise(function(resolve, reject){
