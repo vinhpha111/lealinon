@@ -51,6 +51,18 @@ function announceType(name) {
     }
 }
 
+function messageType(name) {
+    switch (name) {
+        case 'NEW_MESSAGE':
+            return 1;
+            break;
+    
+        default:
+            return null;
+            break;
+    }
+}
+
 app.controller('announceHeaderController', function($scope, $rootScope, Scopes, $http, socket, Sound){
     $scope.user = $rootScope.current_user;
     $scope.announce = {};
@@ -119,10 +131,38 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         }
     }
 
+    function convertMessage(data){
+        let link = null;
+        let content = null;
+        let clickFunc = null;
+        switch (data.type) {
+            case messageType('NEW_MESSAGE'):
+                link = "#";
+                clickFunc = function(){
+                    openChatBox(data.sender);
+                };
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " đã gửi tin nhắn cho bạn ";
+                break;
+        
+            default:
+                break;
+        }
+        return {
+            _id: data._id,
+            clickFunc : clickFunc,
+            html: "<a href='"+link+"'>"+content+"</a>"
+        }
+    }
+
     function setAnnounceHasSee(ids) {
         $http.put('/api/announce/set_has_see',{
             ids: ids
         }).then();
+    }
+    
+    function openChatBox(user){
+        Scopes.get('scopeChatBox').init(user);
     }
 
     $scope.announce.getList = function(){
@@ -201,4 +241,83 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         Sound.notification();
     });
 
+    // notification message
+
+    $scope.message = {};
+    $scope.message.data = [];
+    $scope.message.exceptIds = [];
+    $scope.message.load = false;
+    $scope.message.hasNew = false;
+    $scope.message.numNew = 0;
+
+    function initListMessage (){
+        $scope.message.load = true;
+        $http.get('/api/announce/get_announce_message', {
+            params: {
+                exceptIds: $scope.message.exceptIds,
+            }
+        })
+        .then(function(res){
+            let datas = res.data;
+            console.log(datas);
+            for(let i in datas){
+                $scope.message.numNew--;
+                $scope.message.exceptIds.push(datas[i]._id)
+                $scope.message.data.push(convertMessage(datas[i]));
+            }
+            if ($scope.message.numNew <= 0) {
+                $scope.message.numNew = 0;
+                $scope.message.hasNew = false;
+            }
+            $scope.message.load = false;
+            setMessageHasSee($scope.message.exceptIds);
+        }, function(err){
+            $scope.message.load = false;
+        })
+    }
+
+    $scope.message.getList = function(){
+        $scope.message.data = [];
+        $scope.message.exceptIds = [];
+        $scope.message.load = false;
+        initListMessage();
+    }
+
+    $scope.message.loadMore = function(){
+        initListMessage();
+    }
+
+    $http.get('/api/announce/get_announce_message_not_see')
+    .then(function(res){
+        let datas = res.data;
+        $scope.message.numNew = res.data.countNotSee;
+        if ($scope.message.numNew > 0) {
+            $scope.message.hasNew = true;
+        }
+    }, function(err){
+    })
+
+    function setMessageHasSee(ids) {
+        $http.put('/api/announce/set_announce_message_has_see',{
+            ids: ids
+        }).then();
+    }
+
+    socket.on('announceMessage', function(data){
+        console.log(data);
+        let userInChatBox = Scopes.get('scopeChatBox').user;
+        if (!userInChatBox || userInChatBox._id !== data.sender) {
+            $scope.$apply(function() { 
+                $scope.message.numNew += 1;
+                $scope.message.hasNew = true;
+            });
+            Sound.notification();   
+        } else if(userInChatBox && userInChatBox._id === data.sender) {
+            $http.delete('/api/announce/delete_announce_message', {
+                params: {
+                    ids: [data._id]
+                }
+            }).then();
+        }
+    });
 });

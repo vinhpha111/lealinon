@@ -13,5 +13,10 @@ app.controller('listFriendController', function($scope, $rootScope, $http, Scope
 
     $scope.getList();
 
+    $scope.showChatBox = function(user) {
+        console.log(user);
+        Scopes.get('scopeChatBox').init(user);
+    }
+
     Scopes.store('scopeListFriend', $scope);
 });
