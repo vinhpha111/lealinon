@@ -8,31 +8,58 @@ function announceType(name) {
         case 'INVITED_JOIN_GROUP':
         return 1;
         break;
-        case 'INVITED_MAKE_FRIEND':
+        case 'ASK_JOIN_GROUP':
         return 2;
         break;
-        case 'ACCEPTED_MAKE_FRIEND':
+        case 'ACCEPTED_JOIN_GROUP':
         return 3;
         break;
-        case 'REFUSED_MAKE_FRIEND':
+        case 'REFUSED_JOIN_GROUP':
         return 4;
         break;
-        case 'HAS_ONE_COMMENT_IN_POST':
+        case 'REMOVED_FROM_GROUP':
         return 5;
         break;
-        case 'HAS_ONE_COMMENT_IN_GROUP':
+        case 'AGREE_JOIN_GROUP':
         return 6;
         break;
-        case 'HAS_MESSAGE':
+        case 'INVITED_MAKE_FRIEND':
         return 7;
         break;
-        case 'HAS_FEEL_IN_POST':
+        case 'ACCEPTED_MAKE_FRIEND':
         return 8;
+        break;
+        case 'REFUSED_MAKE_FRIEND':
+        return 9;
+        break;
+        case 'HAS_ONE_COMMENT_IN_POST':
+        return 10;
+        break;
+        case 'HAS_ONE_COMMENT_IN_GROUP':
+        return 11;
+        break;
+        case 'HAS_MESSAGE':
+        return 12;
+        break;
+        case 'HAS_FEEL_IN_POST':
+        return 13;
         break;
         
         default:
         return null;
         break;
+    }
+}
+
+function messageType(name) {
+    switch (name) {
+        case 'NEW_MESSAGE':
+            return 1;
+            break;
+    
+        default:
+            return null;
+            break;
     }
 }
 
@@ -50,9 +77,49 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         switch (data.type) {
             case announceType('INVITED_JOIN_GROUP'):
                 link = "/group/"+data.group_id._id;
-                content = "<strong>"+data.sender.email+"</strong>"
+                content = "<strong>"+data.sender.name+"</strong>"
                         + " mời bạn tham gia nhóm " 
                         + "<strong>"+data.group_id.name+"</strong>";
+                break;
+            case announceType('ASK_JOIN_GROUP'):
+                link = "/group/"+data.group_id._id+"/management";
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " muốn tham gia nhóm "
+                        + "<strong>"+data.group_id.name+"</strong>";
+                break;
+            case announceType('ACCEPTED_JOIN_GROUP'):
+                link = "/group/"+data.group_id._id;
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " đã cho phép bạn tham gia nhóm "
+                        + "<strong>"+data.group_id.name+"</strong>";
+                break;
+            case announceType('REFUSED_JOIN_GROUP'):
+                link = "#";
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " đã hủy yêu cầu tham gia nhóm "
+                        + "<strong>"+data.group_id.name+"</strong> của bạn";
+                break;
+            case announceType('REMOVED_FROM_GROUP'):
+                link = "#";
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " đã loại bạn ra khỏi nhóm "
+                        + "<strong>"+data.group_id.name+"</strong>";
+                break;
+            case announceType('AGREE_JOIN_GROUP'):
+                link = "#";
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " đã đồng ý tham gia "
+                        + "<strong>"+data.group_id.name+"</strong>";
+                break;
+            case announceType('INVITED_MAKE_FRIEND'):
+                link = "/user/"+data.sender._id;
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " đã gửi lời mời kết bạn đến bạn."
+                break;
+            case announceType('ACCEPTED_MAKE_FRIEND'):
+                link = "/user/"+data.sender._id;
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " đã chấp nhận yêu cầu kết bạn của bạn."
                 break;
         
             default:
@@ -64,10 +131,38 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         }
     }
 
+    function convertMessage(data){
+        let link = null;
+        let content = null;
+        let clickFunc = null;
+        switch (data.type) {
+            case messageType('NEW_MESSAGE'):
+                link = "#";
+                clickFunc = function(){
+                    openChatBox(data.sender);
+                };
+                content = "<strong>"+data.sender.name+"</strong>"
+                        + " đã gửi tin nhắn cho bạn ";
+                break;
+        
+            default:
+                break;
+        }
+        return {
+            _id: data._id,
+            clickFunc : clickFunc,
+            html: "<a href='"+link+"'>"+content+"</a>"
+        }
+    }
+
     function setAnnounceHasSee(ids) {
         $http.put('/api/announce/set_has_see',{
             ids: ids
         }).then();
+    }
+    
+    function openChatBox(user){
+        Scopes.get('scopeChatBox').init(user);
     }
 
     $scope.announce.getList = function(){
@@ -96,7 +191,7 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
             }
             $scope.announce.load = false;
             setAnnounceHasSee($scope.announce.exceptIds);
-        }, function(res){
+        }, function(err){
             $scope.announce.load = false;
         })
     }
@@ -122,7 +217,7 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
             }
             $scope.announce.load = false;
             setAnnounceHasSee($scope.announce.exceptIds);
-        }, function(res){
+        }, function(err){
             $scope.announce.load = false;
         })
     }
@@ -134,7 +229,7 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         if ($scope.announce.numNew > 0) {
             $scope.announce.hasNew = true;
         }
-    }, function(res){
+    }, function(err){
     })
     
     socket.on('announceHeader', function(data){
@@ -146,4 +241,83 @@ app.controller('announceHeaderController', function($scope, $rootScope, Scopes, 
         Sound.notification();
     });
 
+    // notification message
+
+    $scope.message = {};
+    $scope.message.data = [];
+    $scope.message.exceptIds = [];
+    $scope.message.load = false;
+    $scope.message.hasNew = false;
+    $scope.message.numNew = 0;
+
+    function initListMessage (){
+        $scope.message.load = true;
+        $http.get('/api/announce/get_announce_message', {
+            params: {
+                exceptIds: $scope.message.exceptIds,
+            }
+        })
+        .then(function(res){
+            let datas = res.data;
+            console.log(datas);
+            for(let i in datas){
+                $scope.message.numNew--;
+                $scope.message.exceptIds.push(datas[i]._id)
+                $scope.message.data.push(convertMessage(datas[i]));
+            }
+            if ($scope.message.numNew <= 0) {
+                $scope.message.numNew = 0;
+                $scope.message.hasNew = false;
+            }
+            $scope.message.load = false;
+            setMessageHasSee($scope.message.exceptIds);
+        }, function(err){
+            $scope.message.load = false;
+        })
+    }
+
+    $scope.message.getList = function(){
+        $scope.message.data = [];
+        $scope.message.exceptIds = [];
+        $scope.message.load = false;
+        initListMessage();
+    }
+
+    $scope.message.loadMore = function(){
+        initListMessage();
+    }
+
+    $http.get('/api/announce/get_announce_message_not_see')
+    .then(function(res){
+        let datas = res.data;
+        $scope.message.numNew = res.data.countNotSee;
+        if ($scope.message.numNew > 0) {
+            $scope.message.hasNew = true;
+        }
+    }, function(err){
+    })
+
+    function setMessageHasSee(ids) {
+        $http.put('/api/announce/set_announce_message_has_see',{
+            ids: ids
+        }).then();
+    }
+
+    socket.on('announceMessage', function(data){
+        console.log(data);
+        let userInChatBox = Scopes.get('scopeChatBox').user;
+        if (!userInChatBox || userInChatBox._id !== data.sender) {
+            $scope.$apply(function() { 
+                $scope.message.numNew += 1;
+                $scope.message.hasNew = true;
+            });
+            Sound.notification();   
+        } else if(userInChatBox && userInChatBox._id === data.sender) {
+            $http.delete('/api/announce/delete_announce_message', {
+                params: {
+                    ids: [data._id]
+                }
+            }).then();
+        }
+    });
 });

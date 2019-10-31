@@ -1,5 +1,6 @@
 var baseModel = require('./base');
 var groupMember = require('./index').getInstance('group_member');
+var groupAskJoin = require('./index').getInstance('group_ask_join');
 class Group extends baseModel {
     constructor(){
         super('groups');
@@ -14,7 +15,7 @@ class Group extends baseModel {
         if (roleList[name]) {
             return roleList[name]
         }
-        return roleList['NORMAL'];
+        return null;
     }
 
     virtual() {
@@ -28,7 +29,12 @@ class Group extends baseModel {
             getRole : async function(user_id){
                 let member = await groupMember.findOne({group_id: this._id, user_id: user_id});
                 let typeRole = member ? member.type : null;
-                return self.listRole(typeRole);
+                let listRole = self.listRole(typeRole, this);
+                let askJoin = await groupAskJoin.getModel().findOne({group_id: this._id, user_id: user_id});
+                if (askJoin) {
+                    listRole.hasAskJoin = true;
+                }
+                return listRole;
             },
             checkRole : async function(user_id, role){
                 let listRole = await this.getRole(user_id);
@@ -37,46 +43,70 @@ class Group extends baseModel {
         }
     }
 
-    listRole(typeRole){
+    listRole(typeRole, group = null){
         switch (typeRole) {
             case this.ROLE('ADMIN'):
                 return {
                     newPost : true,
+                    listPost: true,
                     deleteGroup : true,
                     editGroup : true,
                     deletePost : true,
                     addMember : true,
+                    listMember: true,
+                    deleteMember: true,
+                    canRemoveFromGroup: false,
+                    setRole: true,
                     joinGroup : true,
+                    hasAskJoin : true,
                 }
                 break;
             case this.ROLE('EDITOR'):
                 return {
                     newPost : true,
+                    listPost: true,
                     deleteGroup : false,
                     editGroup : false,
                     deletePost : false,
                     addMember : true,
+                    listMember: true,
+                    deleteMember: false,
+                    canRemoveFromGroup: true,
+                    setRole: false,
                     joinGroup : true,
+                    hasAskJoin : true,
                 }
                 break;
             case this.ROLE('NORMAL'):
                 return {
-                    newPost : true,
+                    newPost : false,
+                    listPost: true,
                     deleteGroup : false,
                     editGroup : false,
                     deletePost : false,
                     addMember : false,
+                    listMember: true,
+                    deleteMember: false,
+                    canRemoveFromGroup: true,
+                    setRole: false,
                     joinGroup : true,
+                    hasAskJoin : true,
                 }
                 break;
             default:
                 return {
                     newPost : false,
+                    listPost: group ? (group.status !== 2 ? true : false) : false,
                     deleteGroup : false,
                     editGroup : false,
                     deletePost : false,
                     addMember : false,
+                    listMember: false,
+                    deleteMember: false,
+                    canRemoveFromGroup: false,
+                    setRole: false,
                     joinGroup : false,
+                    hasAskJoin : false,
                 }
                 break;
         }
@@ -105,7 +135,7 @@ class Group extends baseModel {
                 { description: new RegExp(query.string) },
             ],
             _id: {
-                $nin: query.exceptIds
+                $nin: query.exceptIds,
             }
         })
         .sort({'created_at': 'desc'})

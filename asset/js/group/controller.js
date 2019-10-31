@@ -5,14 +5,9 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
 
     console.log(current_user);
 
+    $scope.data = {};
     $scope.new = function(){
-        let formData = new FormData();
-        formData.append('name', $scope.name);
-        formData.append('description', $scope.description);
-        $http.post('/api/group/new', {
-            name : $scope.name,
-            description : $scope.description,
-        })
+        $http.post('/api/group/new', $scope.data)
         .then(function(res){
             $scope.errors = null;
             Scopes.get('scopeSidebar').getList();
@@ -24,15 +19,17 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
     }
 });
 
-app.controller('detailGroup', function($scope, $routeParams, $http, Scopes) {
+app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scopes, $auth) {
     $scope.id = $routeParams.id;
     $scope.notFound = false;
     $scope.exceptIds = [];
     $scope.listPost = [];
     $scope.loadingPost = false;
+    $scope.typePost = $auth.typePost;
     $http.get('/api/group/get_by_id/'+$routeParams.id)
     .then(function(res){
         $scope.detail = res.data;
+        console.log(res.data);
     }, function(res){
         $scope.detail = null;
         $scope.notFound = true;
@@ -129,6 +126,22 @@ app.controller('detailGroup', function($scope, $routeParams, $http, Scopes) {
         $scope.invite.canSendInvite = false;
     }
 
+    $scope.joinGroup = function(){
+        $http.post('/api/group/'+$routeParams.id+'/join_group', {
+            message: null
+        })
+        .then(function(res){
+            $route.reload();
+        }, function(err){
+            Scopes.get('scopeMessage').alertMessages = [
+                {
+                    type: 'danger',
+                    content: 'Có lỗi xãy ra, hãy thử lại!'
+                }
+            ];
+        })
+    }
+
 });
 
 app.controller('newPost', function($routeParams, $scope, current_user, $location, $window, $http) {
@@ -183,3 +196,106 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
         console.log('route change');
     });
 });
+
+app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
+    $scope.id = $routeParams.id;
+    $http.get('/api/group/get_by_id/'+$routeParams.id)
+    .then(function(res){
+        $scope.detail = res.data;
+        console.log(res.data);
+    }, function(res){
+        $scope.detail = null;
+        $scope.notFound = true;
+        console.log(res);
+    });
+
+    $http.get('/api/group/'+$routeParams.id+'/get_member')
+    .then(function(res){
+        $scope.members = res.data;
+        console.log(res.data);
+    }, function(res){
+        $scope.members = null;
+        console.log(res);
+    });
+
+    $http.get('/api/group/'+$routeParams.id+'/get_member_ask_join')
+    .then(function(res){
+        $scope.memberAskJoin = res.data;
+        console.log(res.data);
+    }, function(res){
+        $scope.memberAskJoin = null;
+        console.log(res);
+    });
+
+    $scope.acceptJoin = function(index){
+        $http.post('/api/group/'+$routeParams.id+'/accept_join', {
+            user_id: $scope.memberAskJoin[index]._id
+        })
+        .then(function(res){
+            $scope.members.unshift(res.data);
+            $scope.memberAskJoin[index].activeAskJoinBtn = false;
+            $scope.memberAskJoin.splice(index, 1);
+        }, function(err){
+            $scope.memberAskJoin[index].activeAskJoinBtn = false;
+            Scopes.get('scopeMessage').alertMessages = [
+                {
+                    type: 'danger',
+                    content: 'Có lỗi xãy ra, hãy thử lại!'
+                }
+            ];
+        });
+    }
+
+    $scope.refuseJoin = function(index){
+        $http.post('/api/group/'+$routeParams.id+'/refuse_join', {
+            user_id: $scope.memberAskJoin[index]._id
+        })
+        .then(function(res){
+            $scope.memberAskJoin[index].activeAskJoinBtn = false;
+            $scope.memberAskJoin.splice(index, 1);
+        }, function(err){
+            $scope.memberAskJoin[index].activeAskJoinBtn = false;
+            Scopes.get('scopeMessage').alertMessages = [
+                {
+                    type: 'danger',
+                    content: 'Có lỗi xãy ra, hãy thử lại!'
+                }
+            ];
+        });
+    }
+
+    $scope.removeMember = null;
+
+    $scope.openPopupRemoveMember = function(member){
+        $scope.removeMember = member;
+    }
+
+    $scope.removeMemberAccept = function(){
+        console.log('sdfsfsdf');
+        $http.delete('/api/group/'+$routeParams.id+'/remove_member', {
+            params : {
+                user_id: $scope.removeMember.user_id._id
+            }
+        })
+        .then(function(res){
+            for (const i in $scope.members) {
+                if ($scope.members[i] === $scope.removeMember) {
+                    $scope.members.splice(i, 1);
+                }
+            }
+            $scope.removeMember = null;
+        }, function(err){
+            $scope.removeMember = null;
+            Scopes.get('scopeMessage').alertMessages = [
+                {
+                    type: 'danger',
+                    content: 'Có lỗi xãy ra, hãy thử lại!'
+                }
+            ];
+        });
+    }
+
+    $scope.accept = function(){
+        console.log("accept");
+    }
+})

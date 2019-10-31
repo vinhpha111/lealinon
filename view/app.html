@@ -32,13 +32,22 @@
   <script src="/js/app.filter.js"></script>
   <script src="/js/group/controller.js"></script>
   <script src="/js/search/controller.js"></script>
+  <script src="/js/user/controller.js"></script>
   <script src="/js/component/sidebar/index.js"></script>
+  <script src="/js/component/listFriend/index.js"></script>
+  <script src="/js/component/chatBox/index.js"></script>
   <script src="/js/component/alertMessage/index.js"></script>
   <script src="/js/component/announceHeader/index.js"></script>
+  <script src="/js/component/popup/index.js"></script>
   <script src="/js/framework/ckeditor/ckeditor.js"></script>
   <script src = "/socket.io/socket.io.js"></script>
 </head>
 <body ng-app="app" ng-controller="mainCtrl">
+  <div ng-bind="htmlSeo">
+    <% if(typeof htmlSeo !== 'undefined'){ %> 
+    <%- htmlSeo %> 
+    <% } %>
+  </div>
   <div class="container">
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -61,11 +70,13 @@
             <li ng-if="!current_user"><a href="<%= base_url('register') %>" target="_self"></span> Register</a></li>
             <li class="">
               <div class="dropdown dropdown-user" ng-if="current_user" style="margin-top: 10px">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{current_user.email}}
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                  <img class="icon-user-dropdown" src="{{current_user.avatar_path}}">&nbsp;&nbsp;
+                  {{current_user.name}}
                   <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a href="#">Quản lý tài khoản</a></li>
+                  <li><a href="/user/{{current_user._id}}">Quản lý tài khoản</a></li>
                   <li><a href="#">Đăng xuất</a></li>
                 </ul>
               </div>
@@ -84,13 +95,11 @@
         <div class="col-sm-8 text-left content-center">
           <div ng-view autoscroll="true"></div>
         </div>
-        <div class="col-sm-2 sidenav text-left">
-          <div class="well">
-            <p>ADS</p>
+        <div style="padding-left: 0px; padding-right: 0px;" class="col-sm-2 sidenav text-left">
+          <div style="position: relative;">
+              <chat-box></chat-box>
           </div>
-          <div class="well">
-            <p>ADS</p>
-          </div>
+          <list-friend></list-friend>
         </div>
       </div>
     </div>

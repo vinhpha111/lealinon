@@ -1,9 +1,10 @@
 var mongoose = require('mongoose');
 var schema = mongoose.Schema;
 var chat_messages = schema({
-    room : [{ type: Schema.Types.ObjectId, ref: 'rooms' }],
-    user : [{ type: Schema.Types.ObjectId, ref: 'users' }],
+    to : { type: schema.Types.ObjectId, ref: 'users' },
+    from : { type: schema.Types.ObjectId, ref: 'users' },
     message : String,
+    has_see: Boolean,
     created_at : Date,
     updated_at : Date
 }, {collection : 'chat_messages'});

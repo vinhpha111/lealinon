@@ -4,6 +4,7 @@
         <i ng-click="announce.getList()" ng-class="{'has-new':announce.hasNew}" class="fa fa-bell dropdown-toggle" data-toggle="dropdown" style="font-size:28px;color:rgb(0, 225, 255); cursor: pointer;"><span class="num">{{announce.numNew}}</span></i>
         <ul class="dropdown-menu">
             <li ng-if="announce.data" ng-repeat="row in announce.data" ng-bind-html="row.html"></li>
+            <li class="text-center" ng-if="announce.data.length === 0 && !announce.load">Không có gì mới</li>
             <li class="text-center" ng-if="announce.load"><i class="fa fa-spinner fa-spin"></i></li>
             <a href="#" ng-click="announce.loadMore()"><h6 class="text-center more">Xem thêm</h6></a>
         </ul>
@@ -11,12 +12,12 @@
 </li>
 <li class="item" style="float: right;">
     <div class="dropdown" style="margin: 12px; float: right;">
-        <i class="fa fa-wechat has-new dropdown-toggle" data-toggle="dropdown" style="font-size:28px;color:rgb(0, 225, 255); cursor: pointer;"></i>
+        <i ng-click="message.getList()" ng-class="{'has-new':message.hasNew}" class="fa fa-wechat dropdown-toggle" data-toggle="dropdown" style="font-size:28px;color:rgb(0, 225, 255); cursor: pointer;"><i style="color: red;" class="fa fa-circle icon-new"></i></i>
         <ul class="dropdown-menu">
-            <li><a href="#">HTML HTML HTML HTML HTML HTML HTML HTML</a></li>
-            <li><a href="#">CSS</a></li>
-            <li><a href="#">JavaScript</a></li>
-            <a href="#"><h6 class="text-center more">more</h6></a>
+            <li ng-if="message.data" ng-repeat="row in message.data" ng-bind-html="row.html" ng-click="row.clickFunc()"></li>
+            <li class="text-center" ng-if="message.data.length === 0 && !message.load">Không có gì mới</li>
+            <li class="text-center" ng-if="message.load"><i class="fa fa-spinner fa-spin"></i></li>
+            <a href="#" ng-click="message.loadMore()"><h6 class="text-center more">Xem thêm</h6></a>
         </ul>
     </div>
 </li>

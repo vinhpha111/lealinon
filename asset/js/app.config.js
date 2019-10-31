@@ -9,6 +9,10 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
         template: "<h1>Hello! this is index</h1>"
     })
 
+    .when('/test-seo', {
+        template: "<h1>Hello! this is index</h1>"
+    })
+
     .when('/detail', {
         templateUrl: 'js/detail/detail.html'
     })
@@ -57,6 +61,30 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
             permission : function($auth, $route){
                 let roleList = [$auth.role.group.ADMIN, $auth.role.group.EDITOR];
                 return $auth.checkPermission.group(roleList, $route.current.params.id, '/group/'+$route.current.params.id);
+            }
+        }
+    })
+
+    .when('/group/:id/management', {
+        templateUrl: 'js/group/management.html',
+        controller: 'managementGroup',
+        resolve : {
+            current_user : function($auth){
+                return $auth.getUser();
+            },
+            permission : function($auth, $route){
+                let roleList = [$auth.role.group.ADMIN, $auth.role.group.EDITOR];
+                return $auth.checkPermission.group(roleList, $route.current.params.id, '/group/'+$route.current.params.id);
+            }
+        }
+    })
+
+    .when('/user/:id', {
+        templateUrl: 'js/user/profile.html',
+        controller: 'profileUser',
+        resolve : {
+            current_user : function($auth){
+                return $auth.getUser();
             }
         }
     })

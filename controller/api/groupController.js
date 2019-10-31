@@ -2,7 +2,10 @@ var app = {}
 var model = require('./../../model');
 var Group = model.getInstance('groups');
 var groupMemberModel = model.getInstance('group_member');
-const {validationResult} = require('express-validator');
+var groupInviteJoin = model.getInstance('group_invite_join');
+var groupAskJoin = model.getInstance('group_ask_join');
+var announce = model.getInstance('announces');
+const {validationResult, check} = require('express-validator');
 var datetime = require('node-datetime');
 var pastDateTime = datetime.create();
 
@@ -15,6 +18,7 @@ app.new = async (req, res) => {
     let data = {
         user_created : req.user._id,
         name : req.body.name,
+        status : req.body.status,
         description: req.body.description,
         slug : convertToSlug(req.body.name),
         created_at : pastDateTime.now()
@@ -38,7 +42,7 @@ app.listInSidebar = async (req, res) => {
         return res.status(403).send(null);
     }
 
-    let list = await Group.find({user_created: req.user._id});
+    let list = await groupMemberModel.listGroupByMember(req.user._id);
     return res.json(list)
 }
 
@@ -55,8 +59,6 @@ app.getById = async (req, res) => {
 }
 
 app.inviteJoinGroup = async (req, res) => {
-    let groupInviteJoin = model.getInstance('group_invite_join');
-    let announce = model.getInstance('announces');
     let userIds = req.body.ids;
     let dataInvites = [];
     let dataAnnounces = [];
@@ -79,8 +81,15 @@ app.inviteJoinGroup = async (req, res) => {
             updated_at : pastDateTime.now(),
         })
     }
+    await groupInviteJoin.getModel().deleteMany({
+        group_id: req.params.id, 
+        invited_users: { $in: userIds }, 
+        type : announce.TYPE('INVITED_JOIN_GROUP'),
+        sender : req.user._id,
+    });
     let invites = await groupInviteJoin.insertMany(dataInvites);
     if (invites) {
+        await announce.getModel().deleteMany({group_id: req.params.id, user_id: { $in: userIds }});
         let announces = await announce.insertMany(dataAnnounces);
         for(let i in announces){
             io.sockets.in(announces[i].user_id).emit('announceHeader', announces[i]);
@@ -90,6 +99,73 @@ app.inviteJoinGroup = async (req, res) => {
     return res.status(500).send(null);
 }
 
+app.joinGroup = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+    let id = req.params.id;
+    let group = await Group.getModel().findOne({_id: id});
+    if (group && ! await group.checkRole(req.user._id, 'joinGroup')) {
+        let dataAnnouce = [];
+        let inviteJoin = await groupInviteJoin.getModel().findOne({
+            invited_users: req.user._id,
+            group_id: id,
+        });
+        if (inviteJoin) {
+            groupMemberModel.add({
+                group_id: id,
+                user_id: req.user._id,
+                type: Group.ROLE('NORMAL')
+            });
+            groupInviteJoin.getModel().deleteOne({_id: inviteJoin._id});
+
+            let memberInGroups = await groupMemberModel.getModel().find({group_id: id});
+            for(let index in memberInGroups){
+                if (memberInGroups[index].user_id !== req.user._id) {
+                    dataAnnouce.push({
+                        user_id : memberInGroups[index].user_id,
+                        type : announce.TYPE('AGREE_JOIN_GROUP'),
+                        group_id : id,
+                        sender : req.user._id,
+                        created_at : pastDateTime.now(),
+                        updated_at : pastDateTime.now(),
+                    });   
+                }
+            }
+        } else {
+            await groupAskJoin.add({
+                user_id: req.user._id,
+                group_id: id,
+                message: req.body.message
+            });
+
+            let memberInGroups = await groupMemberModel.getModel().find({
+                group_id: id, 
+                type: {$in: [Group.ROLE("ADMIN"), Group.ROLE("EDITOR")]}
+            });
+            for(let index in memberInGroups){
+                if (memberInGroups[index].user_id !== req.user._id) {
+                    dataAnnouce.push({
+                        user_id : memberInGroups[index].user_id,
+                        type : announce.TYPE('ASK_JOIN_GROUP'),
+                        group_id : id,
+                        sender : req.user._id,
+                        created_at : pastDateTime.now(),
+                        updated_at : pastDateTime.now(),
+                    });   
+                }
+            }
+        }
+
+        announce.insertMany(dataAnnouce);
+        for(let i in dataAnnouce) {
+            io.sockets.in(dataAnnouce[i].user_id).emit('announceHeader', dataAnnouce[i]);
+        }
+        return res.send(null);
+    }
+    return res.status(403).send(null);
+}
+
 app.getPermission = async (req, res) => {
     if (!req.user) {
         return res.status(403).send(null);
@@ -97,6 +173,128 @@ app.getPermission = async (req, res) => {
     let id = req.params.id;
     let role = await groupMemberModel.findOne({group_id: id, user_id: req.user._id});
     res.json({roles: [role ? role.type : null]});
+}
+
+app.getMember = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+    let id = req.params.id;
+    let group = await Group.findOne({_id: id});
+    if (! await group.checkRole(req.user, 'listMember')) {
+        return res.status(403).send(null);
+    }
+    let list = await groupMemberModel.getMember(id);
+    return res.json(list);
+}
+
+app.getMemberAskJoin = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+    let id = req.params.id;
+    let group = await Group.findOne({_id: id});
+    if (! await group.checkRole(req.user, 'addMember')) {
+        return res.status(403).send(null);
+    }
+    let list = await groupAskJoin.getMemberAskJoin(id);
+    return res.json(list);
+}
+
+app.acceptJoin = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+    let id = req.params.id;
+    let userId = req.body.user_id;
+    let group = await Group.findOne({_id: id});
+    if (! await group.checkRole(req.user._id, 'addMember')) {
+        return res.status(403).send(null);
+    }
+
+    let newMember = await groupMemberModel.add({
+        group_id: id,
+        user_id: userId,
+        type: Group.ROLE('NORMAL'),
+        user_created: req.user._id,
+    });
+
+    await groupAskJoin.getModel().deleteOne({
+        group_id: id,
+        user_id: userId
+    });
+
+    let announceData = await announce.add({
+        user_id : userId,
+        type : announce.TYPE('ACCEPTED_JOIN_GROUP'),
+        group_id : id,
+        sender : req.user._id,
+        created_at : pastDateTime.now(),
+        updated_at : pastDateTime.now(),
+    });
+
+    io.sockets.in(userId).emit('announceHeader', announceData);
+
+    let member = await groupMemberModel.getModel().findOne({group_id: id, user_id: userId}).populate('user_id', '-encrypt_password');
+    return res.json(member);
+}
+
+app.refuseJoin = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+    let id = req.params.id;
+    let userId = req.body.user_id;
+    let group = await Group.findOne({_id: id});
+    if (! await group.checkRole(req.user._id, 'addMember')) {
+        return res.status(403).send(null);
+    }
+
+    await groupAskJoin.getModel().deleteOne({
+        group_id: id,
+        user_id: userId
+    });
+
+    let announceData = await announce.add({
+        user_id : userId,
+        type : announce.TYPE('REFUSED_JOIN_GROUP'),
+        group_id : id,
+        sender : req.user._id,
+        created_at : pastDateTime.now(),
+        updated_at : pastDateTime.now(),
+    });
+
+    io.sockets.in(userId).emit('announceHeader', announceData);
+
+    res.send(null);
+}
+
+app.removeFromGroup = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+    let id = req.params.id;
+    let userId = req.query.user_id;
+    console.log(userId);
+    let group = await Group.findOne({_id: id});
+    console.log(await group.checkRole(req.user._id, 'deleteMember'));
+    console.log(await group.checkRole(userId, 'canRemoveFromGroup'));
+    if (! await group.checkRole(req.user._id, 'deleteMember') || ! await group.checkRole(userId, 'canRemoveFromGroup')) {
+        return res.status(403).send(null);
+    }
+
+    await groupMemberModel.getModel().deleteMany({group_id: id, user_id: userId});
+    let announceData = await announce.add({
+        user_id : userId,
+        type : announce.TYPE('REMOVED_FROM_GROUP'),
+        group_id : id,
+        sender : req.user._id,
+        created_at : pastDateTime.now(),
+        updated_at : pastDateTime.now(),
+    });
+    io.sockets.in(userId).emit('announceHeader', announceData);
+
+    res.send(null);
 }
 
 module.exports = app;

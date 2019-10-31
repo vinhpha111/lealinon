@@ -3,10 +3,13 @@ var app = angular.module('app', [
 ]);
 
 app.run(function($rootScope, $http, socket, $location, Scopes){
-    $http.get("api/current_user")
-    .then(function(response) {
-        $rootScope.current_user = response.data;
-    });
+    $rootScope.getCurrentUser = function(){
+        $http.get("api/current_user")
+        .then(function(response) {
+            $rootScope.current_user = response.data;
+        });
+    }
+    $rootScope.getCurrentUser();
 
     socket.init();
     socket.on('announce', function(data){
