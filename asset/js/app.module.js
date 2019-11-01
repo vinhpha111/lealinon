@@ -4,7 +4,7 @@ var app = angular.module('app', [
 
 app.run(function($rootScope, $http, socket, $location, Scopes){
     $rootScope.getCurrentUser = function(){
-        $http.get("api/current_user")
+        $http.get("api/user/current_user")
         .then(function(response) {
             $rootScope.current_user = response.data;
         });
@@ -22,10 +22,16 @@ app.run(function($rootScope, $http, socket, $location, Scopes){
     });
 });
 
-app.controller('mainCtrl', function($scope, $location, Scopes) {
+app.controller('mainCtrl', function($scope, $location, Scopes, seoInfo) {
     $scope.stringSearch = "";
     $scope.search = function(string){
         $location.path('/search').search({string: string});
     }
     Scopes.store('scopeMainCtrl', $scope);
+
+    $scope.seoInfo = seoInfo;
+
+    $scope.$on('$routeChangeStart', function (event, current, previous) {
+        seoInfo.setTitle(current.$$route.title);
+    });
 });

@@ -94,7 +94,9 @@ app.getListByGroup = async (req, res) => {
     let groupId = req.params.id;
     let exceptIds = req.query.exceptIds;
     let group = await Group.getModel().findOne({_id: groupId});
-    if (! await group.checkRole(req.user, 'listPost')) {
+    let userId = req.user ? req.user._id : null;
+    
+    if (!group || ! await group.checkRole(userId, 'listPost')) {
         return res.status(403).send(null);
     }
     let query = {
@@ -110,7 +112,13 @@ app.getListByGroup = async (req, res) => {
         }
     }
     let listPost = await Post.getModel().find(query, null, action).populate('user_created');
-    res.send(listPost);
+
+    let datas = [];
+    for(let i in listPost) {
+        datas[i] = listPost[i].toJSON();
+        datas[i].role = await listPost[i].getRole(await group.roleInGroup(userId));
+    }
+    res.send(datas);
 }
 
 module.exports = app;

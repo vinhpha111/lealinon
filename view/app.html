@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:ng="http://angularjs.org">
+<html lang="en" xmlns:ng="http://angularjs.org" ng-app="app" ng-controller="mainCtrl">
 <head>
-  <title>Bootstrap Example</title>
+  <title ng-bind="seoInfo.title()"></title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="/">
@@ -42,7 +42,7 @@
   <script src="/js/framework/ckeditor/ckeditor.js"></script>
   <script src = "/socket.io/socket.io.js"></script>
 </head>
-<body ng-app="app" ng-controller="mainCtrl">
+<body>
   <div ng-bind="htmlSeo">
     <% if(typeof htmlSeo !== 'undefined'){ %> 
     <%- htmlSeo %> 
