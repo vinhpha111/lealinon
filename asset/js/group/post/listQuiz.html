@@ -1,7 +1,8 @@
 <div class="panel panel-default">
     <div class="panel-heading" style="position: relative;">
         {{ post.user_created.name }} đã tạo bài thi trắc nghiệm.
-        <a href="#" class="btn btn-success btn-sm do-exam">Làm bài <i class='fa fa-angle-double-right'></i></a>
+        <a ng-if="post.role.doExam" href="#" class="btn btn-success btn-sm do-exam">Làm bài <i class='fa fa-angle-double-right'></i></a>
+        <a ng-if="post.role.setNotify" href="#" class="btn btn-success btn-sm set-notify-btn">Đặt lịch <i class="fa fa-bell"></i></a>
     </div>
     <div class="panel-body" ng-init="post.numLimit = post.content.length > 1000 ? 1000 : null; post.more = post.content.length < 1000;">
         <h3><strong>{{ post.title }}</strong></h3>

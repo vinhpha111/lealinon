@@ -57,7 +57,8 @@ class postGroup extends baseModel {
                     evaluateExam: true,
                     comment: true,
                     setFeel: true,
-                    doExam: false
+                    doExam: false,
+                    setNotify: false,
                 }
                 break;
             case this.ROLE('EDITOR'):
@@ -69,7 +70,8 @@ class postGroup extends baseModel {
                     evaluateExam: true,
                     comment: true,
                     setFeel: true,
-                    doExam: false
+                    doExam: false,
+                    setNotify: false,
                 }
                 break;
             case this.ROLE('NORMAL'):
@@ -81,7 +83,8 @@ class postGroup extends baseModel {
                     evaluateExam: false,
                     comment: true,
                     setFeel: true,
-                    doExam: true
+                    doExam: true,
+                    setNotify: true,
                 }
                 break;
             default:
@@ -93,7 +96,8 @@ class postGroup extends baseModel {
                     evaluateExam: false,
                     comment: false,
                     setFeel: false,
-                    doExam: false
+                    doExam: false,
+                    setNotify: false,
                 }
                 break;
         }

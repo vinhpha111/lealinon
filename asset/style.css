@@ -238,7 +238,7 @@ h1 {
 }
 
 
-.do-exam {
+.do-exam, .set-notify-btn {
     position: absolute;
     right: 5px;
     top: 5px;
