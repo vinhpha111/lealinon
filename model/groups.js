@@ -26,6 +26,11 @@ class Group extends baseModel {
     methods() {
         let self = this;
         return {
+            roleInGroup : async function(user_id) {
+                let member = await groupMember.findOne({group_id: this._id, user_id: user_id});
+                let typeRole = member ? member.type : null;
+                return typeRole;
+            },
             getRole : async function(user_id){
                 let member = await groupMember.findOne({group_id: this._id, user_id: user_id});
                 let typeRole = member ? member.type : null;

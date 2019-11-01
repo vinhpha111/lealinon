@@ -21,6 +21,88 @@ class postGroup extends baseModel {
         }
     }
 
+    ROLE(name = null){
+        let roleList = {
+            ADMIN : 1,
+            EDITOR : 2,
+            NORMAL : 3,
+        }
+        if (roleList[name]) {
+            return roleList[name]
+        }
+        return null;
+    }
+
+    methods() {
+        let self = this;
+        return {
+            getRole : async function(mainRole){
+                return self.listRole(mainRole);
+            },
+            checkRole : async function(mainRole, role){
+                let listRole = await this.getRole(mainRole);
+                return self.roleCan(role, listRole);
+            }
+        }
+    }
+
+    listRole(typeRole){
+        switch (typeRole) {
+            case this.ROLE('ADMIN'):
+                return {
+                    edit: true,
+                    delete: true,
+                    stopExam: true,
+                    publicExam: true,
+                    evaluateExam: true,
+                    comment: true,
+                    setFeel: true,
+                    doExam: false
+                }
+                break;
+            case this.ROLE('EDITOR'):
+                return {
+                    edit: true,
+                    delete: false,
+                    stopExam: true,
+                    publicExam: true,
+                    evaluateExam: true,
+                    comment: true,
+                    setFeel: true,
+                    doExam: false
+                }
+                break;
+            case this.ROLE('NORMAL'):
+                return {
+                    edit: false,
+                    delete: false,
+                    stopExam: false,
+                    publicExam: false,
+                    evaluateExam: false,
+                    comment: true,
+                    setFeel: true,
+                    doExam: true
+                }
+                break;
+            default:
+                return {
+                    edit: false,
+                    delete: false,
+                    stopExam: false,
+                    publicExam: false,
+                    evaluateExam: false,
+                    comment: false,
+                    setFeel: false,
+                    doExam: false
+                }
+                break;
+        }
+    }
+
+    roleCan(type, listRole){
+        return listRole[type] ? true : false; 
+    }
+
     findByString(query){
         let list = this.getModel().aggregate()
         .lookup({

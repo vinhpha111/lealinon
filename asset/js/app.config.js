@@ -18,6 +18,7 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
     })
 
     .when('/search', {
+        title: 'Tìm kiếm',
         templateUrl: 'js/search/index.html',
         controller: 'searchController',
         resolve : {

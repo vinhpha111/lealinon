@@ -9,9 +9,7 @@ var cookieParser = require('cookie-parser');
 var flash = require('express-flash');
 var path = require('path');
 var auth = require('./controller/middleware/authController');
-var apiRoute = require('./route/api');
-var webRoute = require('./route/web');
-// var io = require('socket.io')(http);
+var mainRoute = require('./route');
 global.io = require('./socket')(http)
 require('dotenv').config();
 
@@ -73,10 +71,7 @@ app.use(session({
 app.use(cookieParser());
 app.use(flash());
 
-app.use('/api', auth);
-app.use('/api', apiRoute);
-
-app.use('/', webRoute);
+app.use(mainRoute);
 
 http.listen(process.env.PORT || 3000, () => {
     console.log('listening on port 3000');

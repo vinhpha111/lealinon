@@ -19,5 +19,17 @@ module.exports = function(Class = null){
             post_groups.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
         }
     }
+    if (typeof Class['methods'] === 'function') {
+        let methods = Class.methods();
+        for (let name in methods) {
+            post_groups.methods[name] = methods[name];
+        }
+    }
+    if (typeof Class['postMiddleware'] === 'function') {
+        let postMiddlewares = Class.postMiddleware();
+        for (let type in postMiddlewares) {
+            post_groups.post(type, postMiddlewares[type]);
+        }
+    }
     return mongoose.model('post_groups', post_groups);
 }
