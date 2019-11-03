@@ -73,9 +73,6 @@ app.use(flash());
 
 app.use(mainRoute);
 
-var moment = require('moment');
-console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
-
 http.listen(process.env.PORT || 3000, () => {
     console.log('listening on port 3000');
 });
