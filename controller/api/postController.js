@@ -116,7 +116,7 @@ app.getListByGroup = async (req, res) => {
     let datas = [];
     for(let i in listPost) {
         datas[i] = listPost[i].toJSON();
-        datas[i].role = await listPost[i].getRole(await group.roleInGroup(userId));
+        datas[i].role = await listPost[i].getRole(await group.roleInGroup(userId), userId);
     }
     res.send(datas);
 }

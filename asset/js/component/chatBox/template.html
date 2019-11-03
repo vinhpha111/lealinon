@@ -7,15 +7,16 @@
             <div ng-class="{darker: message.from === current_user._id}" class="row-message">
                 <img ng-class="{right: message.from === current_user._id}" 
                 src="{{message.from === current_user._id ? current_user.avatar_path : user.avatar_path}}" alt="Avatar">
-                <p>{{message.message}}</p>
+                <div class="message" ng-bind-html="message.message"></div>
                 <span ng-class="{'time-left': message.from === current_user._id, 'time-right': message.from !== current_user._id}">{{message.created_at | timeChatBox}}</span>
             </div>
         </div>
     </div>
     <div class="panel-footer">
         <div class="input-group">
-            <input type="text" ng-model="message" class="form-control" placeholder="Search">
-            <div class="input-group-btn">
+            <!-- <input type="text" ng-model="message" class="form-control" placeholder="Search"> -->
+            <textarea class="form-control input-chat" onkeyup="textAreaAdjust(this)" ng-model="message" enter-submit="sendMessage(message); message = ''"></textarea>
+            <div class="input-group-btn send-button">
                 <button ng-click="sendMessage(message); message = ''" class="btn btn-default" type="button">
                     <span class="glyphicon glyphicon-send"></span>
                 </button>
@@ -24,12 +25,25 @@
     </div>
 </div>
 
+<script>
+    function textAreaAdjust(o) {
+        let oldHeight = 5+o.scrollHeight;
+        o.style.height = "1px";
+        let height = 5+o.scrollHeight;
+        if (height <= 80) {
+            o.style.height = height+"px";   
+        } else {
+            o.style.height = oldHeight+"px";
+        }
+    }
+</script>
+
 <style>
     .chat-box {
-        width: 240px;
+        width: 300px;
         position: absolute;
-        top: calc(100vh - 455px);
-        left: -240px;
+        bottom: calc(50px - 100vh);
+        left: -300px;
     }
     
     .chat-box .panel-heading {
@@ -62,6 +76,16 @@
     .chat-box .panel-footer {
         padding: 2px;
     }
+
+    .chat-box .panel-footer .input-chat {
+        height: 37px;
+        resize: none;
+        max-height: 80px;
+    }
+
+    .chat-box .panel-footer .send-button{
+        vertical-align: top;
+    }
     
     
     .row-message {
@@ -70,6 +94,13 @@
         border-radius: 5px;
         padding: 10px;
         margin: 10px 0;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        hyphens: auto;
+    }
+
+    .row-message .message * {
+        font-size: 14px !important;
     }
     
     .darker {

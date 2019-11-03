@@ -61,12 +61,12 @@
     <div class="row" ng-if="quiz.setTime">
         <div class="form-group col-md-6">
             <label for="start-date">Bắt đầu:</label>
-            <input type="text" id="start-date" datetime="dd-MM-yyyy HH:mm" datetime-model="yyyy-MM-dd HH:mm:ss" class="form-control" ng-model="quiz.startDate">
+            <input type="text" id="start-date" datetime-timezone="+0000" datetime="dd-MM-yyyy HH:mm" datetime-model="yyyy-MM-dd HH:mm:ss" class="form-control" ng-model="quiz.startDate">
             <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'startDate'">{{error.msg}}</p>
         </div>
         <div class="form-group col-md-6">
             <label for="end-date">Kết thúc:</label>
-            <input type="text" datetime="dd-MM-yyyy HH:mm" datetime-model="yyyy-MM-dd HH:mm:ss" class="form-control" id="end-date" ng-model="quiz.endDate">
+            <input type="text" datetime-timezone="+0000" datetime="dd-MM-yyyy HH:mm" datetime-model="yyyy-MM-dd HH:mm:ss" class="form-control" id="end-date" ng-model="quiz.endDate">
             <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'endDate'">{{error.msg}}</p>
         </div>
     </div>
