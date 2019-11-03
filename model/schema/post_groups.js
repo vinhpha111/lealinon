@@ -8,6 +8,7 @@ var post_groups = schema({
     group : { type: schema.Types.ObjectId, ref: 'groups' },
     start_at : Date,
     end_at : Date,
+    has_stop : { type: Boolean, default: false },
     created_at : Date,
     updated_at : Date
 }, {collection : 'post_groups'});

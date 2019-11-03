@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading" style="position: relative;">
-        {{ post.user_created.name }} đã tạo bài thi trắc nghiệm.
+        {{ post.user_created.name }} đã tạo bài thi trắc nghiệm. {{ post.start_at | timeChatBox }}
         <a ng-if="post.role.doExam" href="#" class="btn btn-success btn-sm do-exam">Làm bài <i class='fa fa-angle-double-right'></i></a>
         <a ng-if="post.role.setNotify" href="#" class="btn btn-success btn-sm set-notify-btn">Đặt lịch <i class="fa fa-bell"></i></a>
     </div>

@@ -1,4 +1,6 @@
 var baseModel = require('./base');
+var datetime = require('node-datetime');
+var pastDateTime = datetime.create();
 class postGroup extends baseModel {
     constructor(){
         super('post_groups');
@@ -36,8 +38,8 @@ class postGroup extends baseModel {
     methods() {
         let self = this;
         return {
-            getRole : async function(mainRole){
-                return self.listRole(mainRole);
+            getRole : async function(mainRole, userId){
+                return self.listRole(mainRole, this, userId);
             },
             checkRole : async function(mainRole, role){
                 let listRole = await this.getRole(mainRole);
@@ -46,7 +48,24 @@ class postGroup extends baseModel {
         }
     }
 
-    listRole(typeRole){
+    listRole(typeRole, post, userId){
+        let doExam = true;
+        let setNotify = false;
+        if (post.start_at && post.end_at) {
+            let startTime = (new Date(post.start_at)).getTime();
+            let endTime = (new Date(post.end_at)).getTime();
+            let nowTime = pastDateTime.now();
+            if (nowTime - endTime > 0 || startTime - nowTime > 0 || post.has_stop) {
+                doExam = false;
+            }
+            if (startTime - nowTime > 0) {
+                setNotify = true;   
+            }
+        }
+        if (userId === post.user_created) {
+            doExam = false;
+            setNotify = false;
+        }
         switch (typeRole) {
             case this.ROLE('ADMIN'):
                 return {
@@ -57,8 +76,8 @@ class postGroup extends baseModel {
                     evaluateExam: true,
                     comment: true,
                     setFeel: true,
-                    doExam: false,
-                    setNotify: false,
+                    doExam: doExam,
+                    setNotify: setNotify,
                 }
                 break;
             case this.ROLE('EDITOR'):
@@ -70,8 +89,8 @@ class postGroup extends baseModel {
                     evaluateExam: true,
                     comment: true,
                     setFeel: true,
-                    doExam: false,
-                    setNotify: false,
+                    doExam: doExam,
+                    setNotify: setNotify,
                 }
                 break;
             case this.ROLE('NORMAL'):
@@ -83,8 +102,8 @@ class postGroup extends baseModel {
                     evaluateExam: false,
                     comment: true,
                     setFeel: true,
-                    doExam: true,
-                    setNotify: true,
+                    doExam: doExam,
+                    setNotify: setNotify,
                 }
                 break;
             default:

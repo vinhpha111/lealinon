@@ -67,8 +67,9 @@ app.controller('chatBoxController', async function($scope, $rootScope, $http, Sc
         $('.chat-box .panel-body').scrollTop($('.chat-box .panel-body')[0].scrollHeight);
     }
 
-    $scope.sendMessage = function(message){
-        console.log(message);
+    $scope.sendMessage = function(msg){
+        console.log(msg);
+        let message = msg.replace(/\n/g, "<br />");
         if (message.length > 0) {
             $http.post('/api/chat/user/'+$scope.user._id+'/add_message', {
                 message: message,

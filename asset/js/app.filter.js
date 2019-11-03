@@ -6,6 +6,9 @@ app.filter("html", ['$sce', function($sce) {
 
 app.filter('timeChatBox', function(){
   return function(date) {
+    if (!date) {
+      return null;
+    }
     let dateTime = new Date(date);
     let dateFormat = zeroLead(dateTime.getDate())
             +'/'+zeroLead(dateTime.getMonth() + 1)
