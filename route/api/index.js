@@ -16,6 +16,7 @@ route.use('/announce', require('./announce.js'));
 
 route.use('/image', require('./image.js'));
 
+route.use('/post', require('./post.js'));
 
 route.all('/*', (req, res) => {
     res.status(404);

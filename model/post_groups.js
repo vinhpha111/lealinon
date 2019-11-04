@@ -1,6 +1,7 @@
 var baseModel = require('./base');
 var datetime = require('node-datetime');
 var pastDateTime = datetime.create();
+var ObjectId = require('mongodb').ObjectID;
 class postGroup extends baseModel {
     constructor(){
         super('post_groups');
@@ -171,6 +172,14 @@ class postGroup extends baseModel {
         .limit(10)
         .exec();
         return list;
+    }
+
+    async getGroupByPost(postId) {
+        let post = await this.getModel().findOne({_id: new ObjectId(postId)}).populate('group');
+        if (post) {
+            return post.group;
+        }
+        return null;
     }
 
 }
