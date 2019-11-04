@@ -6,6 +6,8 @@ var Post = model.getInstance('post_groups');
 var Group = model.getInstance('groups');
 var quizModel = model.getInstance('quiz_exams');
 var quizListModel = model.getInstance('quiz_lists');
+var commentModel = model.getInstance('comments');
+var announceModel = model.getInstance('announces');
 app.addEssay = async (req, res) => {
     let data = {
         user_created : req.user._id,
@@ -91,6 +93,7 @@ app.addQuiz = async (req, res) => {
 }
 
 app.getListByGroup = async (req, res) => {
+    console.log('time start: '+pastDateTime.now());
     let groupId = req.params.id;
     let exceptIds = req.query.exceptIds;
     let group = await Group.getModel().findOne({_id: groupId});
@@ -117,8 +120,39 @@ app.getListByGroup = async (req, res) => {
     for(let i in listPost) {
         datas[i] = listPost[i].toJSON();
         datas[i].role = await listPost[i].getRole(await group.roleInGroup(userId), userId);
+        // datas[i].comments = await commentModel.listCommentByPost(datas[i]._id);
     }
+    console.log('time end: '+pastDateTime.now());
     res.send(datas);
+}
+
+app.addComment = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+
+    let data = {
+        post : req.params.id,
+        user : req.user._id,
+        content : req.body.content,
+        created_at : pastDateTime.now(),
+        updated_at : pastDateTime.now(),
+    }
+
+    let comment = await commentModel.getModel().create(data);
+    let detail = await commentModel.detailById(comment._id);
+    let group = await Post.getGroupByPost(req.params.id);
+    io.sockets.to('group_'+(group ? group._id : null)).emit('comment_post_'+req.params.id,detail);
+    return res.json(detail);
+}
+
+app.getComment = async (req, res) => {
+    let exceptIds = req.query.exceptIds;
+    let filter = {
+        exceptIds: exceptIds
+    }
+    let comments = await commentModel.listCommentByPost(req.params.id, filter);
+    return res.json(comments);
 }
 
 module.exports = app;

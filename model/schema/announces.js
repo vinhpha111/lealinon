@@ -8,6 +8,7 @@ var announces = schema({
     type : Number,
     group_id : { type: schema.Types.ObjectId, ref: 'groups' },
     sender : { type: schema.Types.ObjectId, ref: 'users' },
+    post : { type: schema.Types.ObjectId, ref: 'post_groups' },
     message : String,
     has_see : { type: Boolean, default: false },
     created_at : Date,

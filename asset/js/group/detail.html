@@ -7,7 +7,7 @@
     <div>
         <a ng-if="detail.role.newPost" href="/group/{{id}}/new-post" class="btn btn-primary btn-block">Tạo bài post mới</a>
         <button ng-click="joinGroup(); activeJoinGroup=true;" ng-class="{disabled: activeJoinGroup}" ng-if="!detail.role.joinGroup && !detail.role.hasAskJoin" class="btn btn-primary btn-block">Tham gia nhóm</button>
-
+        
         <div ng-if="!detail.role.joinGroup && detail.role.hasAskJoin">
             <h6 class="text-center"><i>(Bạn đã gửi yêu cầu tham gia nhóm)</i></h6>
             <button ng-click="joinGroup(); activeJoinGroup=true;" ng-class="{disabled: activeJoinGroup}" class="btn btn-primary btn-block">Hủy yêu cầu</button>
@@ -20,15 +20,41 @@
         </div>
     </div>
     <div ng-if="detail.role.listPost">
-        <div ng-repeat="post in listPost">
-            <div ng-if="post.type === typePost('QUIZ')" ng-include="'/js/group/post/listQuiz.html'"></div>
-            <div ng-if="post.type === typePost('ESSAY')" ng-include="'/js/group/post/listEssay.html'"></div>
-            <div ng-if="post.type === typePost('ANNOUNCE')" ng-include="'/js/group/post/listAnnounce.html'"></div>
+        <div ng-repeat="(index, post) in listPost">
+            <div class="panel panel-default">
+                <div ng-if="post.type === typePost('QUIZ')" ng-include="'/js/group/post/listQuiz.html'"></div>
+                <div ng-if="post.type === typePost('ESSAY')" ng-include="'/js/group/post/listEssay.html'"></div>
+                <div ng-if="post.type === typePost('ANNOUNCE')" ng-include="'/js/group/post/listAnnounce.html'"></div>
+                <div style="padding: 15px;">
+                    <h4>Bình luận</h4>
+                    <div class="comment-list thin-scrollbar comment_content_post_{{ post._id }}">
+                        <h6 ng-if="!(post.comments.length > 0)"><i>không có bình luận nào</i></h6>
+                        <div class="media" ng-repeat="comment in post.comments | orderBy:'created_at'">
+                            <div class="media-left">
+                                <a href="#"><img src="{{ comment.user.avatar_path }}" class="media-object" style="width:40px; height: 30px; object-fit: cover;"></a>
+                            </div>
+                            <div class="media-body">
+                                <h5 class="media-heading"><a href="#" ng-bind="comment.user.name"></a></h5>
+                                <div ng-bind-html="comment.content"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <h6 ng-show="post.typingCommnet"><i class="fa fa-commenting-o"></i><i> Ai đó đang gõ...</i></h6>
+                    <div ng-if="post.commentBox">
+                        <div class="form-group">
+                            <textarea ng-keyup="typingCommentPost(post._id)" ng-model="post.commentContent" class="form-control" rows="3" style="resize: none;"></textarea>
+                        </div>
+                        <div class="text-right">
+                            <button ng-disabled="post.sendingComment" ng-click="sendComment(index)" class="btn btn-info text-right">Gửi</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <h1 class="text-center" ng-if="loadingPost"><i class="fa fa-spinner fa-spin"></i></h1>
         <button ng-click="getPost()" class="btn btn-link btn-block">load more</button>
     </div>
-
+    
     <div ng-if="!detail.role.listPost">
         <h3 class="text-center">Tham gia nhóm để tương tác</h3>
     </div>

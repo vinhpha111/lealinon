@@ -219,6 +219,8 @@ h1 {
 .list-friend-sidebar {
     list-style: none;
     padding-left: 0px;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
 }
 
 .list-friend-sidebar li {
@@ -242,6 +244,11 @@ h1 {
     position: absolute;
     right: 5px;
     top: 5px;
+}
+
+.comment-list {
+    max-height: 180px;
+    overflow-y: auto;
 }
 
 /* On small screens, set height to 'auto' for sidenav and grid */

@@ -19,7 +19,7 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
     }
 });
 
-app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scopes, $auth) {
+app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scopes, $auth, socket, $timeout, current_user) {
     $scope.id = $routeParams.id;
     $scope.notFound = false;
     $scope.exceptIds = [];
@@ -29,6 +29,7 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
     $http.get('/api/group/get_by_id/'+$routeParams.id)
     .then(function(res){
         $scope.detail = res.data;
+        socket.join('group_'+$scope.id);
         console.log(res.data);
     }, function(res){
         $scope.detail = null;
@@ -46,8 +47,12 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
         })
         .then(function(res){
             for(let i in res.data){
+                res.data[i].typingCommnet = false;
                 $scope.listPost.push(res.data[i]);
                 $scope.exceptIds.push(res.data[i]._id);
+                $scope.showComment(i);
+                onTypingCommentPost(res.data[i]._id, i);
+                onCommentPost(res.data[i]._id, i)
             }
             $scope.loadingPost = false;
             console.log(res);
@@ -57,6 +62,23 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
         })
     }
     $scope.getPost();
+
+    $scope.showComment = function(postIndex) {
+        let post = $scope.listPost[postIndex];
+        if (post && !post.commentBox) {
+            $http.get('/api/post/'+post._id+'/get_comment')
+            .then(function(res){
+                $scope.listPost[postIndex].comments = res.data;
+                scrollToBottom('.comment_content_post_'+post._id);
+            })
+        }
+    }
+
+    function scrollToBottom(selector){
+        setTimeout(function(){
+            $(selector).scrollTop($(selector)[0].scrollHeight);
+        }, 100);
+    }
     
     $scope.invite = {};
     $scope.invite.searchingUser = false;
@@ -141,6 +163,64 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
             ];
         })
     }
+
+    $scope.sendComment = function(postIndex) {
+        let post = $scope.listPost[postIndex];
+        if (post && post.commentContent) {
+            $scope.listPost[postIndex].sendingComment = true;
+            $http.post('/api/post/'+post._id+'/add_comment', {
+                content: post.commentContent.replace(/\n/g, "<br />")
+            })
+            .then(function(res) {
+                $scope.listPost[postIndex].commentContent = "";
+                $scope.listPost[postIndex].comments.push(res.data);
+                $scope.listPost[postIndex].sendingComment = false;
+                scrollToBottom('.comment_content_post_'+post._id);
+            }, function(err) {
+                $scope.listPost[postIndex].sendingComment = false;
+            });
+        }
+    }
+
+    $scope.typingCommentPost = function(postId) {
+        socket.emit('typingCommentPost', {
+            groupId : $scope.id,
+            postId : postId
+        });
+    }
+
+    var typingCommentPost = {};
+    function onTypingCommentPost(postId, postIndex) {
+        socket.on('post_'+postId, function(data){
+            $scope.$apply(function() {
+                let post = $scope.listPost[postIndex];
+                if (post) {
+                    $scope.listPost[postIndex]['typingCommnet'] = true;
+                    if (typingCommentPost['post_'+postId]) {
+                        $timeout.cancel(typingCommentPost['post_'+postId]);
+                    }
+                    typingCommentPost['post_'+postId] = $timeout(function(){
+                        $scope.listPost[postIndex].typingCommnet = false;
+                    }, 1000);   
+                }
+            })
+        });
+    }
+
+    function onCommentPost(postId, postIndex) {
+        socket.on('comment_post_'+postId, function(data){
+            $scope.$apply(function() {
+                let post = $scope.listPost[postIndex];
+                if (post && data.user._id !== current_user._id) {
+                    $scope.listPost[postIndex].comments.push(data);
+                }
+            })
+        });
+    }
+
+    $scope.$on('$routeChangeStart', function (event, current, previous) {
+        socket.leave('group_'+$scope.id);
+    });
 
 });
 
