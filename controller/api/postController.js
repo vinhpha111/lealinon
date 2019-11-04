@@ -19,8 +19,8 @@ app.addEssay = async (req, res) => {
         updated_at : pastDateTime.now(),
     }
     if (req.body.setTime) {
-        data.start_at = datetime.create(req.body.startDate).getTime();
-        data.end_at = datetime.create(req.body.endDate).getTime();
+        data.start_at = req.body.startDate;
+        data.end_at = req.body.endDate;
     }
 
     let addEssay = await Post.add(data);

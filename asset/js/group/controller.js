@@ -246,7 +246,12 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
 
     $scope.essay = {};
     $scope.addEssay = function() {
-        $http.post('/api/group/'+id+'/new_essay', $scope.essay)
+        let data = $scope.essay;
+        data.startDate = (new Date(data.startDate)).getTime();
+        console.log(data.startDate);
+        data.endDate = (new Date(data.endDate)).getTime();
+        console.log(data.endDate);
+        $http.post('/api/group/'+id+'/new_essay', data)
         .then(function(res){
             $scope.errors = null;
             $location.path('/group/'+id);
