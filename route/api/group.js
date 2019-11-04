@@ -7,7 +7,7 @@ route.post('/new', require('../../controller/Request/client/group/new'), groupCo
 route.get('/list_in_sidebar', groupController.listInSidebar);
 route.get('/get_by_id/:id', groupController.getById);
 route.get('/permission/:id', groupController.getPermission);
-route.post('/:id/new_essay', require('../../controller/Request/client/group/newEssay'), postController.addEssay);
+route.post('/:id/new_essay', /* require('../../controller/Request/client/group/newEssay'), */ postController.addEssay);
 route.post('/:id/new_quiz', require('../../controller/Request/client/group/newQuiz'), postController.addQuiz);
 route.get('/:id/list_post', postController.getListByGroup);
 route.post('/:id/invite_member', groupController.inviteJoinGroup);
