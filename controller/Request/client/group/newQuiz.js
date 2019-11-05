@@ -16,7 +16,7 @@ module.exports = [
         if (!value) {
             throw new Error('trường bắt buộc');
         }
-        if (!Date.parse(value)) {
+        if (!(new Date(value))) {
             throw new Error('sai định dạng');
         }
         return true;
@@ -28,7 +28,7 @@ module.exports = [
         if (!value) {
             throw new Error('trường bắt buộc');
         }
-        if (!Date.parse(value)) {
+        if (!(new Date(value))) {
             throw new Error('sai định dạng');
         }
         return true;
@@ -37,7 +37,7 @@ module.exports = [
         if (!req.body.setTime) {
             return true;
         }
-        if (Date.parse(req.body.startDate) && Date.parse(req.body.endDate) && Date.parse(req.body.startDate) >= Date.parse(req.body.endDate)) {
+        if ((new Date(req.body.startDate)) && (new Date(req.body.endDate)) && req.body.startDate >= req.body.endDate) {
             throw new Error('ngày sau phải lớn hơn ngày trước');
         }
         return true;

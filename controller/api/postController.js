@@ -8,6 +8,7 @@ var quizModel = model.getInstance('quiz_exams');
 var quizListModel = model.getInstance('quiz_lists');
 var commentModel = model.getInstance('comments');
 var announceModel = model.getInstance('announces');
+var feelModel = model.getInstance('feels');
 app.addEssay = async (req, res) => {
     let data = {
         user_created : req.user._id,
@@ -93,7 +94,6 @@ app.addQuiz = async (req, res) => {
 }
 
 app.getListByGroup = async (req, res) => {
-    console.log('time start: '+pastDateTime.now());
     let groupId = req.params.id;
     let exceptIds = req.query.exceptIds;
     let group = await Group.getModel().findOne({_id: groupId});
@@ -122,7 +122,6 @@ app.getListByGroup = async (req, res) => {
         datas[i].role = await listPost[i].getRole(await group.roleInGroup(userId), userId);
         // datas[i].comments = await commentModel.listCommentByPost(datas[i]._id);
     }
-    console.log('time end: '+pastDateTime.now());
     res.send(datas);
 }
 
@@ -153,6 +152,75 @@ app.getComment = async (req, res) => {
     }
     let comments = await commentModel.listCommentByPost(req.params.id, filter);
     return res.json(comments);
+}
+
+app.setFeel = async (req, res) => {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+    let postId = req.params.id;
+    let type = req.body.type;
+
+    let feel = await feelModel.getModel().findOne({
+        post: postId,
+        user: req.user._id,
+        feel_type: type,
+    });
+    let group = await Post.getGroupByPost(postId);
+    if (feel) {
+        io.sockets.to('group_'+(group ? group._id : null)).emit('remove_feel_post_'+postId, feel);
+        feel.remove();
+    } else {
+        let oldFeels = await feelModel.getModel().find({
+            post: postId,
+            user: req.user._id
+        });
+        for(let i in oldFeels) {
+            io.sockets.to('group_'+(group ? group._id : null)).emit('remove_feel_post_'+postId, oldFeels[i]);
+        }
+        await feelModel.getModel().deleteMany({
+            post: postId,
+            user: req.user._id
+        });
+        feel = await feelModel.getModel().create({
+            post: postId,
+            user: req.user._id,
+            feel_type: type,
+            created_at : pastDateTime.now(),
+            updated_at : pastDateTime.now(),
+        });
+        io.sockets.to('group_'+(group ? group._id : null)).emit('add_feel_post_'+postId, feel);
+    }
+    return res.json(feel);
+}
+
+app.getFeel = async function(req, res) {
+    let postId = req.params.id;
+    let data = {};
+    data.countLike = await feelModel.getModel().countDocuments({
+        post: postId,
+        feel_type: 1,
+    });
+    data.countUnlike = await feelModel.getModel().countDocuments({
+        post: postId,
+        feel_type: 2,
+    });
+    let user_id = req.user ? req.user._id : null;
+    if (user_id) {
+        let hasLike = await feelModel.getModel().countDocuments({
+            post : postId,
+            feel_type : 1,
+            user : user_id,
+        });
+        data.hasLike = hasLike > 0;
+        let hasUnlike = await feelModel.getModel().countDocuments({
+            post : postId,
+            feel_type : 2,
+            user : user_id,
+        });
+        data.hasUnlike = hasUnlike > 0;   
+    }
+    return res.json(data);
 }
 
 module.exports = app;

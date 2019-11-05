@@ -19,7 +19,7 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
     }
 });
 
-app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scopes, $auth, socket, $timeout, current_user) {
+app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scopes, $auth, socket, $timeout) {
     $scope.id = $routeParams.id;
     $scope.notFound = false;
     $scope.exceptIds = [];
@@ -30,11 +30,9 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
     .then(function(res){
         $scope.detail = res.data;
         socket.join('group_'+$scope.id);
-        console.log(res.data);
     }, function(res){
         $scope.detail = null;
         $scope.notFound = true;
-        console.log(res);
     });
 
     $scope.getPost = function(){
@@ -46,16 +44,19 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
             params: { exceptIds : $scope.exceptIds }
         })
         .then(function(res){
+            let countData = parseInt($scope.listPost.length);
             for(let i in res.data){
+                let index = countData + parseInt(i);
                 res.data[i].typingCommnet = false;
                 $scope.listPost.push(res.data[i]);
                 $scope.exceptIds.push(res.data[i]._id);
-                $scope.showComment(i);
-                onTypingCommentPost(res.data[i]._id, i);
-                onCommentPost(res.data[i]._id, i)
+                $scope.showComment(index);
+                onTypingCommentPost(res.data[i]._id, index);
+                onCommentPost(res.data[i]._id, index);
+                getFeelPost(res.data[i]._id, index);
+                listenFeelPost(res.data[i]._id, index)
             }
-            $scope.loadingPost = false;
-            console.log(res);
+            $scope.loadingPost = false;;
         }, function(res){
             $scope.loadingPost = false;
             console.log(res);
@@ -65,11 +66,34 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
 
     $scope.showComment = function(postIndex) {
         let post = $scope.listPost[postIndex];
-        if (post && !post.commentBox) {
-            $http.get('/api/post/'+post._id+'/get_comment')
+        if (post) {
+            let oldHeight = 0;
+            let exceptIds = [];
+            for(let i in post.comments) {
+                exceptIds.push((post.comments)[i]._id)
+            }
+            let moreFlag = exceptIds.length > 0;
+            if (moreFlag) {
+                oldHeight = $('.comment_content_post_'+post._id)[0].scrollHeight;
+            }
+            $scope.listPost[postIndex].loadingComment = true;
+            $http.get('/api/post/'+post._id+'/get_comment', {
+                params : {
+                    "exceptIds[]" : exceptIds
+                }
+            })
             .then(function(res){
-                $scope.listPost[postIndex].comments = res.data;
-                scrollToBottom('.comment_content_post_'+post._id);
+                $scope.listPost[postIndex].comments = 
+                    $scope.listPost[postIndex].comments ? $scope.listPost[postIndex].comments.concat(res.data)
+                    : res.data;
+                $scope.listPost[postIndex].loadingComment = false;
+                if (!moreFlag) {
+                    scrollToBottom('.comment_content_post_'+post._id);   
+                } else {
+                    setTimeout(function(){
+                        $('.comment_content_post_'+post._id).scrollTop($('.comment_content_post_'+post._id)[0].scrollHeight - oldHeight);
+                    }, 100);
+                }
             })
         }
     }
@@ -173,7 +197,7 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
             })
             .then(function(res) {
                 $scope.listPost[postIndex].commentContent = "";
-                $scope.listPost[postIndex].comments.push(res.data);
+                // $scope.listPost[postIndex].comments.push(res.data);
                 $scope.listPost[postIndex].sendingComment = false;
                 scrollToBottom('.comment_content_post_'+post._id);
             }, function(err) {
@@ -211,8 +235,85 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
         socket.on('comment_post_'+postId, function(data){
             $scope.$apply(function() {
                 let post = $scope.listPost[postIndex];
-                if (post && data.user._id !== current_user._id) {
-                    $scope.listPost[postIndex].comments.push(data);
+                $scope.listPost[postIndex].comments.push(data);
+            })
+        });
+    }
+
+    $scope.setFeelPost = function(postId, type) {
+        let index = null;
+        switch ([1,2].indexOf(type) !== -1) {
+            case true:
+                for (let i in $scope.listPost) {
+                    if ($scope.listPost[i]._id === postId) {
+                        index = i;
+                        $scope.listPost[index].settingFeel = true;
+                    }
+                }
+                $http.post('/api/post/'+postId+'/set_feel', {
+                    type: type
+                }).then(function(res){
+                    $scope.listPost[index].settingFeel = false;
+                });
+                break;
+        
+            default:
+                break;
+        }
+    }
+
+    function getFeelPost(postId, postIndex) {
+        $http.get('/api/post/'+postId+'/get_feel')
+        .then(function(res){
+            console.log(res.data);
+            $scope.listPost[postIndex].countLike = res.data.countLike;
+            $scope.listPost[postIndex].countUnlike = res.data.countUnlike;
+            $scope.listPost[postIndex].liked = res.data.hasLike;
+            $scope.listPost[postIndex].unliked = res.data.hasUnlike;
+        });
+    }
+
+    function listenFeelPost(postId, postIndex) {
+        socket.on('add_feel_post_'+postId, function(data){
+            console.log('add_feel_post_');
+            console.log(data);
+            $scope.$apply(function() {
+                switch (data.feel_type) {
+                    case 1:
+                        $scope.listPost[postIndex].countLike++;
+                        break;
+                    case 2:
+                        $scope.listPost[postIndex].countUnlike++;
+                        break;
+                
+                    default:
+                        break;
+                }
+            })
+        });
+
+        socket.on('remove_feel_post_'+postId, function(data){
+            console.log('remove_feel_post_');
+            console.log(data);
+            $scope.$apply(function() {
+                switch (data.feel_type) {
+                    case 1:
+                        $scope.listPost[postIndex].countLike--;
+                        $scope.listPost[postIndex].countLike = 
+                            ($scope.listPost[postIndex].countLike < 0 
+                                ? 0 
+                                : $scope.listPost[postIndex].countLike);
+                        break;
+                    case 2:
+                        $scope.listPost[postIndex].countUnlike--;
+                        $scope.listPost[postIndex].countUnlike = 
+                            ($scope.listPost[postIndex].countUnlike < 0 
+                                ? 0 
+                                : $scope.listPost[postIndex].countUnlike);
+                        break;
+                
+                    default:
+                        break;
                 }
             })
         });
@@ -248,9 +349,7 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
     $scope.addEssay = function() {
         let data = $scope.essay;
         data.startDate = (new Date(data.startDate)).getTime();
-        console.log(data.startDate);
         data.endDate = (new Date(data.endDate)).getTime();
-        console.log(data.endDate);
         $http.post('/api/group/'+id+'/new_essay', data)
         .then(function(res){
             $scope.errors = null;
@@ -265,8 +364,10 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
     $scope.quiz = {};
     $scope.quiz.questions = [{}];
     $scope.addQuiz = function(){
-        console.log($scope.quiz);
-        $http.post('/api/group/'+id+'/new_quiz', $scope.quiz)
+        let data = $scope.quiz;
+        data.startDate = (new Date(data.startDate)).getTime();
+        data.endDate = (new Date(data.endDate)).getTime();
+        $http.post('/api/group/'+id+'/new_quiz', data)
         .then(function(res){
             $scope.errors = null;
             $location.path('/group/'+id);
