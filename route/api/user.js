@@ -3,7 +3,7 @@ var route = express.Router();
 var userController = require('../../controller/api/userController')
 
 route.get('/find', userController.find);
-route.get('/get_by_id/:id', userController.getById);
+route.get('/get_by_id/:id', require('../../controller/Request/client/common'), userController.getById);
 route.post('/:id/edit', require('../../controller/Request/client/user/edit'), userController.edit);
 route.post('/:id/invite_make_friend', userController.inviteMakeFriend);
 route.post('/:id/accept_make_friend', userController.acceptMakeFriend);
