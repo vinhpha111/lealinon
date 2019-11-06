@@ -1,4 +1,4 @@
-app.controller('profileUser', function($scope, $routeParams, $http, $route, $rootScope, Scopes){
+app.controller('profileUser', function($scope, $routeParams, $http, $route, $rootScope, $location, Scopes){
     let id = $routeParams.id;
     $scope.id = id;
     $scope.detail = null;
@@ -8,6 +8,9 @@ app.controller('profileUser', function($scope, $routeParams, $http, $route, $roo
         console.log(res);
     }, function(err){
         $scope.detail = null;
+        if (err.status === 404) {
+            $location.path( "/404.html" );
+        }
     });
 
     $scope.userEdit = {};
