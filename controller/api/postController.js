@@ -8,6 +8,7 @@ var quizModel = model.getInstance('quiz_exams');
 var quizListModel = model.getInstance('quiz_lists');
 var commentModel = model.getInstance('comments');
 var announceModel = model.getInstance('announces');
+var essayAnserModel = model.getInstance('essay_answer');
 var feelModel = model.getInstance('feels');
 app.addEssay = async (req, res) => {
     let data = {
@@ -221,6 +222,59 @@ app.getFeel = async function(req, res) {
         data.hasUnlike = hasUnlike > 0;   
     }
     return res.json(data);
+}
+
+app.getDetailEssay = async (req, res) => {
+    let detail = await Post.getModel().findOne({_id: req.params.id, type: Post.TYPE('ESSAY')});
+    if (detail && req.user) {
+        detail = detail.toJSON();
+        let answer = await essayAnserModel.getModel().findOne({post: detail._id, user: req.user._id});
+        detail.answer = answer;
+    }
+    if (detail) {
+        return res.json(detail);
+    }
+    return res.status(404).send();
+}
+
+app.addEssayAnswer = async (req, res) => {
+    let userId = req.user._id;
+    let postId = req.params.id;
+    let content = req.body.content;
+    let isDraft = req.body.isDraft;
+    let id = req.body._id;
+    if (id) {
+        let answer = await essayAnserModel.getModel().findOne({_id: id, user: userId, is_draft: true});
+        if (answer) {
+            answer.content = content;
+            answer.post = postId;
+            answer.is_draft = isDraft;
+            answer.updated_at = pastDateTime.now();
+            await answer.save();
+            return res.json(answer);
+        }
+    }
+
+    let existAnswer =  await essayAnserModel.getModel().findOne({post : postId, user: userId, is_draft: false});
+    if (existAnswer) {
+        return res.status(422).json({
+            errors: [{
+                param: 'has_exist',
+                msg: 'Bạn đã gửi câu trả lời trước đó'
+            }]
+        });
+    }
+
+
+    let answer = await essayAnserModel.getModel().create({
+        content : content,
+        user : userId,
+        post : postId,
+        is_draft : isDraft,
+        created_at : pastDateTime.now(),
+        updated_at : pastDateTime.now(),
+    });
+    return res.json(answer);
 }
 
 module.exports = app;

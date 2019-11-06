@@ -80,6 +80,16 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
         }
     })
 
+    .when('/essay/:id/do', {
+        templateUrl: 'js/post/doEssay.html',
+        controller: 'doEssay',
+        resolve : {
+            current_user : function($auth){
+                return $auth.getUser();
+            },
+        }
+    })
+
     .when('/user/:id', {
         templateUrl: 'js/user/profile.html',
         controller: 'profileUser',
