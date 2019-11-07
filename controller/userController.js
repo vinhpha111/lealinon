@@ -113,4 +113,28 @@ app.active = async (req, res) => {
     }
 }
 
+var passport = require('passport');
+var FacebookTokenStrategy = require('passport-facebook-token');
+passport.use(new FacebookTokenStrategy({
+    clientID: '2884189654927036',
+    clientSecret: '284b449ebb190bca17ddb0a70943787d'
+  }, function(accessToken, refreshToken, profile, done) {
+    console.log(profile);
+    return done('zdczxczxc', null);
+    // User.findOrCreate({facebookId: profile.id}, function (error, user) {
+    //   return done(error, user);
+    // });
+  }
+));
+app.login_facebook = [
+    passport.initialize(),
+    passport.session(),
+    passport.authenticate('facebook-token', {
+        session: false
+    }),
+    (req, res) => {
+        res.send(req.user);
+    }
+]
+
 module.exports = app;

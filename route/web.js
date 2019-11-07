@@ -17,6 +17,8 @@ route.get('/test-seo', (req, res) => {
     })
 })
 
+route.post('/login_facebook', userController.login_facebook)
+
 route.get('/*', homeController.index);
 
 module.exports = route;
