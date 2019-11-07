@@ -5,6 +5,7 @@ app.controller('doEssay', function($scope, $routeParams, $route, $location, $win
     $http.get('/api/post/'+$routeParams.id+'/get_essay')
     .then(function(res){
         $scope.detail = res.data;
+        $scope.answer = res.data.answer;
         setTimeout(function(){
             let height = $('.content-essay')[0].scrollHeight;
             if (height > 200) {
@@ -19,6 +20,7 @@ app.controller('doEssay', function($scope, $routeParams, $route, $location, $win
     });
 
     $scope.sendAnswer = function(isDraft = false){
+        $scope.errors = null;
         $scope.detail.sending = true;
         $scope.answer.isDraft = isDraft;
         $http.post('/api/post/'+$routeParams.id+'/add_essay_answer', $scope.answer)

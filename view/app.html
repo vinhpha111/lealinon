@@ -51,9 +51,9 @@
   </div>
   <div class="container">
     <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">Logo</a>
+      <div class="container navbar">
+        <div class="navbar-header" id="navbar-header">
+          <a class="navbar-brand" href="/">Logo</a>
           <form ng-submit="search(stringSearch)">
               <div class="input-group search-input">
                 <input ng-model="stringSearch" type="text" class="form-control" placeholder="Search">
@@ -65,12 +65,12 @@
               </div>
             </form>
         </div>
-        <div class="navbar" id="myNavbar">
-          <ul class="nav navbar-nav navbar-right">
+        <div class="" id="myNavbar">
+          <ul class="nav navbar-nav navbar-right" style="margin-right: 0px;">
             <li ng-if="!current_user"><a href="<%= base_url('login') %>" target="_self"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
             <li ng-if="!current_user"><a href="<%= base_url('register') %>" target="_self"></span> Register</a></li>
             <li class="">
-              <div class="dropdown dropdown-user" ng-if="current_user" style="margin-top: 10px">
+              <div class="dropdown dropdown-user" ng-if="current_user">
                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
                   <img class="icon-user-dropdown" src="{{current_user.avatar_path}}">&nbsp;&nbsp;
                   {{current_user.name}}

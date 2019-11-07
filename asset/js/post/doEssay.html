@@ -6,13 +6,14 @@
         </div>
         <h5 ng-click="detail.reduce = false" ng-if="detail.reduce" class="text-center content-post-reduce-more"><a href="#" class="">Xem thêm</a></h5>
     </div>
-    <div ng-if='!detail.answer'>
+    <div ng-if='detail.answer.is_draft'>
         <div class="form-group">
             <label>Bài làm:</label>
             <textarea ng-model='answer.content' class="form-control" ck-editor></textarea>
             <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'content'">{{error.msg}}</p>
         </div>
         <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'has_exist'">{{error.msg}}</p>
+        <h5 ng-if='detail.sending' class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i></h5>
         <div class="btn-group btn-group-justified">
             <div style="padding-right: 10px;" class="btn-group">
                 <button ng-click='sendAnswer(true)' ng-disabled='detail.sending' type="button" class="btn btn-default">Lưu tạm</button>
@@ -21,35 +22,38 @@
                 <button ng-disabled='detail.sending' type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirm-send">Gửi bài</button>
             </div>
         </div>
+        {{answer.content}}
     </div>
-    <div ng-if='detail.answer'>
+    <div ng-if='!detail.answer.is_draft'>
         <hr>
         <h4 class="text-center"><strong>Câu trả lời của bạn</strong></h4>
         <div class="panel panel-default">
             <div class="panel-body">
-                <div class="content-post-group" ng-bind-html="detail.answer.content"></div>
-            </div>
-        </div>
-        </div>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="confirm-send" role="dialog">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Xác nhận</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Sau khi gửi bài thì bạn không thể sửa lại. bạn chắc chứ?</p>
-                </div>
-                <div class="modal-footer">
-                        <button ng-click='sendAnswer()' type="button" class="btn btn-primary" data-dismiss="modal">Gửi</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+                <div class="content-post-group" ng-bind-html="detail.answer.content">
+                    
                 </div>
             </div>
         </div>
     </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="confirm-send" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Xác nhận</h4>
+            </div>
+            <div class="modal-body">
+                <p>Sau khi gửi bài thì bạn không thể sửa lại. bạn chắc chứ?</p>
+            </div>
+            <div class="modal-footer">
+                <button ng-click='sendAnswer()' type="button" class="btn btn-primary" data-dismiss="modal">Gửi</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 <div ng-if="status === 404">
     <h3>Bài kiểm tra này không tồn tại</h3>

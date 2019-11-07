@@ -70,7 +70,7 @@ app.use(session({
 }));
 app.use(cookieParser());
 app.use(flash());
-
+app.use(require('./helper/filterRequest')());
 app.use(mainRoute);
 
 http.listen(process.env.PORT || 3000, () => {

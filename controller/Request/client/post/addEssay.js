@@ -1,9 +1,9 @@
 const {check, body, validationResult} = require('express-validator');
-var xss = require("xss");
+
 module.exports = [
     (req, res, next) => {
         if (req.body.content) {
-            req.body.content = xss(req.body.content);
+            req.body.content = req.htmlFilter(req.body.content);
         }
         next();
     },
