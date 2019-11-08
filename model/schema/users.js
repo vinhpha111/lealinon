@@ -11,7 +11,10 @@ var users = schema({
     birthday : Date,
     job : Number,
     introduce : String,
-    facebook_token : String,
+    facebook_id : {
+        type: String,
+        select: false
+    },
     encrypt_password : {
         type: String,
         select: false
