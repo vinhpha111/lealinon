@@ -116,14 +116,13 @@ app.active = async (req, res) => {
 var passport = require('passport');
 var FacebookTokenStrategy = require('passport-facebook-token');
 passport.use(new FacebookTokenStrategy({
-    clientID: '2884189654927036',
-    clientSecret: '284b449ebb190bca17ddb0a70943787d'
-  }, function(accessToken, refreshToken, profile, done) {
+    clientID: process.env.FACEBOOK_APP_ID ? process.env.FACEBOOK_APP_ID : null,
+    clientSecret: process.env.FACEBOOK_APP_SECRET ? process.env.FACEBOOK_APP_SECRET : null
+  }, async function(accessToken, refreshToken, profile, done) {
     console.log(profile);
-    return done('zdczxczxc', null);
-    // User.findOrCreate({facebookId: profile.id}, function (error, user) {
-    //   return done(error, user);
-    // });
+    let user = User.findOrCreateFacebook(profile);
+    user.then(data => done(null, data))
+    .catch(err => done(err, null));
   }
 ));
 app.login_facebook = [
@@ -133,6 +132,13 @@ app.login_facebook = [
         session: false
     }),
     (req, res) => {
+        var token = jwt.sign({
+            _id: req.user._id,
+            email : req.user.email
+        },  process.env.TOKEN_CLIENT_PRIVATE, { expiresIn: 60*60*24*30 })
+        req.session.token = token;
+
+        return res.redirect('/');
         res.send(req.user);
     }
 ]

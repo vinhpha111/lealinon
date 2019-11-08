@@ -42,6 +42,47 @@
   <script src="/js/component/popup/index.js"></script>
   <script src="/js/framework/ckeditor/ckeditor.js"></script>
   <script src = "/socket.io/socket.io.js"></script>
+
+  <script>
+    (function(d, s, id){
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {return;}
+      js = d.createElement(s); js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    $(document).ready(function(params) {
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '<%= facebookAppId %>',
+        cookie     : true,
+        xfbml      : true,
+        version    : 'v5.0'
+      });
+      
+      FB.AppEvents.logPageView();   
+
+      FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+      });
+      
+    };
+  });
+
+  function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+  }
+    
+  function statusChangeCallback(response) {
+    if (response.status && response.status === 'connected') {
+      document.getElementById("facebook_token").value = response.authResponse.accessToken;
+      document.getElementById("login_facebook_form").submit();
+    }
+  } 
+  </script>
 </head>
 <body>
   <div ng-bind="htmlSeo">
@@ -67,8 +108,12 @@
         </div>
         <div class="" id="myNavbar">
           <ul class="nav navbar-nav navbar-right" style="margin-right: 0px;">
-            <li ng-if="!current_user"><a href="<%= base_url('login') %>" target="_self"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-            <li ng-if="!current_user"><a href="<%= base_url('register') %>" target="_self"></span> Register</a></li>
+            <li ng-if="!current_user">
+                <form method="POST" id="login_facebook_form" action="<%= base_url('login_facebook') %>">
+                  <input name="access_token" type="hidden" id="facebook_token">
+                </form>
+              <div style="margin-bottom: 10px" scope="public_profile,email" onlogin="checkLoginState();" class="fb-login-button" data-width="" data-size="large" data-button-type="login_with" data-auto-logout-link="false" data-use-continue-as="false">Đăng nhập với Facebook</div>
+            </li>
             <li class="">
               <div class="dropdown dropdown-user" ng-if="current_user">
                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
