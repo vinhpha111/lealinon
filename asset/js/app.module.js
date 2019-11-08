@@ -31,7 +31,16 @@ app.controller('mainCtrl', function($scope, $location, Scopes, seoInfo) {
 
     $scope.seoInfo = seoInfo;
 
+    $scope.menuPhoneButton = function(){
+        setTimeout(function(){
+            $scope.$apply(function(){
+                $scope.openMenuPhone = true;
+            })
+        }, 10);
+    }
+
     $scope.$on('$routeChangeStart', function (event, current, previous) {
         seoInfo.setTitle(current.$$route.title);
+        $scope.openMenuPhone = false;
     });
 });

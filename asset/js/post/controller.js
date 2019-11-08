@@ -6,7 +6,9 @@ app.controller('doEssay', function($scope, $routeParams, $route, $http, seoInfo)
     $http.get('/api/post/'+$routeParams.id+'/get_essay')
     .then(function(res){
         $scope.detail = res.data;
-        $scope.answer = res.data.answer;
+        if (res.data.answer) {
+            $scope.answer = res.data.answer;   
+        }
         seoInfo.setTitle($scope.detail.title+' - bài làm');
         $scope.loading = false;
         setTimeout(function(){
@@ -24,6 +26,7 @@ app.controller('doEssay', function($scope, $routeParams, $route, $http, seoInfo)
     });
 
     $scope.sendAnswer = function(isDraft = false){
+        console.log($scope.answer);
         $scope.errors = null;
         $scope.detail.sending = true;
         $scope.answer.isDraft = isDraft;
