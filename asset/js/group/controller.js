@@ -19,7 +19,7 @@ app.controller('newGroup', function($scope, $location, $window, $http, current_u
     }
 });
 
-app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scopes, $auth, socket, $timeout) {
+app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scopes, $auth, socket, $timeout, seoInfo) {
     $scope.id = $routeParams.id;
     $scope.notFound = false;
     $scope.exceptIds = [];
@@ -29,6 +29,7 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
     $http.get('/api/group/get_by_id/'+$routeParams.id)
     .then(function(res){
         $scope.detail = res.data;
+        seoInfo.setTitle($scope.detail.name);
         socket.join('group_'+$scope.id);
     }, function(res){
         $scope.detail = null;
@@ -57,9 +58,8 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
                 listenFeelPost(res.data[i]._id, index)
             }
             $scope.loadingPost = false;;
-        }, function(res){
+        }, function(err){
             $scope.loadingPost = false;
-            console.log(res);
         })
     }
     $scope.getPost();
@@ -109,7 +109,6 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
     $scope.invite.listFindUserInvite = null;
     $scope.invite.stringFindUserInvite = '';
     $scope.searchUser = function(){
-        console.log($scope.invite.stringFindUserInvite);
         if ($scope.invite.searchingUser) {
             return;
         }
@@ -120,10 +119,8 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
         .then(function(res){
             $scope.invite.listFindUserInvite = res.data;
             $scope.invite.searchingUser = false;
-            console.log(res);
-        }, function(res){
+        }, function(err){
             $scope.invite.searchingUser = false;
-            console.log(res);
         })
     }
 
@@ -165,7 +162,6 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
         for(let i in $scope.invite.listFindUserInvite){
             if ($scope.invite.listFindUserInvite[i].checked) {
                 $scope.invite.canSendInvite = true;
-                console.log($scope.invite.canSendInvite);
                 return;
             }
         }
@@ -265,18 +261,20 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
     function getFeelPost(postId, postIndex) {
         $http.get('/api/post/'+postId+'/get_feel')
         .then(function(res){
-            console.log(res.data);
             $scope.listPost[postIndex].countLike = res.data.countLike;
             $scope.listPost[postIndex].countUnlike = res.data.countUnlike;
             $scope.listPost[postIndex].liked = res.data.hasLike;
             $scope.listPost[postIndex].unliked = res.data.hasUnlike;
+        }, function(err){
+            $scope.listPost[postIndex].countLike = 0;
+            $scope.listPost[postIndex].countUnlike = 0;
+            $scope.listPost[postIndex].liked = 0;
+            $scope.listPost[postIndex].unliked = 0;
         });
     }
 
     function listenFeelPost(postId, postIndex) {
         socket.on('add_feel_post_'+postId, function(data){
-            console.log('add_feel_post_');
-            console.log(data);
             $scope.$apply(function() {
                 switch (data.feel_type) {
                     case 1:
@@ -293,8 +291,6 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
         });
 
         socket.on('remove_feel_post_'+postId, function(data){
-            console.log('remove_feel_post_');
-            console.log(data);
             $scope.$apply(function() {
                 switch (data.feel_type) {
                     case 1:
@@ -354,9 +350,7 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
         .then(function(res){
             $scope.errors = null;
             $location.path('/group/'+id);
-            console.log(res);
         }, function(res){
-            console.log(res);
             $scope.errors = res.data.errors;
         });
     }
@@ -371,9 +365,7 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
         .then(function(res){
             $scope.errors = null;
             $location.path('/group/'+id);
-            console.log(res);
         }, function(res){
-            console.log(res);
             $scope.errors = res.data.errors;
         })
     }
@@ -388,29 +380,23 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
     $http.get('/api/group/get_by_id/'+$routeParams.id)
     .then(function(res){
         $scope.detail = res.data;
-        console.log(res.data);
     }, function(res){
         $scope.detail = null;
         $scope.notFound = true;
-        console.log(res);
     });
 
     $http.get('/api/group/'+$routeParams.id+'/get_member')
     .then(function(res){
         $scope.members = res.data;
-        console.log(res.data);
     }, function(res){
         $scope.members = null;
-        console.log(res);
     });
 
     $http.get('/api/group/'+$routeParams.id+'/get_member_ask_join')
     .then(function(res){
         $scope.memberAskJoin = res.data;
-        console.log(res.data);
     }, function(res){
         $scope.memberAskJoin = null;
-        console.log(res);
     });
 
     $scope.acceptJoin = function(index){
@@ -457,7 +443,6 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
     }
 
     $scope.removeMemberAccept = function(){
-        console.log('sdfsfsdf');
         $http.delete('/api/group/'+$routeParams.id+'/remove_member', {
             params : {
                 user_id: $scope.removeMember.user_id._id
@@ -479,9 +464,5 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
                 }
             ];
         });
-    }
-
-    $scope.accept = function(){
-        console.log("accept");
     }
 })

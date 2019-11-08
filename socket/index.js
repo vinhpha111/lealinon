@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 function getCookie(cname, stringCookie) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(stringCookie);

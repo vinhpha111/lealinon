@@ -101,7 +101,7 @@ app.getListByGroup = async (req, res) => {
     let userId = req.user ? req.user._id : null;
     
     if (!group || ! await group.checkRole(userId, 'listPost')) {
-        return res.status(403).send(null);
+        return res.status(403);
     }
     let query = {
         group : groupId,
@@ -130,6 +130,11 @@ app.addComment = async (req, res) => {
     if (!req.user) {
         return res.status(403).send(null);
     }
+    let group = await Post.getGroupByPost(req.params.id);
+    let post = await Post.getModel().findOne({_id: req.params.id});
+    if (!group || ! await post.checkRole(await group.roleInGroup(req.user._id), 'comment')) {
+        return res.send(403);
+    }
 
     let data = {
         post : req.params.id,
@@ -141,7 +146,6 @@ app.addComment = async (req, res) => {
 
     let comment = await commentModel.getModel().create(data);
     let detail = await commentModel.detailById(comment._id);
-    let group = await Post.getGroupByPost(req.params.id);
     io.sockets.to('group_'+(group ? group._id : null)).emit('comment_post_'+req.params.id,detail);
     return res.json(detail);
 }
@@ -197,6 +201,12 @@ app.setFeel = async (req, res) => {
 
 app.getFeel = async function(req, res) {
     let postId = req.params.id;
+    let user_id = req.user ? req.user._id : null;
+    let detail = await Post.getModel().findOne({_id: postId});
+    let group = await Post.getGroupByPost(req.params.id);
+    if (!group || ! await detail.checkRole(await group.roleInGroup(user_id), 'view')) {
+        return res.status(403);
+    }
     let data = {};
     data.countLike = await feelModel.getModel().countDocuments({
         post: postId,
@@ -206,7 +216,6 @@ app.getFeel = async function(req, res) {
         post: postId,
         feel_type: 2,
     });
-    let user_id = req.user ? req.user._id : null;
     if (user_id) {
         let hasLike = await feelModel.getModel().countDocuments({
             post : postId,
@@ -226,13 +235,20 @@ app.getFeel = async function(req, res) {
 
 app.getDetailEssay = async (req, res) => {
     let detail = await Post.getModel().findOne({_id: req.params.id, type: Post.TYPE('ESSAY')});
-    if (detail && req.user) {
-        detail = detail.toJSON();
-        let answer = await essayAnserModel.getModel().findOne({post: detail._id, user: req.user._id});
-        detail.answer = answer;
+    let data = null;
+    let group = await Post.getGroupByPost(req.params.id);
+    let userId = req.user ? req.user._id : null;
+    if (!group || ! await detail.checkRole(await group.roleInGroup(userId), 'doEssay')) {
+        return res.status(403);
     }
-    if (detail) {
-        return res.json(detail);
+    if (detail && req.user && group) {
+        data = detail.toJSON();
+        let answer = await essayAnserModel.getModel().findOne({post: detail._id, user: req.user._id});
+        data.answer = answer;
+        data.role = await detail.getRole(await group.roleInGroup(req.user._id), req.user._id);
+    }
+    if (data) {
+        return res.json(data);
     }
     return res.status(404).send();
 }
@@ -243,6 +259,13 @@ app.addEssayAnswer = async (req, res) => {
     let content = req.body.content;
     let isDraft = req.body.isDraft;
     let id = req.body._id;
+    let group = await Post.getGroupByPost(postId);
+    let post = await Post.getModel().findOne({_id: postId});
+    if (!post) return res.status(404);
+    if (!group || ! await post.checkRole(group.roleInGroup(userId), 'doEssay')) {
+        return res.status(403);
+    }
+
     if (id) {
         let answer = await essayAnserModel.getModel().findOne({_id: id, user: userId, is_draft: true});
         if (answer) {

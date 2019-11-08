@@ -25,6 +25,15 @@
                 <div ng-if="post.type === typePost('QUIZ')" ng-include="'/js/group/post/listQuiz.html'"></div>
                 <div ng-if="post.type === typePost('ESSAY')" ng-include="'/js/group/post/listEssay.html'"></div>
                 <div ng-if="post.type === typePost('ANNOUNCE')" ng-include="'/js/group/post/listAnnounce.html'"></div>
+                <div class="panel-footer">
+                    <button ng-disabled="post.settingFeel" ng-click="setFeelPost(post._id, 1); post.liked = !post.liked; post.unliked = false" class="btn btn-default">
+                        {{ post.countLike }} <i ng-class="{'fa-thumbs-up':post.liked, 'fa-thumbs-o-up':!post.liked}" class="fa" style="font-size:26px; color: rgb(10, 115, 236);"></i>
+                    </button>
+                    <button ng-disabled="post.settingFeel" ng-click="setFeelPost(post._id, 2); post.liked = false; post.unliked = !post.unliked" class="btn btn-default">
+                        {{ post.countUnlike }} <i ng-class="{'fa-thumbs-down':post.unliked, 'fa-thumbs-o-down':!post.unliked}" class="fa" style="font-size:26px; color: rgb(10, 115, 236);"></i>
+                    </button>
+                    <button ng-click="post.commentBox = !post.commentBox" class="btn btn-default"><i class="fa fa-commenting-o" style="font-size:26px; color: black;"></i></button>
+                </div>
                 <div style="padding: 15px;">
                     <h4>Bình luận</h4>
                     <div class="comment-list thin-scrollbar comment_content_post_{{ post._id }}">
