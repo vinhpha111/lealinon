@@ -1,11 +1,14 @@
-app.controller('doEssay', function($scope, $routeParams, $route, $location, $window, $http, current_user, Scopes){
+app.controller('doEssay', function($scope, $routeParams, $route, $http, seoInfo){
     $scope.answer = {};
     $scope.errors = null;
+    $scope.loading = true;
 
     $http.get('/api/post/'+$routeParams.id+'/get_essay')
     .then(function(res){
         $scope.detail = res.data;
         $scope.answer = res.data.answer;
+        seoInfo.setTitle($scope.detail.title+' - bài làm');
+        $scope.loading = false;
         setTimeout(function(){
             let height = $('.content-essay')[0].scrollHeight;
             if (height > 200) {
@@ -17,6 +20,7 @@ app.controller('doEssay', function($scope, $routeParams, $route, $location, $win
         }, 200);
     }, function(err){
         $scope.status = err.status;
+        $scope.loading = false;
     });
 
     $scope.sendAnswer = function(isDraft = false){

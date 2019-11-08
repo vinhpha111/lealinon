@@ -1,4 +1,4 @@
-<div ng-if='detail' style="padding-top: 10px;">
+<div ng-if='detail.role.doEssay' style="padding-top: 10px;">
     <h3>Làm bài</h3>
     <h4 ng-bind='detail.title'></h4>
     <div style="position: relative;">
@@ -57,6 +57,10 @@
 </div>
 <div ng-if="status === 404">
     <h3>Bài kiểm tra này không tồn tại</h3>
+</div>
+<h3 ng-if='loading' class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i></h3>
+<div ng-show="(!loading && !detail.role.doEssay) || status === 403">
+    <h3>bạn không có quyền thực hiện thao tác này!</h3>
 </div>
 
 <style>

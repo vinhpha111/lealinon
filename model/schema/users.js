@@ -20,6 +20,7 @@ var users = schema({
         select: false
     },
     online_status : Boolean, // 0: offline, 1: online
+    token_login : [String],
     active : Boolean,
     created_at : Date
 }, {collection : 'users'});

@@ -21,7 +21,7 @@
     padding-top: 20px;
     height: 100%;
     position: sticky !important;
-    top: 50px;
+    top: 65px;
 }
 
 /* Set black background color, white text and some padding */
@@ -224,7 +224,7 @@ h1 {
 }
 
 .list-friend-sidebar li {
-    height: 30px;
+    min-height: 30px;
     padding: 5px;
     cursor: pointer;
 }

@@ -51,6 +51,8 @@ class postGroup extends baseModel {
 
     listRole(typeRole, post, userId){
         let doExam = true;
+        let doEssay = true;
+        let doQuiz = true;
         let setNotify = false;
         if (post.start_at && post.end_at) {
             let startTime = (new Date(post.start_at)).getTime();
@@ -58,18 +60,25 @@ class postGroup extends baseModel {
             let nowTime = pastDateTime.now();
             if (nowTime - endTime > 0 || startTime - nowTime > 0 || post.has_stop) {
                 doExam = false;
+                doEssay = false;
+                doQuiz = false;
             }
             if (startTime - nowTime > 0) {
                 setNotify = true;   
             }
         }
-        if (userId === post.user_created) {
+        if (userId === post.user_created || post.type === this.TYPE('ANNOUNCE')) {
             doExam = false;
+            doEssay = false;
+            doQuiz = false;
             setNotify = false;
         }
+        if (post.type === this.TYPE('ESSAY')) doQuiz = false;
+        if (post.type === this.TYPE('QUIZ')) doEssay = false;
         switch (typeRole) {
             case this.ROLE('ADMIN'):
                 return {
+                    view: true,
                     edit: true,
                     delete: true,
                     stopExam: true,
@@ -77,12 +86,14 @@ class postGroup extends baseModel {
                     evaluateExam: true,
                     comment: true,
                     setFeel: true,
-                    doExam: doExam,
+                    doEssay: doEssay,
+                    doQuiz: doQuiz,
                     setNotify: setNotify,
                 }
                 break;
             case this.ROLE('EDITOR'):
                 return {
+                    view: true,
                     edit: true,
                     delete: false,
                     stopExam: true,
@@ -90,12 +101,14 @@ class postGroup extends baseModel {
                     evaluateExam: true,
                     comment: true,
                     setFeel: true,
-                    doExam: doExam,
+                    doEssay: doEssay,
+                    doQuiz: doQuiz,
                     setNotify: setNotify,
                 }
                 break;
             case this.ROLE('NORMAL'):
                 return {
+                    view: true,
                     edit: false,
                     delete: false,
                     stopExam: false,
@@ -103,12 +116,14 @@ class postGroup extends baseModel {
                     evaluateExam: false,
                     comment: true,
                     setFeel: true,
-                    doExam: doExam,
+                    doEssay: doEssay,
+                    doQuiz: doQuiz,
                     setNotify: setNotify,
                 }
                 break;
             default:
                 return {
+                    view: false,
                     edit: false,
                     delete: false,
                     stopExam: false,
@@ -116,7 +131,8 @@ class postGroup extends baseModel {
                     evaluateExam: false,
                     comment: false,
                     setFeel: false,
-                    doExam: false,
+                    doEssay: false,
+                    doQuiz: false,
                     setNotify: false,
                 }
                 break;

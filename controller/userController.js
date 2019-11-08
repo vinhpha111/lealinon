@@ -137,7 +137,7 @@ app.login_facebook = [
             email : req.user.email
         },  process.env.TOKEN_CLIENT_PRIVATE, { expiresIn: 60*60*24*30 })
         req.session.token = token;
-
+        res.cookie('refresh_token', token, {httpOnly : true, maxAge: 1000*60*60*24*30});
         return res.redirect('/');
     }
 ]

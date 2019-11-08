@@ -8,6 +8,7 @@ module.exports = [
         next();
     },
     check('content').isLength({min: 1}).withMessage('trường bắt buộc'),
+    check('isDraft').isBoolean().withMessage('sai format'),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
