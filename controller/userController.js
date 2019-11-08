@@ -5,6 +5,7 @@ var User = model.getInstance('users');
 const {validationResult} = require('express-validator');
 datetime = require('node-datetime');
 var pastDateTime = datetime.create();
+require('dotenv').config();
 app.get_login = (req, res) => {
     res.render('index', {
         layout : 'user/login.html',
@@ -116,10 +117,9 @@ app.active = async (req, res) => {
 var passport = require('passport');
 var FacebookTokenStrategy = require('passport-facebook-token');
 passport.use(new FacebookTokenStrategy({
-    clientID: process.env.FACEBOOK_APP_ID ? process.env.FACEBOOK_APP_ID : null,
-    clientSecret: process.env.FACEBOOK_APP_SECRET ? process.env.FACEBOOK_APP_SECRET : null
+    clientID: process.env.FACEBOOK_APP_ID ? process.env.FACEBOOK_APP_ID : 'none',
+    clientSecret: process.env.FACEBOOK_APP_SECRET ? process.env.FACEBOOK_APP_SECRET : 'none'
   }, async function(accessToken, refreshToken, profile, done) {
-    console.log(profile);
     let user = User.findOrCreateFacebook(profile);
     user.then(data => done(null, data))
     .catch(err => done(err, null));
@@ -139,7 +139,6 @@ app.login_facebook = [
         req.session.token = token;
 
         return res.redirect('/');
-        res.send(req.user);
     }
 ]
 

@@ -32,10 +32,10 @@ for (const key in helpers = require('./helper')) {
 // mail
 var nodemailer = require('nodemailer');
 global.transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: process.env.EMAIL_SERVICE,
   auth: {
-    user: 'vinhpha111@gmail.com',
-    pass: 'vinhpha112013'
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD
   }
 });
 // end
