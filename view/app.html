@@ -2,6 +2,7 @@
 <html lang="en" xmlns:ng="http://angularjs.org" ng-app="app" ng-controller="mainCtrl">
 <head>
   <title ng-bind="seoInfo.title()"></title>
+  <link rel="icon" type="image/x-icon" href="/image/logo.png" />
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <base href="/">
@@ -93,11 +94,11 @@
   <form method="POST" id="login_facebook_form" action="<%= base_url('login_facebook') %>">
     <input name="access_token" type="hidden" id="facebook_token">
   </form>
-  <div class="container">
+  <div class="container" ng-click="openMenuPhone = false">
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container navbar">
         <div class="navbar-header" id="navbar-header">
-          <a class="navbar-brand" href="/">Logo</a>
+          <a class="navbar-brand" href="/"><img src="/image/logo.png" width="30px"></a>
           <form ng-submit="search(stringSearch)">
               <div class="input-group search-input">
                 <input ng-model="stringSearch" type="text" class="form-control" placeholder="Search">
@@ -116,7 +117,7 @@
             </li>
             <li class="">
               <div class="dropdown dropdown-user" ng-if="current_user">
-                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                <button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
                   <img class="icon-user-dropdown" src="{{current_user.avatar_path}}">&nbsp;&nbsp;
                   {{current_user.name}}
                   <span class="caret"></span>
@@ -128,7 +129,8 @@
               </div>
             </li>
           </ul>
-          <ul class=" announce-header text-rigth">
+          <ul class="announce-header text-rigth">
+              <li id="menu-popup-close-btn"><button ng-click="menuPhoneButton()" class="btn btn-link btn-xs" style="font-size:24px"><i class="fa fa-bars"></i></button></li>
               <announce-header ng-if="current_user"></announce-header>
           </ul>
         </div>
@@ -137,7 +139,7 @@
     
     <div class="container-fluid" id="main">    
       <div class="row content">
-        <left-sidebar></left-sidebar>
+        <left-sidebar class="left-sidebar"></left-sidebar>
         <div class="col-sm-8 text-left content-center">
           <div ng-view autoscroll="true"></div>
         </div>
@@ -145,7 +147,7 @@
           <div style="position: relative;">
               <chat-box></chat-box>
           </div>
-          <list-friend></list-friend>
+          <list-friend class="right-sidebar"></list-friend>
         </div>
       </div>
     </div>
@@ -163,6 +165,23 @@
           });
       });
     </script>
+  </div>
+
+  <div ng-hide="!openMenuPhone" id="menu-popup" ng-init="tabShow = 'group'">
+    <ul class="nav nav-tabs menu-popup-header">
+      <li ng-class="{active: tabShow === 'group'}" ng-click="tabShow = 'group'"><a data-toggle="tab"><i class="fa fa-group"></i> Nhóm</a></li>
+      <li ng-class="{active: tabShow === 'list_friend'}" ng-click="tabShow = 'list_friend'"><a data-toggle="tab"><i class="fa fa-user"></i> Bạn</a></li>
+      <i ng-click="openMenuPhone = false" class="fa fa-close menu-popup-close-btn"></i>
+    </ul>
+  
+    <div class="tab-content">
+      <div ng-class="{'in active': tabShow === 'group'}" class="tab-pane fade">
+        <left-sidebar></left-sidebar>
+      </div>
+      <div ng-class="{'in active': tabShow === 'list_friend'}" class="tab-pane fade">
+        <list-friend></list-friend>
+      </div>
+    </div>
   </div>
 </body>
 </html>

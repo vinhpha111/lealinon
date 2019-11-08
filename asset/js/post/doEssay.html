@@ -6,7 +6,7 @@
         </div>
         <h5 ng-click="detail.reduce = false" ng-if="detail.reduce" class="text-center content-post-reduce-more"><a href="#" class="">Xem thêm</a></h5>
     </div>
-    <div ng-if='detail.answer.is_draft'>
+    <div ng-if='!detail.answer || detail.answer.is_draft'>
         <div class="form-group">
             <label>Bài làm:</label>
             <textarea ng-model='answer.content' class="form-control" ck-editor></textarea>
@@ -22,9 +22,8 @@
                 <button ng-disabled='detail.sending' type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirm-send">Gửi bài</button>
             </div>
         </div>
-        {{answer.content}}
     </div>
-    <div ng-if='!detail.answer.is_draft'>
+    <div ng-if='detail.answer && !detail.answer.is_draft'>
         <hr>
         <h4 class="text-center"><strong>Câu trả lời của bạn</strong></h4>
         <div class="panel panel-default">

@@ -261,9 +261,9 @@ app.addEssayAnswer = async (req, res) => {
     let id = req.body._id;
     let group = await Post.getGroupByPost(postId);
     let post = await Post.getModel().findOne({_id: postId});
-    if (!post) return res.status(404);
-    if (!group || ! await post.checkRole(group.roleInGroup(userId), 'doEssay')) {
-        return res.status(403);
+    if (!post) return res.status(404).send(null);
+    if (!group || ! await post.checkRole(await group.roleInGroup(userId), 'doEssay')) {
+        return res.status(403).send(null);
     }
 
     if (id) {
