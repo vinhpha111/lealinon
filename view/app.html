@@ -90,6 +90,9 @@
     <%- htmlSeo %> 
     <% } %>
   </div>
+  <form method="POST" id="login_facebook_form" action="<%= base_url('login_facebook') %>">
+    <input name="access_token" type="hidden" id="facebook_token">
+  </form>
   <div class="container">
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container navbar">
@@ -109,9 +112,6 @@
         <div class="" id="myNavbar">
           <ul class="nav navbar-nav navbar-right" style="margin-right: 0px;">
             <li ng-if="!current_user">
-                <form method="POST" id="login_facebook_form" action="<%= base_url('login_facebook') %>">
-                  <input name="access_token" type="hidden" id="facebook_token">
-                </form>
               <div style="margin-bottom: 10px" scope="public_profile,email" onlogin="checkLoginState();" class="fb-login-button" data-width="" data-size="large" data-button-type="login_with" data-auto-logout-link="false" data-use-continue-as="false">Đăng nhập với Facebook</div>
             </li>
             <li class="">
