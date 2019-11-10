@@ -63,6 +63,7 @@ app.controller('chatBoxController', async function($scope, $rootScope, $http, Sc
     $scope.close = function(){
         $scope.show = false;
         $scope.user = null;
+        socket.removeListener('message_user_'+$scope.user._id, listenMessage);
     }
 
     function listenMessage(message) {
