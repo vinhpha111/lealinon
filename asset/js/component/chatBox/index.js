@@ -66,10 +66,12 @@ app.controller('chatBoxController', async function($scope, $rootScope, $http, Sc
     }
 
     function listenMessage(message) {
-        $scope.listMessage.push(message);
-        setTimeout(() => {
-            updateScroll();
-        }, 500);
+        if ($scope.listMessage.indexOf(message) === -1) {
+            $scope.listMessage.push(message);
+            setTimeout(() => {
+                updateScroll();
+            }, 500);   
+            }
     }
 
     function updateScroll(){
