@@ -79,4 +79,8 @@ app.controller('profileUser', function($scope, $routeParams, $http, $route, $roo
             ];
         })
     }
+
+    $scope.chatBox = function(user) {
+        Scopes.get('scopeListFriend').showChatBox(user);
+    }
 });
