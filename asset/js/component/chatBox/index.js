@@ -61,13 +61,13 @@ app.controller('chatBoxController', async function($scope, $rootScope, $http, Sc
     }
 
     $scope.close = function(){
+        socket.removeListener('message_user_'+$scope.user._id, listenMessage);
         $scope.show = false;
         $scope.user = null;
-        socket.removeListener('message_user_'+$scope.user._id, listenMessage);
     }
 
     function listenMessage(message) {
-        if ($scope.listMessage.indexOf(message) === -1) {
+        if ($scope.listMessage.indexOf(message) === -1 && message.from === $scope.user._id) {
             $scope.listMessage.push(message);
             setTimeout(() => {
                 updateScroll();
