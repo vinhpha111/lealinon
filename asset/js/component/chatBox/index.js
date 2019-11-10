@@ -3,9 +3,10 @@ app.component('chatBox', {
     controller: 'chatBoxController',
 });
 
-app.controller('chatBoxController', async function($scope, $rootScope, $http, Scopes, $auth, socket){
+app.controller('chatBoxController', async function($scope, $rootScope, $http, Scopes, $auth, socket, $sce){
 
     $scope.listMessage = [];
+    $scope.msg = {content: ''};
     let exceptIds = [];
 
     getListMessage = function(){
@@ -34,6 +35,14 @@ app.controller('chatBoxController', async function($scope, $rootScope, $http, Sc
     }
 
     $scope.init = function(user) {
+        $scope.msg.content = '';
+        let firstIndex = true;
+        for(let index in $scope.emoji.data) {
+            if (firstIndex) {
+                $scope.emoji.active = index;
+                firstIndex = false;
+            }
+        }
         if ($scope.user) {
             socket.removeListener('message_user_'+$scope.user._id, listenMessage);
         }
@@ -67,9 +76,10 @@ app.controller('chatBoxController', async function($scope, $rootScope, $http, Sc
         $('.chat-box .panel-body').scrollTop($('.chat-box .panel-body')[0].scrollHeight);
     }
 
-    $scope.sendMessage = function(msg){
-        console.log(msg);
-        let message = msg.replace(/\n/g, "<br />");
+    $scope.sendMessage = function(){
+        console.log($scope.msg.content);
+        let message = $scope.msg.content.replace(/\n/g, "<br />");
+        $scope.msg.content = '';
         if (message.length > 0) {
             $http.post('/api/chat/user/'+$scope.user._id+'/add_message', {
                 message: message,
@@ -83,6 +93,26 @@ app.controller('chatBoxController', async function($scope, $rootScope, $http, Sc
             })
         }
     }
+
+    $scope.addEmojiToMessage = function(code) {
+            let text = $('#'+code).text();
+
+            $scope.msg.content += ' '+text;
+    }
+
+    $scope.emoji = {};
+    $http.get('/emoji_list.json')
+    .then(function(res) {
+        console.log(res.data);
+        $scope.emoji.data = res.data;
+        let firstIndex = true;
+        for(let index in $scope.emoji.data) {
+            if (firstIndex) {
+                $scope.emoji.active = index;
+                firstIndex = false;
+            }
+        }
+    });
 
     Scopes.store('scopeChatBox', $scope);
 });
