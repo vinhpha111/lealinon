@@ -145,6 +145,7 @@ class User extends baseModel {
         .match({
             $or: [
                 { email: new RegExp(query.string) },
+                { name: new RegExp(query.string) },
             ],
             _id: {
                 $nin: query.exceptIds

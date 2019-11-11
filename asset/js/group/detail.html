@@ -36,13 +36,13 @@
                 </div>
                 <div style="padding: 15px;">
                     <h4>Bình luận</h4>
-                    <div class="comment-list thin-scrollbar comment_content_post_{{ post._id }}">
+                    <div style="padding: 10px;" class="comment-list thin-scrollbar comment_content_post_{{ post._id }}">
                         <h6 ng-if="!post.loadingComment" class="text-center"><a ng-click="showComment(index)" href="#">Xem thêm bình luận...</a></h6>
                         <li class="text-center" ng-if="post.loadingComment"><i class="fa fa-spinner fa-spin"></i></li>
                         <h6 ng-if="!(post.comments.length > 0) && !post.loadingComment"><i>không có bình luận nào</i></h6>
                         <div class="media" ng-repeat="comment in post.comments | orderBy:'created_at'">
                             <div class="media-left">
-                                <a title="{{ comment.created_at | formatDateTime }}" href="/user/{{ comment.user._id }}"><img src="{{ comment.user.avatar_path }}" class="media-object" style="width:40px; height: 30px; object-fit: cover;"></a>
+                                <a title="{{ comment.created_at | formatDateTime }}" href="/user/{{ comment.user._id }}"><img src="{{ comment.user.avatar_path }}" class="media-object" style="width:40px; height: 40px; object-fit: cover;"></a>
                             </div>
                             <div class="media-body">
                                 <h5 class="media-heading"><a title="{{ comment.created_at | formatDateTime }}" href="/user/{{ comment.user._id }}" ng-bind="comment.user.name"></a></h5>
@@ -84,7 +84,7 @@
                     <form>
                         <div class="list-user-invite-group">
                             <div class="checkbox" ng-repeat="user in invite.listFindUserInvite">
-                                <label><input type="checkbox" ng-change="checkSendInvite()" ng-model="user.checked">{{user.email}}</label>
+                                <label><input type="checkbox" ng-change="checkSendInvite()" ng-model="user.checked">{{user.name}}</label>
                             </div>
                         </div>
                         <button ng-if="invite.canSendInvite" style="margin-top: 10px;" ng-click="inviteUserJoinGroup()" data-dismiss="modal" class="btn btn-sm btn-info">Mời</button>

@@ -7,6 +7,18 @@ module.exports = [
         }
         return true;
     }),
+    check('groupId').custom((val, {req}) => {
+        if (req.query.groupId && !ObjectId.isValid(req.query.groupId)) {
+            throw new Error('format of groupId is not correct');
+        }
+        return true;
+    }),
+    check('exceptIds').custom((val, {req}) => {
+        if (req.query.exceptIds && !Array.isArray(req.query.exceptIds)) {
+            req.query.exceptIds = null;
+        }
+        return true;
+    }),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

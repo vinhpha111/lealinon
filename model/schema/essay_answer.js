@@ -7,6 +7,7 @@ var essay_answer = schema({
     post : { type: schema.Types.ObjectId, ref: 'post_groups' },
     evaluate_user : { type: schema.Types.ObjectId, ref: 'users' },
     score : Number,
+    comment : String,
     is_draft : {
         type: Boolean,
         default: false,

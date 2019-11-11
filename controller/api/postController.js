@@ -133,7 +133,7 @@ app.addComment = async (req, res) => {
     let group = await Post.getGroupByPost(req.params.id);
     let post = await Post.getModel().findOne({_id: req.params.id});
     if (!group || ! await post.checkRole(await group.roleInGroup(req.user._id), 'comment')) {
-        return res.send(403);
+        return res.sendStatus(403);
     }
 
     let data = {
@@ -238,14 +238,15 @@ app.getDetailEssay = async (req, res) => {
     let data = null;
     let group = await Post.getGroupByPost(req.params.id);
     let userId = req.user ? req.user._id : null;
-    if (!group || ! await detail.checkRole(await group.roleInGroup(userId), 'doEssay')) {
-        return res.status(403);
+    if (!group || ! await detail.checkRole(await group.roleInGroup(userId), 'view')) {
+        return res.status(403).send();
     }
     if (detail && req.user && group) {
         data = detail.toJSON();
         let answer = await essayAnserModel.getModel().findOne({post: detail._id, user: req.user._id});
         data.answer = answer;
         data.role = await detail.getRole(await group.roleInGroup(req.user._id), req.user._id);
+        data.group = group.toJSON();
     }
     if (data) {
         return res.json(data);
@@ -298,6 +299,54 @@ app.addEssayAnswer = async (req, res) => {
         updated_at : pastDateTime.now(),
     });
     return res.json(answer);
+}
+
+app.getListEssayAnswer = async (req, res) => {
+    let userId = req.user._id;
+    let postId = req.params.id;
+    let exceptIds = req.query.exceptIds ? req.query.exceptIds : [];
+    let group = await Post.getGroupByPost(postId);
+    let post = await Post.getModel().findOne({_id: postId});
+    if (!post) return res.status(404).send(null);
+    if (!group || ! await post.checkRole(await group.roleInGroup(userId), 'viewListAnswer')) {
+        return res.sendStatus(403);
+    }
+
+    let query = {
+        post : postId,
+        _id: {
+            $nin: exceptIds
+        }
+    }
+    let action = {
+        limit:20,
+        sort:{
+            created_at: -1
+        }
+    }
+    let listAnswer = await essayAnserModel.getModel().find(query, '-content -comment', action).populate('user');
+    return res.json(listAnswer);
+}
+
+app.getDetailEssayAnswer = async (req, res) => {
+    let userId = req.user._id;
+    let answerId = req.params.id;
+    let answer = await essayAnserModel.getModel().findOne({_id: answerId}).populate('post').populate('user').populate('evaluate_user');
+    let group = null;
+    let roleInGroup = null;
+    if (answer && answer.post.group) {
+        group = await Post.getGroupByPost(answer.post._id);
+        if (group) roleInGroup = await group.roleInGroup(userId);
+    }
+    if (!answer) return res.status(404).send(null);
+    if (!group || ! await answer.post.checkRole(roleInGroup, 'viewListAnswer')) {
+        return res.sendStatus(403);
+    }
+
+    data = answer.toJSON();
+    data.role =  await answer.post.getRole(roleInGroup, req.user._id);
+    
+    return res.json(data);
 }
 
 module.exports = app;
