@@ -13,4 +13,7 @@ route.post('/:id/add_essay_answer',
     validCommon.concat(require('../../controller/Request/client/post/addEssay')),
     postController.addEssayAnswer);
 
+route.get('/:id/get_list_essay_answer', validCommon, postController.getListEssayAnswer)
+route.get('/get_detail_essay_answer/:id', validCommon, postController.getDetailEssayAnswer)
+
 module.exports = route;

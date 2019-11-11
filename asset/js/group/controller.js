@@ -113,8 +113,11 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
             return;
         }
         $scope.invite.searchingUser = true;
-        $http.get('/api/user/find', {
-            params: { string : $scope.invite.stringFindUserInvite }
+        $http.get('/api/user/find_to_invite_join_group', {
+            params: { 
+                string : $scope.invite.stringFindUserInvite,
+                groupId : $routeParams.id
+            }
         })
         .then(function(res){
             $scope.invite.listFindUserInvite = res.data;

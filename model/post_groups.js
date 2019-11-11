@@ -75,10 +75,18 @@ class postGroup extends baseModel {
         }
         if (post.type === this.TYPE('ESSAY')) doQuiz = false;
         if (post.type === this.TYPE('QUIZ')) doEssay = false;
+
+        let management = false;
+        if (typeRole === this.ROLE('ADMIN') || post.user_created === userId) {
+            management = true;
+        }
+        
         switch (typeRole) {
             case this.ROLE('ADMIN'):
                 return {
                     view: true,
+                    management : management,
+                    viewListAnswer: true,
                     edit: true,
                     delete: true,
                     stopExam: true,
@@ -94,6 +102,8 @@ class postGroup extends baseModel {
             case this.ROLE('EDITOR'):
                 return {
                     view: true,
+                    management : management,
+                    viewListAnswer: true,
                     edit: true,
                     delete: false,
                     stopExam: true,
@@ -109,6 +119,8 @@ class postGroup extends baseModel {
             case this.ROLE('NORMAL'):
                 return {
                     view: true,
+                    management : management,
+                    viewListAnswer: false,
                     edit: false,
                     delete: false,
                     stopExam: false,
@@ -124,6 +136,8 @@ class postGroup extends baseModel {
             default:
                 return {
                     view: false,
+                    management : false,
+                    viewListAnswer: false,
                     edit: false,
                     delete: false,
                     stopExam: false,

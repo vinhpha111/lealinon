@@ -61,6 +61,18 @@ app.filter('formatDateTime', function(){
   }
 });
 
+app.filter('formatDateTime', function(){
+  return function(date) {
+    let d = new Date(date);
+    let dateFormat = zeroLead(d.getDate())
+                +'/'+zeroLead(d.getMonth() + 1)
+                +'/'+d.getFullYear()
+                +' '+zeroLead(d.getHours())
+                +':'+zeroLead(d.getMinutes());
+    return dateFormat;
+  }
+});
+
 function zeroLead(number) {
   return (number < 10 ? '0' : '') + number;
 }
