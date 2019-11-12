@@ -106,6 +106,10 @@ app.controller('detailEssayAnswer', function($scope, $routeParams, $route, $http
     $scope.detail = {};
     $scope.errors = null;
     $scope.loading = true;
+    $scope.evaluate = {
+        score: 0,
+        numHover: 0,
+    };
 
     $http.get('/api/post/get_detail_essay_answer/'+$routeParams.id)
     .then(function(res){
@@ -125,5 +129,16 @@ app.controller('detailEssayAnswer', function($scope, $routeParams, $route, $http
     }, function(err){
         $scope.status = err.status;
         $scope.loading = false;
-    })
+    });
+
+    $scope.submitAvaluate = function(){
+        $scope.evaluate.disableSubmit = true;
+        $http.post('/api/post/add_evaluate_essay_answer/'+$routeParams.id, $scope.evaluate)
+        .then(function(res) {
+            $route.reload();
+        }, function(err) {
+            $scope.evaluate.errors = err.data.errors;
+            $scope.evaluate.disableSubmit = false;
+        })
+    }
 });

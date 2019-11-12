@@ -55,13 +55,26 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
                 onTypingCommentPost(res.data[i]._id, index);
                 onCommentPost(res.data[i]._id, index);
                 getFeelPost(res.data[i]._id, index);
-                listenFeelPost(res.data[i]._id, index)
+                listenFeelPost(res.data[i]._id, index);
             }
-            $scope.loadingPost = false;;
+            $scope.loadingPost = false;
         }, function(err){
             $scope.loadingPost = false;
         })
     }
+
+    $scope.checkReduce = function(index) {
+        setTimeout(function(){
+            let height = $('#content_post_group_'+$scope.listPost[index]._id)[0].scrollHeight;
+            if (height > 200) {
+                $scope.$apply(function(){
+                    $scope.listPost[index].reduce = true;
+                    $scope.listPost[index].reduceBack = true;
+                });
+            }
+        }, 200);
+    }
+
     $scope.getPost();
 
     $scope.showComment = function(postIndex) {

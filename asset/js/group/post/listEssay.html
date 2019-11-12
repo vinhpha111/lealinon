@@ -4,8 +4,11 @@
     <a ng-if="post.role.doEssay" href="/essay/{{post._id}}/do" class="btn btn-success btn-sm do-exam">Làm bài <i class='fa fa-angle-double-right'></i></a>
     <a ng-if="post.role.setNotify" href="#" class="btn btn-success btn-sm set-notify-btn">Thông báo <i class="fa fa-bell"></i></a>
 </div>
-<div class="panel-body" ng-init="post.numLimit = post.content.length > 1000 ? 1000 : null; post.more = post.content.length < 1000;">
+<div class="panel-body">
     <h3><strong>{{ post.title }}</strong></h3>
-    <div class="content-post-group" ng-bind-html="post.content | limitTo:post.numLimit"></div>
-    <button ng-if="!post.more" ng-click="post.numLimit = null; post.more = true;" class="btn btn-link btn-block"><i class="material-icons">more_horiz</i></button>
+    <div style="position: relative;" ng-init="checkReduce(index)">
+        <div id="content_post_group_{{post._id}}" class="content-essay" ng-class="{'content-post-reduce': post.reduce}" class="content-post-group" ng-bind-html="post.content"></div>
+        <h5 ng-click="post.reduce = false" ng-if="post.reduce" class="text-center content-post-reduce-more"><a href="#" class="">Xem thêm</a></h5>
+        <h5 ng-if="!post.reduce && !loadingPost && post.reduceBack" class="text-center"><a ng-click="post.reduce = true" href="#" class="">Ẩn bớt</a></h5>
+    </div>
 </div>

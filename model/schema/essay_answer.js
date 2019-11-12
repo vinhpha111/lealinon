@@ -5,6 +5,10 @@ var essay_answer = schema({
     content : String,
     user : { type: schema.Types.ObjectId, ref: 'users' },
     post : { type: schema.Types.ObjectId, ref: 'post_groups' },
+    has_evaluate : {
+        type: Boolean,
+        default: false,
+    },
     evaluate_user : { type: schema.Types.ObjectId, ref: 'users' },
     score : Number,
     comment : String,
