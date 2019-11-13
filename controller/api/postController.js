@@ -344,7 +344,7 @@ app.getDetailEssayAnswer = async (req, res) => {
     }
 
     data = answer.toJSON();
-    data.role =  await answer.post.getRole(roleInGroup, req.user._id);
+    data.role =  await answer.getRole(roleInGroup, req.user._id);
     
     return res.json(data);
 }
@@ -365,7 +365,7 @@ app.addEvaluateEssayAnswer = async (req, res) => {
         ]})
     }
     let group = await Post.getGroupByPost(answer.post ? answer.post._id : null);
-    if (!answer.post || ! await answer.post.checkRole(await group.roleInGroup(userId), 'evaluateExam', userId)) {
+    if (!answer.post || ! await answer.checkRole(await group.roleInGroup(userId), 'evaluateExam', userId)) {
         return res.sendStatus(403);
     }
 
