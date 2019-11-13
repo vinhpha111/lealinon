@@ -73,6 +73,22 @@ app.use(flash());
 app.use(require('./helper/filterRequest')());
 app.use(mainRoute);
 
+/* async function updateIdToData() {
+  let uid = require('uid');
+  let model = require('./model/index');
+  let models = ['essay_answer', 'groups', 'post_groups', 'quiz_answers', 'users'];
+  for(let i in models) {
+    let currentModel = model.getInstance(models[i]);
+    let datas = await currentModel.getModel().find();
+    for(let index in datas) {
+      let update = await currentModel.getModel().updateOne({_id: datas[index]._id}, {id: uid(10)});
+    }
+  }
+}
+setTimeout(() => {
+  updateIdToData()
+}, 5000); */
+
 http.listen(process.env.PORT || 3000, () => {
     console.log('listening on port 3000');
 });

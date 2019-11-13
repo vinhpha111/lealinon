@@ -132,7 +132,7 @@ app.addComment = async (req, res) => {
     }
     let group = await Post.getGroupByPost(req.params.id);
     let post = await Post.getModel().findOne({_id: req.params.id});
-    if (!group || ! await post.checkRole(await group.roleInGroup(req.user._id), 'comment')) {
+    if (!group || ! await post.checkRole(await group.roleInGroup(req.user._id), 'comment', req.user._id)) {
         return res.sendStatus(403);
     }
 
@@ -204,7 +204,7 @@ app.getFeel = async function(req, res) {
     let user_id = req.user ? req.user._id : null;
     let detail = await Post.getModel().findOne({_id: postId});
     let group = await Post.getGroupByPost(req.params.id);
-    if (!group || ! await detail.checkRole(await group.roleInGroup(user_id), 'view')) {
+    if (!group || ! await detail.checkRole(await group.roleInGroup(user_id), 'view', user_id)) {
         return res.status(403);
     }
     let data = {};
@@ -238,7 +238,7 @@ app.getDetailEssay = async (req, res) => {
     let data = null;
     let group = await Post.getGroupByPost(req.params.id);
     let userId = req.user ? req.user._id : null;
-    if (!group || ! await detail.checkRole(await group.roleInGroup(userId), 'view')) {
+    if (!group || ! await detail.checkRole(await group.roleInGroup(userId), 'view', userId)) {
         return res.status(403).send();
     }
     if (detail && req.user && group) {
@@ -263,7 +263,7 @@ app.addEssayAnswer = async (req, res) => {
     let group = await Post.getGroupByPost(postId);
     let post = await Post.getModel().findOne({_id: postId});
     if (!post) return res.status(404).send(null);
-    if (!group || ! await post.checkRole(await group.roleInGroup(userId), 'doEssay')) {
+    if (!group || ! await post.checkRole(await group.roleInGroup(userId), 'doEssay', userId)) {
         return res.status(403).send(null);
     }
 
@@ -339,7 +339,7 @@ app.getDetailEssayAnswer = async (req, res) => {
         if (group) roleInGroup = await group.roleInGroup(userId);
     }
     if (!answer) return res.status(404).send(null);
-    if (!group || ! await answer.post.checkRole(roleInGroup, 'viewListAnswer')) {
+    if (!group || ! await answer.post.checkRole(roleInGroup, 'viewListAnswer', userId)) {
         return res.sendStatus(403);
     }
 
@@ -365,9 +365,12 @@ app.addEvaluateEssayAnswer = async (req, res) => {
         ]})
     }
     let group = await Post.getGroupByPost(answer.post ? answer.post._id : null);
-    if (!answer.post || ! await answer.post.checkRole(await group.roleInGroup(userId), 'evaluateExam')) {
+    if (!answer.post || ! await answer.post.checkRole(await group.roleInGroup(userId), 'evaluateExam', userId)) {
         return res.sendStatus(403);
     }
+
+    // console.log(await answer.post.checkRole(await group.roleInGroup(userId), 'evaluateExam', userId));
+    // return res.sendStatus(403);
 
     let dataUpdate = {
         has_evaluate : true,

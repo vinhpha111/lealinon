@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
 var schema = mongoose.Schema;
 var quiz_answers = schema({
-    user : [{ type: Schema.Types.ObjectId, ref: 'users' }],
-    post : [{ type: Schema.Types.ObjectId, ref: 'post_groups' }],
-    quiz_exam : [{ type: Schema.Types.ObjectId, ref: 'quiz_exams' }],
+    user : { type: schema.Types.ObjectId, ref: 'users' },
+    post : { type: schema.Types.ObjectId, ref: 'post_groups' },
+    quiz_exam : { type: schema.Types.ObjectId, ref: 'quiz_exams' },
     number_sort_quiz : Number,//đáp án chọn
     comment : String,
     created_at : Date,
