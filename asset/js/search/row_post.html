@@ -1,5 +1,8 @@
-<div class="panel panel-default" ng-init="data.numLimit = data.content.length > 1000 ? 1000 : null; data.activeReadMore = data.content.length <= 1000">
+<div class="panel panel-default">
     <div class="panel-heading"><a href="/post/{{data._id}}" class="header-link"><i class="fa fa-newspaper-o" style="font-size:24px"></i>&nbsp;&nbsp; {{data.title}}</a></div>
-    <div class="panel-body" data-dd-collapse-text="100" ng-bind-html="data.content | limitTo:data.numLimit"></div>
-    <h6 class="text-center"><a href="#" ng-if="!data.activeReadMore" ng-click="data.numLimit = null; data.activeReadMore = true;">Read more</a></h6>
+    <div style="position: relative;" class="panel-body" ng-init="checkReduce(index)">
+        <div id="content_post_group_{{data._id}}" class="content-essay" ng-class="{'content-post-reduce': data.reduce}" class="content-post-group" ng-bind-html="data.content"></div>
+        <h5 ng-click="data.reduce = false" ng-if="data.reduce" class="text-center content-post-reduce-more"><a href="#" class="">Xem thêm</a></h5>
+        <h5 ng-if="!data.reduce && !loadingPost && data.reduceBack" class="text-center"><a ng-click="data.reduce = true" href="#" class="">Ẩn bớt</a></h5>
+    </div>
 </div>

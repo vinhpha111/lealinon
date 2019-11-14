@@ -6,7 +6,7 @@
     <li ng-click="changeType('post')" ng-class="{active: type==='post'}"><a href="#">Bài post</a></li>
 </ul>
 <div style="padding-top: 10px;">
-    <div ng-repeat="data in datas">
+    <div ng-repeat="(index, data) in datas">
         <div ng-if="data.table==='group'" ng-include="'js/search/row_group.html'"></div>
         <div ng-if="data.table==='user'" ng-include="'js/search/row_user.html'"></div>
         <div ng-if="data.table==='post'" ng-include="'js/search/row_post.html'"></div>

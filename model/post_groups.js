@@ -42,8 +42,8 @@ class postGroup extends baseModel {
             getRole : async function(mainRole, userId){
                 return self.listRole(mainRole, this, userId);
             },
-            checkRole : async function(mainRole, role){
-                let listRole = await this.getRole(mainRole);
+            checkRole : async function(mainRole, role, userId){
+                let listRole = await this.getRole(mainRole, userId);
                 return self.roleCan(role, listRole);
             }
         }
@@ -54,6 +54,7 @@ class postGroup extends baseModel {
         let doEssay = true;
         let doQuiz = true;
         let setNotify = false;
+        let evaluateExam = true;
         if (post.start_at && post.end_at) {
             let startTime = (new Date(post.start_at)).getTime();
             let endTime = (new Date(post.end_at)).getTime();
@@ -67,11 +68,14 @@ class postGroup extends baseModel {
                 setNotify = true;   
             }
         }
-        if (userId === post.user_created || post.type === this.TYPE('ANNOUNCE')) {
+        if (userId === post.user_created.toString()
+            || (typeof(post.user_created) === 'object' && userId === post.user_created._id.toString()) 
+            || post.type === this.TYPE('ANNOUNCE')) {
             doExam = false;
             doEssay = false;
             doQuiz = false;
             setNotify = false;
+            evaluateExam = false;
         }
         if (post.type === this.TYPE('ESSAY')) doQuiz = false;
         if (post.type === this.TYPE('QUIZ')) doEssay = false;
@@ -91,7 +95,7 @@ class postGroup extends baseModel {
                     delete: true,
                     stopExam: true,
                     publicExam: true,
-                    evaluateExam: true,
+                    evaluateExam: evaluateExam,
                     comment: true,
                     setFeel: true,
                     doEssay: doEssay,
@@ -108,7 +112,7 @@ class postGroup extends baseModel {
                     delete: false,
                     stopExam: true,
                     publicExam: true,
-                    evaluateExam: true,
+                    evaluateExam: evaluateExam,
                     comment: true,
                     setFeel: true,
                     doEssay: doEssay,
@@ -125,7 +129,7 @@ class postGroup extends baseModel {
                     delete: false,
                     stopExam: false,
                     publicExam: false,
-                    evaluateExam: false,
+                    evaluateExam: evaluateExam,
                     comment: true,
                     setFeel: true,
                     doEssay: doEssay,

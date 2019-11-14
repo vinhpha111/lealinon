@@ -7,15 +7,52 @@
         <h5 ng-click="detail.post.reduce = false" ng-if="detail.post.reduce" class="text-center content-post-reduce-more"><a href="#" class="">Xem thêm</a></h5>
         <h5 ng-if="!detail.post.reduce && !loading && detail.post.reduceBack" class="text-center"><a ng-click="detail.post.reduce = true" href="#" class="">Ẩn bớt</a></h5>
     </div>
-    <h4 class="text-center"><strong>Câu trả lời của <a href="/user/{{detail.user._id}}" target="_blank">{{detail.user.name}}</a></strong></h4>
+    <h4 style="margin-top: 40px" class="text-center"><strong>Câu trả lời của <a href="/user/{{detail.user._id}}" target="_blank">{{detail.user.name}}</a></strong></h4>
     <div class="panel panel-default">
         <div class="panel-body">
+            <div ng-if="detail.has_evaluate">
+                <p>
+                    <a href="/user/{{ detail.evaluate_user._id }}">{{ detail.evaluate_user.name }}</a> đã đánh giá: 
+                    <i ng-repeat="i in [1,2,3,4,5,6,7,8,9,10]"
+                    class="fa fa-star" ng-class="{'fa-star-o': (i > detail.score)}"
+                    style="font-size:16px; color: rgb(255, 187, 0);"></i>
+                    <a href="#" ng-click="detail.showCommentEvaluate = !detail.showCommentEvaluate">Nhận xét <i class="fa fa-caret-down"></i></a>
+                </p>
+                <div ng-if="detail.showCommentEvaluate" class="well" ng-bind-html="detail.comment"></div>
+            </div>
             <div class="content-post-group" ng-bind-html="detail.content">
             </div>
         </div>
     </div>
-    <div>
-        <button class="btn btn-info btn-block">Đánh giá</button>
+    <div ng-if="!detail.has_evaluate && detail.role.evaluateExam">
+        <button ng-click="evaluate.showEvaluate = !evaluate.showEvaluate" class="btn btn-info btn-block">Đánh giá <i ng-class="{'fa-caret-down': !evaluate.showEvaluate, 'fa-caret-up': evaluate.showEvaluate}" class="fa"></i></button>
+        <div ng-if='evaluate.showEvaluate' class="form-horizontal" style="margin-top: 15px;">
+            <div class="form-group">
+                <label class="control-label col-sm-2">Điểm:</label>
+                <div class="col-sm-10">
+                    <i ng-repeat="i in [1,2,3,4,5,6,7,8,9,10]"
+                    ng-mouseleave="evaluate.score = evaluate.score ? evaluate.score : 0; evaluate.numHover = evaluate.score;"
+                    ng-mouseover="evaluate.numHover = i"
+                    ng-click="evaluate.score = i"
+                    class="fa fa-star" ng-class="{'fa-star-o': (i > evaluate.numHover)}"
+                    style="font-size:24px; color: rgb(255, 187, 0); cursor: pointer;"></i>
+                    <p class="error-msg" ng-repeat="error in evaluate.errors" ng-if="error.param == 'score'">{{error.msg}}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="comment" class="control-label col-sm-2">Comment:</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" ng-model="evaluate.comment" style="resize: none;" rows="5" id="comment" ck-editor-comment></textarea>
+                    <p class="error-msg" ng-repeat="error in evaluate.errors" ng-if="error.param == 'comment'">{{error.msg}}</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <p class="error-msg" ng-repeat="error in evaluate.errors" ng-if="error.param == 'has_exist'">{{error.msg}}</p>
+                    <button ng-disabled="evaluate.disableSubmit" ng-click="submitAvaluate()" type="button" class="btn btn-default">Lưu</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -23,7 +60,7 @@
     <h3>Bài kiểm tra này không tồn tại</h3>
 </div>
 <h3 ng-if='loading' class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i></h3>
-<div ng-show="(!loading && detail.role && !detail.role.viewListAnswer) || status === 403">
+<div ng-show="(!loading && detail.role && !detail.role.view) || status === 403">
     <h3>bạn không có quyền thực hiện thao tác này!</h3>
 </div>
 <style>

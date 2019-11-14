@@ -1,9 +1,10 @@
 app.controller('doEssay', function($scope, $routeParams, $route, $http, seoInfo){
+    $scope.id = $routeParams.id;
     $scope.answer = {};
     $scope.errors = null;
     $scope.loading = true;
 
-    $http.get('/api/post/'+$routeParams.id+'/get_essay')
+    $http.get('/api/post/'+$scope.id+'/get_essay')
     .then(function(res){
         $scope.detail = res.data;
         if (res.data.answer) {
@@ -30,7 +31,7 @@ app.controller('doEssay', function($scope, $routeParams, $route, $http, seoInfo)
         $scope.errors = null;
         $scope.detail.sending = true;
         $scope.answer.isDraft = isDraft;
-        $http.post('/api/post/'+$routeParams.id+'/add_essay_answer', $scope.answer)
+        $http.post('/api/post/'+$scope.id+'/add_essay_answer', $scope.answer)
         .then(function(res){
             $scope.detail.sending = false;
             if(!isDraft) $route.reload();
@@ -45,11 +46,12 @@ app.controller('doEssay', function($scope, $routeParams, $route, $http, seoInfo)
 });
 
 app.controller('detailEssay', function($scope, $routeParams, $route, $http, seoInfo, Scopes){
+    $scope.id = $routeParams.id;
     $scope.answer = {};
     $scope.errors = null;
     $scope.loading = true;
 
-    $http.get('/api/post/'+$routeParams.id+'/get_essay')
+    $http.get('/api/post/'+$scope.id+'/get_essay')
     .then(function(res){
         $scope.detail = res.data;
         if (res.data.answer) {
@@ -89,7 +91,7 @@ app.controller('detailEssay', function($scope, $routeParams, $route, $http, seoI
         for(let i in $scope.detail.listAnswer) {
             exceptIds.push($scope.detail.listAnswer._id);
         }
-        $http.get('/api/post/'+$routeParams.id+'/get_list_essay_answer', {
+        $http.get('/api/post/'+$scope.id+'/get_list_essay_answer', {
             params : {
                 'exceptIds' : exceptIds
             }
@@ -103,11 +105,16 @@ app.controller('detailEssay', function($scope, $routeParams, $route, $http, seoI
 });
 
 app.controller('detailEssayAnswer', function($scope, $routeParams, $route, $http, seoInfo, Scopes){
+    $scope.id = $routeParams.id;
     $scope.detail = {};
     $scope.errors = null;
     $scope.loading = true;
+    $scope.evaluate = {
+        score: 0,
+        numHover: 0,
+    };
 
-    $http.get('/api/post/get_detail_essay_answer/'+$routeParams.id)
+    $http.get('/api/post/get_detail_essay_answer/'+$scope.id)
     .then(function(res){
         $scope.loading = false;
         $scope.detail = res.data;
@@ -125,5 +132,16 @@ app.controller('detailEssayAnswer', function($scope, $routeParams, $route, $http
     }, function(err){
         $scope.status = err.status;
         $scope.loading = false;
-    })
+    });
+
+    $scope.submitAvaluate = function(){
+        $scope.evaluate.disableSubmit = true;
+        $http.post('/api/post/add_evaluate_essay_answer/'+$scope.id, $scope.evaluate)
+        .then(function(res) {
+            $route.reload();
+        }, function(err) {
+            $scope.evaluate.errors = err.data.errors;
+            $scope.evaluate.disableSubmit = false;
+        })
+    }
 });

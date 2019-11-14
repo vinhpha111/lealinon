@@ -45,10 +45,6 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
             current_user : function($auth, $route){
                 return $auth.getUser();
             },
-            permission : function($auth, $route){
-                let roleList = [$auth.role.group.ADMIN, $auth.role.group.EDITOR];
-                return $auth.checkPermission.group(roleList, $route.current.params.id);
-            }
         }
     })
 

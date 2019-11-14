@@ -8,7 +8,7 @@ var quizModel = model.getInstance('quiz_exams');
 var quizListModel = model.getInstance('quiz_lists');
 var commentModel = model.getInstance('comments');
 var announceModel = model.getInstance('announces');
-var essayAnserModel = model.getInstance('essay_answer');
+var essayAnswerModel = model.getInstance('essay_answer');
 var feelModel = model.getInstance('feels');
 app.addEssay = async (req, res) => {
     let data = {
@@ -132,7 +132,7 @@ app.addComment = async (req, res) => {
     }
     let group = await Post.getGroupByPost(req.params.id);
     let post = await Post.getModel().findOne({_id: req.params.id});
-    if (!group || ! await post.checkRole(await group.roleInGroup(req.user._id), 'comment')) {
+    if (!group || ! await post.checkRole(await group.roleInGroup(req.user._id), 'comment', req.user._id)) {
         return res.sendStatus(403);
     }
 
@@ -204,7 +204,7 @@ app.getFeel = async function(req, res) {
     let user_id = req.user ? req.user._id : null;
     let detail = await Post.getModel().findOne({_id: postId});
     let group = await Post.getGroupByPost(req.params.id);
-    if (!group || ! await detail.checkRole(await group.roleInGroup(user_id), 'view')) {
+    if (!group || ! await detail.checkRole(await group.roleInGroup(user_id), 'view', user_id)) {
         return res.status(403);
     }
     let data = {};
@@ -238,12 +238,12 @@ app.getDetailEssay = async (req, res) => {
     let data = null;
     let group = await Post.getGroupByPost(req.params.id);
     let userId = req.user ? req.user._id : null;
-    if (!group || ! await detail.checkRole(await group.roleInGroup(userId), 'view')) {
+    if (!group || ! await detail.checkRole(await group.roleInGroup(userId), 'view', userId)) {
         return res.status(403).send();
     }
     if (detail && req.user && group) {
         data = detail.toJSON();
-        let answer = await essayAnserModel.getModel().findOne({post: detail._id, user: req.user._id});
+        let answer = await essayAnswerModel.getModel().findOne({post: detail._id, user: req.user._id});
         data.answer = answer;
         data.role = await detail.getRole(await group.roleInGroup(req.user._id), req.user._id);
         data.group = group.toJSON();
@@ -255,7 +255,7 @@ app.getDetailEssay = async (req, res) => {
 }
 
 app.addEssayAnswer = async (req, res) => {
-    let userId = req.user._id;
+    let userId = req.user ? req.user._id : null;
     let postId = req.params.id;
     let content = req.body.content;
     let isDraft = req.body.isDraft;
@@ -263,12 +263,12 @@ app.addEssayAnswer = async (req, res) => {
     let group = await Post.getGroupByPost(postId);
     let post = await Post.getModel().findOne({_id: postId});
     if (!post) return res.status(404).send(null);
-    if (!group || ! await post.checkRole(await group.roleInGroup(userId), 'doEssay')) {
+    if (!group || ! await post.checkRole(await group.roleInGroup(userId), 'doEssay', userId)) {
         return res.status(403).send(null);
     }
 
     if (id) {
-        let answer = await essayAnserModel.getModel().findOne({_id: id, user: userId, is_draft: true});
+        let answer = await essayAnswerModel.getModel().findOne({_id: id, user: userId, is_draft: true});
         if (answer) {
             answer.content = content;
             answer.post = postId;
@@ -279,7 +279,7 @@ app.addEssayAnswer = async (req, res) => {
         }
     }
 
-    let existAnswer =  await essayAnserModel.getModel().findOne({post : postId, user: userId, is_draft: false});
+    let existAnswer =  await essayAnswerModel.getModel().findOne({post : postId, user: userId, is_draft: false});
     if (existAnswer) {
         return res.status(422).json({
             errors: [{
@@ -290,7 +290,7 @@ app.addEssayAnswer = async (req, res) => {
     }
 
 
-    let answer = await essayAnserModel.getModel().create({
+    let answer = await essayAnswerModel.getModel().create({
         content : content,
         user : userId,
         post : postId,
@@ -302,7 +302,7 @@ app.addEssayAnswer = async (req, res) => {
 }
 
 app.getListEssayAnswer = async (req, res) => {
-    let userId = req.user._id;
+    let userId = req.user ? req.user._id : null;
     let postId = req.params.id;
     let exceptIds = req.query.exceptIds ? req.query.exceptIds : [];
     let group = await Post.getGroupByPost(postId);
@@ -324,14 +324,14 @@ app.getListEssayAnswer = async (req, res) => {
             created_at: -1
         }
     }
-    let listAnswer = await essayAnserModel.getModel().find(query, '-content -comment', action).populate('user');
+    let listAnswer = await essayAnswerModel.getModel().find(query, '-content -comment', action).populate('user');
     return res.json(listAnswer);
 }
 
 app.getDetailEssayAnswer = async (req, res) => {
-    let userId = req.user._id;
+    let userId = req.user ? req.user._id : null;
     let answerId = req.params.id;
-    let answer = await essayAnserModel.getModel().findOne({_id: answerId}).populate('post').populate('user').populate('evaluate_user');
+    let answer = await essayAnswerModel.getModel().findOne({_id: answerId}).populate('post').populate('user').populate('evaluate_user');
     let group = null;
     let roleInGroup = null;
     if (answer && answer.post.group) {
@@ -339,14 +339,47 @@ app.getDetailEssayAnswer = async (req, res) => {
         if (group) roleInGroup = await group.roleInGroup(userId);
     }
     if (!answer) return res.status(404).send(null);
-    if (!group || ! await answer.post.checkRole(roleInGroup, 'viewListAnswer')) {
+    if (!group || ! await answer.post.checkRole(roleInGroup, 'viewListAnswer', userId)) {
         return res.sendStatus(403);
     }
 
     data = answer.toJSON();
-    data.role =  await answer.post.getRole(roleInGroup, req.user._id);
+    data.role =  await answer.getRole(roleInGroup, req.user._id);
     
     return res.json(data);
+}
+
+app.addEvaluateEssayAnswer = async (req, res) => {
+    let answerId = req.params.id;
+    let userId = req.user ? req.user._id : null;
+    let answer = await essayAnswerModel.getModel().findOne({_id: answerId, is_draft: {$ne : true}}).populate('post');
+    if (!answer) {
+        return res.sendStatus(404);
+    }
+    if (answer.has_evaluate) {
+        return res.status(422).json({errors: [
+            {
+                param: 'has_exist',
+                msg: 'Bài làm này đã được đánh giá!'
+            }
+        ]})
+    }
+    let group = await Post.getGroupByPost(answer.post ? answer.post._id : null);
+    if (!answer.post || ! await answer.checkRole(await group.roleInGroup(userId), 'evaluateExam', userId)) {
+        return res.sendStatus(403);
+    }
+
+    // console.log(await answer.post.checkRole(await group.roleInGroup(userId), 'evaluateExam', userId));
+    // return res.sendStatus(403);
+
+    let dataUpdate = {
+        has_evaluate : true,
+        evaluate_user : userId,
+        score : req.body.score,
+        comment : req.body.comment
+    }
+    answer = await essayAnswerModel.getModel().updateOne({_id: answerId}, dataUpdate);
+    return res.json(answer);
 }
 
 module.exports = app;

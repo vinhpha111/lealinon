@@ -26,7 +26,7 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
     $scope.listPost = [];
     $scope.loadingPost = false;
     $scope.typePost = $auth.typePost;
-    $http.get('/api/group/get_by_id/'+$routeParams.id)
+    $http.get('/api/group/get_by_id/'+$scope.id)
     .then(function(res){
         $scope.detail = res.data;
         seoInfo.setTitle($scope.detail.name);
@@ -41,7 +41,7 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
             return;
         }
         $scope.loadingPost = true;
-        $http.get('/api/group/'+$routeParams.id+'/list_post', {
+        $http.get('/api/group/'+$scope.id+'/list_post', {
             params: { exceptIds : $scope.exceptIds }
         })
         .then(function(res){
@@ -55,13 +55,26 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
                 onTypingCommentPost(res.data[i]._id, index);
                 onCommentPost(res.data[i]._id, index);
                 getFeelPost(res.data[i]._id, index);
-                listenFeelPost(res.data[i]._id, index)
+                listenFeelPost(res.data[i]._id, index);
             }
-            $scope.loadingPost = false;;
+            $scope.loadingPost = false;
         }, function(err){
             $scope.loadingPost = false;
         })
     }
+
+    $scope.checkReduce = function(index) {
+        setTimeout(function(){
+            let height = $('#content_post_group_'+$scope.listPost[index]._id)[0].scrollHeight;
+            if (height > 200) {
+                $scope.$apply(function(){
+                    $scope.listPost[index].reduce = true;
+                    $scope.listPost[index].reduceBack = true;
+                });
+            }
+        }, 200);
+    }
+
     $scope.getPost();
 
     $scope.showComment = function(postIndex) {
@@ -116,7 +129,7 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
         $http.get('/api/user/find_to_invite_join_group', {
             params: { 
                 string : $scope.invite.stringFindUserInvite,
-                groupId : $routeParams.id
+                groupId : $scope.id
             }
         })
         .then(function(res){
@@ -138,7 +151,7 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
             $scope.invite.stringFindUserInvite = null;
             $scope.invite.listFindUserInvite = null;
             $scope.invite.introduce = null;
-            $http.post('/api/group/'+$routeParams.id+"/invite_member",{
+            $http.post('/api/group/'+$scope.id+"/invite_member",{
                 ids : ids,
                 introduce : $scope.invite.introduce
             })
@@ -172,7 +185,7 @@ app.controller('detailGroup', function($scope, $routeParams, $route, $http, Scop
     }
 
     $scope.joinGroup = function(){
-        $http.post('/api/group/'+$routeParams.id+'/join_group', {
+        $http.post('/api/group/'+$scope.id+'/join_group', {
             message: null
         })
         .then(function(res){
@@ -380,7 +393,7 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
 
 app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
     $scope.id = $routeParams.id;
-    $http.get('/api/group/get_by_id/'+$routeParams.id)
+    $http.get('/api/group/get_by_id/'+$scope.id)
     .then(function(res){
         $scope.detail = res.data;
     }, function(res){
@@ -388,14 +401,14 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
         $scope.notFound = true;
     });
 
-    $http.get('/api/group/'+$routeParams.id+'/get_member')
+    $http.get('/api/group/'+$scope.id+'/get_member')
     .then(function(res){
         $scope.members = res.data;
     }, function(res){
         $scope.members = null;
     });
 
-    $http.get('/api/group/'+$routeParams.id+'/get_member_ask_join')
+    $http.get('/api/group/'+$scope.id+'/get_member_ask_join')
     .then(function(res){
         $scope.memberAskJoin = res.data;
     }, function(res){
@@ -403,7 +416,7 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
     });
 
     $scope.acceptJoin = function(index){
-        $http.post('/api/group/'+$routeParams.id+'/accept_join', {
+        $http.post('/api/group/'+$scope.id+'/accept_join', {
             user_id: $scope.memberAskJoin[index]._id
         })
         .then(function(res){
@@ -422,7 +435,8 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
     }
 
     $scope.refuseJoin = function(index){
-        $http.post('/api/group/'+$routeParams.id+'/refuse_join', {
+        $scope.id = $routeParams.id;
+        $http.post('/api/group/'+$scope.id+'/refuse_join', {
             user_id: $scope.memberAskJoin[index]._id
         })
         .then(function(res){
@@ -446,7 +460,8 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
     }
 
     $scope.removeMemberAccept = function(){
-        $http.delete('/api/group/'+$routeParams.id+'/remove_member', {
+        $scope.id = $routeParams.id;
+        $http.delete('/api/group/'+$scope.id+'/remove_member', {
             params : {
                 user_id: $scope.removeMember.user_id._id
             }
