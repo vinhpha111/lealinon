@@ -15,6 +15,17 @@ route.get('/test-seo', (req, res) => {
     res.render('app', {
         htmlSeo: "<h1>this is page test seo</h1>"
     })
+});
+
+route.get('/sitemap', async (req, res) => {
+    const { SitemapStream, streamToPromise } = require('sitemap')
+    // Creates a sitemap object given the input configuration with URLs
+    const sitemap = new SitemapStream({ hostname: process.env.BASE_URL });
+    sitemap.write({ url: '/essay/5dc24518011cfa39a149f16d', changefreq: 'daily', priority: 0.3 })
+    sitemap.end()
+    
+    let xml = await streamToPromise(sitemap);
+    res.send(xml);
 })
 
 route.post('/login_facebook', userController.login_facebook)
