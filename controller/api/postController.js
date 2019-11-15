@@ -205,7 +205,7 @@ app.getFeel = async function(req, res) {
     let detail = await Post.getModel().findOne({_id: postId});
     let group = await Post.getGroupByPost(req.params.id);
     if (!group || ! await detail.checkRole(await group.roleInGroup(user_id), 'view', user_id)) {
-        return res.status(403);
+        return res.sendStatus(403);
     }
     let data = {};
     data.countLike = await feelModel.getModel().countDocuments({
@@ -241,11 +241,11 @@ app.getDetailEssay = async (req, res) => {
     if (!group || ! await detail.checkRole(await group.roleInGroup(userId), 'view', userId)) {
         return res.status(403).send();
     }
-    if (detail && req.user && group) {
+    if (detail && group) {
         data = detail.toJSON();
-        let answer = await essayAnswerModel.getModel().findOne({post: detail._id, user: req.user._id});
+        let answer = await essayAnswerModel.getModel().findOne({post: detail._id, user: userId});
         data.answer = answer;
-        data.role = await detail.getRole(await group.roleInGroup(req.user._id), req.user._id);
+        data.role = await detail.getRole(await group.roleInGroup(userId), userId);
         data.group = group.toJSON();
     }
     if (data) {
@@ -316,6 +316,9 @@ app.getListEssayAnswer = async (req, res) => {
         post : postId,
         _id: {
             $nin: exceptIds
+        },
+        is_draft: {
+            $ne: true
         }
     }
     let action = {
@@ -331,7 +334,9 @@ app.getListEssayAnswer = async (req, res) => {
 app.getDetailEssayAnswer = async (req, res) => {
     let userId = req.user ? req.user._id : null;
     let answerId = req.params.id;
-    let answer = await essayAnswerModel.getModel().findOne({_id: answerId}).populate('post').populate('user').populate('evaluate_user');
+    let answer = await essayAnswerModel.getModel().findOne({_id: answerId, is_draft: { $ne: true }})
+    .populate('post')
+    .populate('user').populate('evaluate_user');
     let group = null;
     let roleInGroup = null;
     if (answer && answer.post.group) {
