@@ -17,15 +17,32 @@ route.get('/test-seo', (req, res) => {
     })
 });
 
+const { SitemapStream, streamToPromise } = require('sitemap')
+const { createGzip } = require('zlib')
+let sitemap
 route.get('/sitemap', async (req, res) => {
-    const { SitemapStream, streamToPromise } = require('sitemap')
-    // Creates a sitemap object given the input configuration with URLs
-    const sitemap = new SitemapStream({ hostname: process.env.BASE_URL });
-    sitemap.write({ url: '/essay/5dc24518011cfa39a149f16d', changefreq: 'daily', priority: 0.3 })
-    sitemap.end()
+    res.header('Content-Type', 'application/xml');
+    res.header('Content-Encoding', 'gzip');
+    // if we have a cached entry send it
+    if (sitemap) {
+        res.send(sitemap)
+        return
+    }
+    try {
+        const smStream = new SitemapStream({ hostname: process.env.BASE_URL })
+        const pipeline = smStream.pipe(createGzip())
     
-    let xml = await streamToPromise(sitemap);
-    res.send(xml);
+        smStream.write({ url: '/essay/5dc24518011cfa39a149f16d',  changefreq: 'daily', priority: 0.3 })
+        smStream.end()
+    
+        // cache the response
+        streamToPromise(pipeline).then(sm => sitemap = sm)
+        // stream the response
+        pipeline.pipe(res).on('error', (e) => {throw e})
+    } catch (e) {
+        console.error(e)
+        res.status(500).end()
+    }
 })
 
 route.post('/login_facebook', userController.login_facebook)
