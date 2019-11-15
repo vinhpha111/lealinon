@@ -139,7 +139,7 @@ class postGroup extends baseModel {
                 break;
             default:
                 return {
-                    view: false,
+                    view: true,
                     management : false,
                     viewListAnswer: false,
                     edit: false,

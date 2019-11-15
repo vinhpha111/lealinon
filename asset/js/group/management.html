@@ -29,15 +29,25 @@
     <ul class="thin-scrollbar">
         <li ng-repeat="(index, member) in members | filter: inputMemberName">
             <a href="#">{{ member.user_id.name }}</a>
-            <select ng-if="member.type !== 1" ng-value="member.type" class="role-member">
-                <option value="1">Admin</option>
-                <option value="2">Editor</option>
-                <option value="3">Normal</option>
+            <select ng-init="member.oldType = member.type" ng-change="openPopupsetRole(member)" ng-if="member.type !== 1" ng-model="member.type" class="role-member">
+                <option ng-value="1">{{1 | roleText}}</option>
+                <option ng-value="2">{{2 | roleText}}</option>
+                <option ng-value="3">{{3 | roleText}}</option>
             </select>
             <span ng-if="member.type === 1" class="role-member">Admin</span>
             <i ng-click="openPopupRemoveMember(member);" ng-if="member.type !== 1" class="fa fa-remove remove-member" style="color:red; cursor: pointer;"></i>
         </li>
     </ul>
+</div>
+
+<div ng-show="setRoleMember" class="popup-component">
+    <div class="popup-set-role">
+        <h4>Bạn có chắc muốn cấp cho {{setRoleMember.user_id.name}} quyền {{ setRoleMember.type | roleText }} ?</h4>
+        <div class="text-center">
+            <button ng-disabled="activeSetRole" ng-click="activeSetRole = true; setRole(setRoleMember)" ng type="button" class="btn btn-warning btn-xs">Xác nhận</button>
+            <button ng-disabled="activeSetRole" ng-click="cancelSetRoleMember()" type="button" class="btn btn-default btn-xs">Hủy</button>
+        </div>
+    </div>
 </div>
 
 <div class="well well-sm list-member-ask-join-group">
@@ -131,7 +141,7 @@
         top: 5px;
     }
     
-    .popup-remove-member {
+    .popup-remove-member, .popup-set-role {
         margin: auto;
         margin-top: 300px;
         width: 300px;

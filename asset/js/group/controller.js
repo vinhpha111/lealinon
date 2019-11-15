@@ -391,7 +391,7 @@ app.controller('newPost', function($routeParams, $scope, current_user, $location
     });
 });
 
-app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
+app.controller('managementGroup', function($scope, $routeParams, $http, Scopes, $route){
     $scope.id = $routeParams.id;
     $http.get('/api/group/get_by_id/'+$scope.id)
     .then(function(res){
@@ -482,5 +482,37 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes){
                 }
             ];
         });
+    }
+
+    $scope.setRoleMember = null;
+    $scope.openPopupsetRole = function(member){
+        $scope.setRoleMember = member;
+    }
+    $scope.cancelSetRoleMember = function() {
+        for(let i in $scope.members) {
+            if ($scope.members[i]._id === $scope.setRoleMember._id) {
+                $scope.members[i].type = $scope.members[i].oldType;
+                break;
+            }
+        }
+        $scope.setRoleMember = null;
+    }
+    $scope.setRole = function() {
+        $http.put('/api/group/'+$scope.id+'/set_role', {
+            user_id: $scope.setRoleMember.user_id._id,
+            role: $scope.setRoleMember.type
+        }).then(function(res) {
+            $scope.activeSetRole = false;
+            $route.reload();
+        }, function(err) {
+            $scope.activeSetRole = false;
+            $scope.cancelSetRoleMember();
+            Scopes.get('scopeMessage').alertMessages = [
+                {
+                    type: 'danger',
+                    content: 'Có lỗi xãy ra, hãy thử lại!'
+                }
+            ];
+        })
     }
 })

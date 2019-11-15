@@ -76,3 +76,23 @@ app.filter('formatDateTime', function(){
 function zeroLead(number) {
   return (number < 10 ? '0' : '') + number;
 }
+
+app.filter('roleText', function(){
+  return function(typeNumber) {
+    switch (typeNumber) {
+      case 1:
+        return 'Admin';
+        break;
+      case 2:
+        return 'Editor';
+        break;
+      case 3:
+        return 'Normal';
+        break;
+    
+      default:
+        return 'None'
+        break;
+    }
+  }
+});

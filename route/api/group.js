@@ -17,5 +17,6 @@ route.get('/:id/get_member_ask_join', groupController.getMemberAskJoin);
 route.post('/:id/accept_join', groupController.acceptJoin);
 route.post('/:id/refuse_join', groupController.refuseJoin);
 route.delete('/:id/remove_member', groupController.removeFromGroup);
+route.put('/:id/set_role', groupController.setRole);
 
 module.exports = route;
