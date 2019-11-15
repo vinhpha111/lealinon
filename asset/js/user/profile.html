@@ -79,7 +79,7 @@
 
 <a ng-if="!detail.roles.hasLogin" href="#" class="btn btn-info btn-sm">Login để kết nối với bạn</a>
 
-<button ng-if="detail.roles.isFriend" href="#" class="btn btn-info btn-sm"><i class="fa fa-wechat"></i> Nhắn tin</button>
+<button ng-if="detail.roles.isFriend" ng-click="chatBox(detail)" class="btn btn-info btn-sm"><i class="fa fa-wechat"></i> Nhắn tin</button>
 <style>
     .avatar-in-profile {
         width: 80px;

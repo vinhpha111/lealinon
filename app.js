@@ -9,9 +9,7 @@ var cookieParser = require('cookie-parser');
 var flash = require('express-flash');
 var path = require('path');
 var auth = require('./controller/middleware/authController');
-var apiRoute = require('./route/api');
-var webRoute = require('./route/web');
-// var io = require('socket.io')(http);
+var mainRoute = require('./route');
 global.io = require('./socket')(http)
 require('dotenv').config();
 
@@ -34,10 +32,10 @@ for (const key in helpers = require('./helper')) {
 // mail
 var nodemailer = require('nodemailer');
 global.transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: process.env.EMAIL_SERVICE,
   auth: {
-    user: 'vinhpha111@gmail.com',
-    pass: 'vinhpha112013'
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD
   }
 });
 // end
@@ -72,11 +70,24 @@ app.use(session({
 }));
 app.use(cookieParser());
 app.use(flash());
+app.use(require('./helper/filterRequest')());
+app.use(mainRoute);
 
-app.use('/api', auth);
-app.use('/api', apiRoute);
-
-app.use('/', webRoute);
+/* async function updateIdToData() {
+  let uid = require('uid');
+  let model = require('./model/index');
+  let models = ['essay_answer', 'groups', 'post_groups', 'quiz_answers', 'users'];
+  for(let i in models) {
+    let currentModel = model.getInstance(models[i]);
+    let datas = await currentModel.getModel().find();
+    for(let index in datas) {
+      let update = await currentModel.getModel().updateOne({_id: datas[index]._id}, {id: uid(10)});
+    }
+  }
+}
+setTimeout(() => {
+  updateIdToData()
+}, 5000); */
 
 http.listen(process.env.PORT || 3000, () => {
     console.log('listening on port 3000');

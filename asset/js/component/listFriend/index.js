@@ -15,6 +15,7 @@ app.controller('listFriendController', function($scope, $rootScope, $http, Scope
 
     $scope.showChatBox = function(user) {
         console.log(user);
+        Scopes.get('scopeMainCtrl').openMenuPhone = false;
         Scopes.get('scopeChatBox').init(user);
     }
 

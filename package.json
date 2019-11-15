@@ -42,9 +42,17 @@
     "nodemailer": "^6.3.0",
     "passport": "^0.4.0",
     "passport-facebook": "^3.0.0",
+    "passport-facebook-token": "^3.3.0",
     "redbird": "^0.9.0",
     "sharp": "^0.23.1",
+    "sitemap": "^5.1.0",
     "socket.io": "^2.3.0",
-    "uid": "0.0.2"
+    "uid": "0.0.2",
+    "xss": "^1.0.6"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "asset/*"
+    ]
   }
 }

@@ -1,10 +1,9 @@
 var mongoose = require('mongoose');
 var schema = mongoose.Schema;
 var feels = schema({
-    item_id : Number,
-    item_type : Number,
-    feel_type : Number,
-    user : [{ type: Schema.Types.ObjectId, ref: 'users' }],
+    post : { type: schema.Types.ObjectId, ref: 'post_groups' },
+    feel_type : Number, // 1: like, 2: unlike
+    user : { type: schema.Types.ObjectId, ref: 'users' },
     created_at : Date,
     updated_at : Date
 }, {collection : 'feels'});
@@ -14,6 +13,18 @@ module.exports = function(Class = null){
         let vituals = Class.virtual();
         for (let nameVirtual in vituals) {
             feels.virtual(nameVirtual).get(vituals[nameVirtual].get).set(vituals[nameVirtual].set);
+        }
+    }
+    if (typeof Class['methods'] === 'function') {
+        let methods = Class.methods();
+        for (let name in methods) {
+            feels.methods[name] = methods[name];
+        }
+    }
+    if (typeof Class['postMiddleware'] === 'function') {
+        let postMiddlewares = Class.postMiddleware();
+        for (let type in postMiddlewares) {
+            feels.post(type, postMiddlewares[type]);
         }
     }
     return mongoose.model('feels', feels);

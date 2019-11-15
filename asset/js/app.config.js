@@ -18,6 +18,7 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
     })
 
     .when('/search', {
+        title: 'Tìm kiếm',
         templateUrl: 'js/search/index.html',
         controller: 'searchController',
         resolve : {
@@ -44,10 +45,6 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
             current_user : function($auth, $route){
                 return $auth.getUser();
             },
-            permission : function($auth, $route){
-                let roleList = [$auth.role.group.ADMIN, $auth.role.group.EDITOR];
-                return $auth.checkPermission.group(roleList, $route.current.params.id);
-            }
         }
     })
 
@@ -76,6 +73,36 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
                 let roleList = [$auth.role.group.ADMIN, $auth.role.group.EDITOR];
                 return $auth.checkPermission.group(roleList, $route.current.params.id, '/group/'+$route.current.params.id);
             }
+        }
+    })
+
+    .when('/essay/:id', {
+        templateUrl: 'js/post/detailEssay.html',
+        controller: 'detailEssay',
+        resolve : {
+            current_user : function($auth){
+                return $auth.getUser();
+            },
+        }
+    })
+
+    .when('/essay_answer/:id', {
+        templateUrl: 'js/post/detailEssayAnswer.html',
+        controller: 'detailEssayAnswer',
+        resolve : {
+            current_user : function($auth){
+                return $auth.getUser();
+            },
+        }
+    })
+
+    .when('/essay/:id/do', {
+        templateUrl: 'js/post/doEssay.html',
+        controller: 'doEssay',
+        resolve : {
+            current_user : function($auth){
+                return $auth.getUser();
+            },
         }
     })
 

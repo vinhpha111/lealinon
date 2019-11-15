@@ -39,4 +39,16 @@ app.controller('searchController', function($scope, $location, Scopes, $http){
     }
 
     $scope.search();
+
+    $scope.checkReduce = function(index) {
+        setTimeout(function(){
+            let height = $('#content_post_group_'+$scope.datas[index]._id)[0].scrollHeight;
+            if (height > 200) {
+                $scope.$apply(function(){
+                    $scope.datas[index].reduce = true;
+                    $scope.datas[index].reduceBack = true;
+                });
+            }
+        }, 200);
+    }
 })

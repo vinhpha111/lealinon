@@ -7,16 +7,37 @@
             <div ng-class="{darker: message.from === current_user._id}" class="row-message">
                 <img ng-class="{right: message.from === current_user._id}" 
                 src="{{message.from === current_user._id ? current_user.avatar_path : user.avatar_path}}" alt="Avatar">
-                <p>{{message.message}}</p>
+                <div class="message" ng-bind-html="message.message"></div>
                 <span ng-class="{'time-left': message.from === current_user._id, 'time-right': message.from !== current_user._id}">{{message.created_at | timeChatBox}}</span>
             </div>
         </div>
     </div>
     <div class="panel-footer">
         <div class="input-group">
-            <input type="text" ng-model="message" class="form-control" placeholder="Search">
-            <div class="input-group-btn">
-                <button ng-click="sendMessage(message); message = ''" class="btn btn-default" type="button">
+            <div style="position: relative;">
+                <div ng-show="showEmojiBox" class="emoji-box">
+                    <div style="position: relative;">
+                        <i style="position: absolute; right: 10px; top: 0px; font-size: 16px;" 
+                        ng-click="showEmojiBox = false;" class="fa fa-close"></i>
+                    </div>
+                    <div ng-repeat="(key, list) in emoji.data" ng-show='key === emoji.active' class="emoji-box-content thin-scrollbar">
+                        <ul>
+                            <li ng-repeat="item in list" id="{{ 'emoji_'+item.no }}" ng-bind-html="item.code" ng-click="addEmojiToMessage('emoji_'+item.no);"></li>
+                        </ul>
+                    </div>
+                    <div class="emoji-box-tab">
+                        <button ng-repeat="(key, list) in emoji.data" 
+                        ng-class="{'btn-default': key === emoji.active , 'btn-link': key !== emoji.active}" 
+                        ng-click="emoji.active = key;"
+                        ng-bind-html="list[0].code" class="btn btn-default btn-xs"></button>
+                    </div>
+                </div>
+                <span ng-click="showEmojiBox = true;" class="emoji-icon">&#128518;</span>
+            </div>
+            <!-- <input type="text" ng-model="message" class="form-control" placeholder="Search"> -->
+            <textarea class="form-control input-chat" onkeyup="textAreaAdjust(this)" ng-model="msg.content" enter-submit="sendMessage(); showEmojiBox = false;"></textarea>
+            <div class="input-group-btn send-button">
+                <button ng-click="sendMessage(); showEmojiBox = false;" class="btn btn-default" type="button">
                     <span class="glyphicon glyphicon-send"></span>
                 </button>
             </div>
@@ -24,12 +45,25 @@
     </div>
 </div>
 
+<script>
+    function textAreaAdjust(o) {
+        let oldHeight = 5+o.scrollHeight;
+        o.style.height = "1px";
+        let height = 5+o.scrollHeight;
+        if (height <= 80) {
+            o.style.height = height+"px";   
+        } else {
+            o.style.height = oldHeight+"px";
+        }
+    }
+</script>
+
 <style>
     .chat-box {
-        width: 240px;
+        width: 300px;
         position: absolute;
-        top: calc(100vh - 455px);
-        left: -240px;
+        bottom: calc(50px - 100vh);
+        left: -300px;
     }
     
     .chat-box .panel-heading {
@@ -62,6 +96,16 @@
     .chat-box .panel-footer {
         padding: 2px;
     }
+
+    .chat-box .panel-footer .input-chat {
+        height: 37px;
+        resize: none;
+        max-height: 80px;
+    }
+
+    .chat-box .panel-footer .send-button{
+        vertical-align: top;
+    }
     
     
     .row-message {
@@ -70,6 +114,13 @@
         border-radius: 5px;
         padding: 10px;
         margin: 10px 0;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        hyphens: auto;
+    }
+
+    .row-message .message * {
+        font-size: 14px !important;
     }
     
     .darker {
@@ -105,5 +156,49 @@
     .time-left {
         float: left;
         color: #999;
+    }
+
+    .emoji-icon {
+        position: absolute;
+        font-size: 20px;
+        top: -25px;
+        left: 5px;
+        cursor: pointer;
+    }
+
+    .emoji-box {
+        position: absolute;
+        width: 100%;
+        left: 0px;
+        bottom: 0px;
+        z-index: 1000;
+        border: 1px solid darkgrey;
+    }
+    .emoji-box-content {
+        width: 100%;
+        height: 200px;
+        overflow-y: auto;
+        background-color: aquamarine;
+    }
+
+    .emoji-box-content ul {
+        list-style: none;
+        padding: 15px 5px 5px 5px;
+    }
+
+    .emoji-box-content ul li {
+        display: inline-flex;
+        font-size: 16px;
+        margin-right: 5px;
+        cursor: pointer;
+    }
+
+    .emoji-box-content ul li:hover {
+        background-color: ghostwhite;
+    }
+
+    .emoji-box-tab {
+        width: 100%;
+        background-color: white;
     }
 </style>

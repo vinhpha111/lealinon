@@ -4,6 +4,7 @@ var model = require('./../../model');
 var User = model.getInstance('users');
 var inviteMakeFriendModel = model.getInstance('user_invite_make_friend');
 var friendModel = model.getInstance('user_friend');
+var groupMemberModel = model.getInstance('group_member');
 var announce = model.getInstance('announces');
 const {validationResult} = require('express-validator');
 datetime = require('node-datetime');
@@ -28,14 +29,42 @@ app.find = async (req, res) => {
     
     let query = {
         $or : [
-            { email : new RegExp(str) }
+            { email : new RegExp(str) },
+            { name : new RegExp(str) }
         ]
     }
     let action = {
         limit:10
     }
     
-    let listUser = await User.find(query, ['_id', 'email'], action);
+    let listUser = await User.find(query, null, action);
+    return res.json(listUser);
+}
+
+app.findToInviteJoinGroup = async (req, res) => {
+    if (!req.user) return res.status(404).send("Not found!");
+    
+    let str = req.query.string;
+    let groupId = req.query.groupId;
+    if (!str || !groupId) {
+        return res.send([]);
+    }
+
+    let listMember = await groupMemberModel.getModel().find({group_id: groupId});
+    let exceptIds = listMember.map(item => item.user_id);
+    let query = {
+        $or : [
+            { email : new RegExp(str) },
+            { name : new RegExp(str) }
+        ],
+        _id : {
+            $nin: exceptIds
+        }
+    }
+    let action = {
+        limit:10
+    }
+    let listUser = await User.find(query, null, action);
     return res.json(listUser);
 }
 

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 function getCookie(cname, stringCookie) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(stringCookie);
@@ -41,7 +42,11 @@ module.exports = (http) => {
 
         socket.on('leaveRoom', function(roomName) {
             socket.leave(roomName);
-        })
+        });
+
+        socket.on('typingCommentPost', function(data){
+            socket.broadcast.to('group_'+data.groupId).emit('post_'+data.postId,data);
+        });
 
         console.log('A user connected');
         console.log(socket.user);

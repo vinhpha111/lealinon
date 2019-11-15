@@ -18,10 +18,9 @@
 
 /* Set gray background color and 100% height */
 .sidenav {
-    padding-top: 20px;
     height: 100%;
     position: sticky !important;
-    top: 50px;
+    top: 65px;
 }
 
 /* Set black background color, white text and some padding */
@@ -32,12 +31,16 @@ footer {
 }
 
 #main{
-    margin-top: 50px;
+    margin-top: 55px;
 }
 
 .search-input {
     max-width: 300px;
     margin-top: 10px;
+}
+
+.announce-header {
+    padding-left: 0px;
 }
 
 .announce-header .dropdown-menu{
@@ -219,10 +222,12 @@ h1 {
 .list-friend-sidebar {
     list-style: none;
     padding-left: 0px;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
 }
 
 .list-friend-sidebar li {
-    height: 30px;
+    min-height: 30px;
     padding: 5px;
     cursor: pointer;
 }
@@ -238,11 +243,52 @@ h1 {
 }
 
 
-.do-exam {
+.do-exam, .set-notify-btn {
     position: absolute;
     right: 5px;
     top: 5px;
 }
+
+.comment-list {
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+#menu-popup-close-btn {
+    display: none;
+}
+
+/* reduce post */
+.content-post-group * {
+    max-width: 100%;
+}
+
+.content-post-reduce {
+    height: 200px;
+    overflow-y: hidden;
+}
+
+.content-post-reduce::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 70px;
+    bottom: 0px;
+    left: 0px;
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
+}
+
+.content-post-reduce-more{
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    left: 0px;
+}
+
+.content-post-reduce-more a{
+    color: white;
+}
+/* end reduce post */
 
 /* On small screens, set height to 'auto' for sidenav and grid */
 @media screen and (max-width: 767px) {
@@ -280,5 +326,42 @@ h1 {
         left: 0px;
         top: 50px;
         width: 100%;
+    }
+
+    #menu-popup {
+        position: fixed;
+        height: calc(100vh - 150px);
+        width: 100%;
+        top: 150px;
+        left: 0px;
+        z-index: 1000;
+        background-color: white;
+    }
+
+    #menu-popup .menu-popup-header {
+        position: relative;
+    }
+
+    #menu-popup .menu-popup-header .menu-popup-close-btn {
+        position: absolute;
+        right: 10px;
+        top: 5px;
+        font-size: 30px;
+    }
+
+    #menu-popup-close-btn {
+        display: list-item;
+        float: left;
+    }
+
+    .left-sidebar, .right-sidebar {
+        display: none;
+    }
+
+    .chat-box {
+        position: fixed !important;
+        left: 0px !important;
+        bottom: 0px !important;
+        z-index: 1000 !important;
     }
 }

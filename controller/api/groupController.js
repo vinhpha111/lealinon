@@ -275,10 +275,7 @@ app.removeFromGroup = async (req, res) => {
     }
     let id = req.params.id;
     let userId = req.query.user_id;
-    console.log(userId);
-    let group = await Group.findOne({_id: id});
-    console.log(await group.checkRole(req.user._id, 'deleteMember'));
-    console.log(await group.checkRole(userId, 'canRemoveFromGroup'));
+    let group = await Group.getModel().findOne({_id: id});
     if (! await group.checkRole(req.user._id, 'deleteMember') || ! await group.checkRole(userId, 'canRemoveFromGroup')) {
         return res.status(403).send(null);
     }
@@ -295,6 +292,22 @@ app.removeFromGroup = async (req, res) => {
     io.sockets.in(userId).emit('announceHeader', announceData);
 
     res.send(null);
+}
+
+app.setRole = async function(req, res) {
+    if (!req.user) {
+        return res.status(403).send(null);
+    }
+    let id = req.params.id;
+    let userId = req.body.user_id;
+    let role = req.body.role;
+    let group = await Group.getModel().findOne({_id: id});
+    if (! await group.checkRole(req.user._id, 'setRole') 
+        || ! await group.checkRole(userId, 'canRemoveFromGroup')) {
+        return res.status(403).send(null);
+    }
+    await groupMemberModel.getModel().updateOne({group_id: id, user_id: userId}, {type: role});
+    return res.sendStatus(200);
 }
 
 module.exports = app;

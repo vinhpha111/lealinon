@@ -145,6 +145,7 @@ class User extends baseModel {
         .match({
             $or: [
                 { email: new RegExp(query.string) },
+                { name: new RegExp(query.string) },
             ],
             _id: {
                 $nin: query.exceptIds
@@ -166,6 +167,25 @@ class User extends baseModel {
         .limit(10)
         .exec();
         return list;
+    }
+
+    async findOrCreateFacebook(profile) {
+        let user = await this.getModel().findOne({ facebook_id: profile.id });
+        if (user) {
+            return user;
+        }
+        let dataNew = {
+            email : profile.emails[0] ? profile.emails[0].value : null,
+            name : profile.displayName,
+            facebook_id : profile.id,
+            active : true,
+            created_at : (new Date()).getTime(),
+        }
+        if (profile.photos[0]) {
+            dataNew.avatar_path = profile.photos[0].value;
+        }
+        user = await this.getModel().create(dataNew);
+        return user;
     }
 }
 

@@ -5,6 +5,7 @@ var User = model.getInstance('users');
 const {validationResult} = require('express-validator');
 datetime = require('node-datetime');
 var pastDateTime = datetime.create();
+require('dotenv').config();
 app.get_login = (req, res) => {
     res.render('index', {
         layout : 'user/login.html',
@@ -112,5 +113,33 @@ app.active = async (req, res) => {
         return res.redirect('/');
     }
 }
+
+var passport = require('passport');
+var FacebookTokenStrategy = require('passport-facebook-token');
+passport.use(new FacebookTokenStrategy({
+    clientID: process.env.FACEBOOK_APP_ID ? process.env.FACEBOOK_APP_ID : 'none',
+    clientSecret: process.env.FACEBOOK_APP_SECRET ? process.env.FACEBOOK_APP_SECRET : 'none'
+  }, async function(accessToken, refreshToken, profile, done) {
+    let user = User.findOrCreateFacebook(profile);
+    user.then(data => done(null, data))
+    .catch(err => done(err, null));
+  }
+));
+app.login_facebook = [
+    passport.initialize(),
+    passport.session(),
+    passport.authenticate('facebook-token', {
+        session: false
+    }),
+    (req, res) => {
+        var token = jwt.sign({
+            _id: req.user._id,
+            email : req.user.email
+        },  process.env.TOKEN_CLIENT_PRIVATE, { expiresIn: 60*60*24*30 })
+        req.session.token = token;
+        res.cookie('refresh_token', token, {httpOnly : true, maxAge: 1000*60*60*24*30});
+        return res.redirect('/');
+    }
+]
 
 module.exports = app;

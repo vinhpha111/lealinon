@@ -11,12 +11,16 @@ var users = schema({
     birthday : Date,
     job : Number,
     introduce : String,
-    facebook_token : String,
+    facebook_id : {
+        type: String,
+        select: false
+    },
     encrypt_password : {
         type: String,
         select: false
     },
     online_status : Boolean, // 0: offline, 1: online
+    token_login : [String],
     active : Boolean,
     created_at : Date
 }, {collection : 'users'});

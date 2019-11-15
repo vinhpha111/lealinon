@@ -4,7 +4,7 @@ app.service('$auth', function($rootScope, $http, $location, $window) {
             if ($rootScope.current_user) {
                 resolve($rootScope.current_user);
             }
-            $http.get("api/current_user")
+            $http.get("api/user/current_user")
             .then(function(response) {
                 resolve(response.data);
             }, function(response){
@@ -12,7 +12,7 @@ app.service('$auth', function($rootScope, $http, $location, $window) {
             });
         });
     }
-
+    
     this.role = {
         group : {
             ADMIN : 1,
@@ -20,24 +20,24 @@ app.service('$auth', function($rootScope, $http, $location, $window) {
             NORMAL : 3
         }
     }
-
+    
     this.typePost = function(name) {
         switch (name) {
             case 'ESSAY':
-                return 1;
-                break;
+            return 1;
+            break;
             case 'QUIZ':
-                return 2;
-                break;
+            return 2;
+            break;
             case 'ANNOUNCE':
-                return 3;
-                break;
+            return 3;
+            break;
             default:
-                return 3;
-                break;
+            return 3;
+            break;
         }
     }
-
+    
     this.checkPermission = {
         group : function(listRole, groupId, redirect) {
             return new Promise(function(resolve, reject){
@@ -111,4 +111,15 @@ app.factory('Sound', function(){
             })
         }
     }
-})
+});
+
+app.factory('seoInfo', function() {
+    var mainTile = 'Lealinon';
+    var subTitle = null;
+    return {
+        title: function() {
+            return (subTitle ? subTitle + ' | ' : '') + mainTile; 
+        },
+        setTitle: function(newTitle) { subTitle = newTitle }
+    };
+});

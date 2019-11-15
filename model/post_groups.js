@@ -1,4 +1,7 @@
 var baseModel = require('./base');
+var datetime = require('node-datetime');
+var pastDateTime = datetime.create();
+var ObjectId = require('mongodb').ObjectID;
 class postGroup extends baseModel {
     constructor(){
         super('post_groups');
@@ -19,6 +22,143 @@ class postGroup extends baseModel {
                 return 3;
                 break;
         }
+    }
+
+    ROLE(name = null){
+        let roleList = {
+            ADMIN : 1,
+            EDITOR : 2,
+            NORMAL : 3,
+        }
+        if (roleList[name]) {
+            return roleList[name]
+        }
+        return null;
+    }
+
+    methods() {
+        let self = this;
+        return {
+            getRole : async function(mainRole, userId){
+                return self.listRole(mainRole, this, userId);
+            },
+            checkRole : async function(mainRole, role, userId){
+                let listRole = await this.getRole(mainRole, userId);
+                return self.roleCan(role, listRole);
+            }
+        }
+    }
+
+    listRole(typeRole, post, userId){
+        let doExam = true;
+        let doEssay = true;
+        let doQuiz = true;
+        let setNotify = false;
+        let evaluateExam = true;
+        if (post.start_at && post.end_at) {
+            let startTime = (new Date(post.start_at)).getTime();
+            let endTime = (new Date(post.end_at)).getTime();
+            let nowTime = pastDateTime.now();
+            if (nowTime - endTime > 0 || startTime - nowTime > 0 || post.has_stop) {
+                doExam = false;
+                doEssay = false;
+                doQuiz = false;
+            }
+            if (startTime - nowTime > 0) {
+                setNotify = true;   
+            }
+        }
+        if (userId === post.user_created.toString()
+            || (typeof(post.user_created) === 'object' && userId === post.user_created._id.toString()) 
+            || post.type === this.TYPE('ANNOUNCE')) {
+            doExam = false;
+            doEssay = false;
+            doQuiz = false;
+            setNotify = false;
+            evaluateExam = false;
+        }
+        if (post.type === this.TYPE('ESSAY')) doQuiz = false;
+        if (post.type === this.TYPE('QUIZ')) doEssay = false;
+
+        let management = false;
+        if (typeRole === this.ROLE('ADMIN') || post.user_created === userId) {
+            management = true;
+        }
+        
+        switch (typeRole) {
+            case this.ROLE('ADMIN'):
+                return {
+                    view: true,
+                    management : management,
+                    viewListAnswer: true,
+                    edit: true,
+                    delete: true,
+                    stopExam: true,
+                    publicExam: true,
+                    evaluateExam: evaluateExam,
+                    comment: true,
+                    setFeel: true,
+                    doEssay: doEssay,
+                    doQuiz: doQuiz,
+                    setNotify: setNotify,
+                }
+                break;
+            case this.ROLE('EDITOR'):
+                return {
+                    view: true,
+                    management : management,
+                    viewListAnswer: true,
+                    edit: true,
+                    delete: false,
+                    stopExam: true,
+                    publicExam: true,
+                    evaluateExam: evaluateExam,
+                    comment: true,
+                    setFeel: true,
+                    doEssay: doEssay,
+                    doQuiz: doQuiz,
+                    setNotify: setNotify,
+                }
+                break;
+            case this.ROLE('NORMAL'):
+                return {
+                    view: true,
+                    management : management,
+                    viewListAnswer: false,
+                    edit: false,
+                    delete: false,
+                    stopExam: false,
+                    publicExam: false,
+                    evaluateExam: evaluateExam,
+                    comment: true,
+                    setFeel: true,
+                    doEssay: doEssay,
+                    doQuiz: doQuiz,
+                    setNotify: setNotify,
+                }
+                break;
+            default:
+                return {
+                    view: true,
+                    management : false,
+                    viewListAnswer: false,
+                    edit: false,
+                    delete: false,
+                    stopExam: false,
+                    publicExam: false,
+                    evaluateExam: false,
+                    comment: false,
+                    setFeel: false,
+                    doEssay: false,
+                    doQuiz: false,
+                    setNotify: false,
+                }
+                break;
+        }
+    }
+
+    roleCan(type, listRole){
+        return listRole[type] ? true : false; 
     }
 
     findByString(query){
@@ -66,6 +206,14 @@ class postGroup extends baseModel {
         .limit(10)
         .exec();
         return list;
+    }
+
+    async getGroupByPost(postId) {
+        let post = await this.getModel().findOne({_id: new ObjectId(postId)}).populate('group');
+        if (post) {
+            return post.group;
+        }
+        return null;
     }
 
 }
