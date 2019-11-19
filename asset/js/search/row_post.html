@@ -1,7 +1,7 @@
 <div class="panel panel-default">
     <div class="panel-heading"><a href="/post/{{data._id}}" class="header-link"><i class="fa fa-newspaper-o" style="font-size:24px"></i>&nbsp;&nbsp; {{data.title}}</a></div>
     <div style="position: relative;" class="panel-body" ng-init="checkReduce(index)">
-        <div id="content_post_group_{{data._id}}" class="content-essay" ng-class="{'content-post-reduce': data.reduce}" class="content-post-group" ng-bind-html="data.content"></div>
+        <div id="content_post_group_{{data._id}}" class="content-essay" ng-class="{'content-post-reduce': data.reduce}" class="content-post-group" bind-html="data.content"></div>
         <h5 ng-click="data.reduce = false" ng-if="data.reduce" class="text-center content-post-reduce-more"><a href="#" class="">Xem thêm</a></h5>
         <h5 ng-if="!data.reduce && !loadingPost && data.reduceBack" class="text-center"><a ng-click="data.reduce = true" href="#" class="">Ẩn bớt</a></h5>
     </div>

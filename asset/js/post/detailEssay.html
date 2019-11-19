@@ -2,7 +2,7 @@
     <a href="/group/{{detail.group._id}}" class="btn btn-default"><i class='fa fa-arrow-left'></i> {{ detail.group.name }}</a>
     <h2 ng-if="detail" ng-bind="detail.title"></h2>
     <div style="position: relative;">
-        <div class="content-essay" ng-class="{'content-post-reduce': detail.reduce}" ng-bind-html='detail.content'>
+        <div class="content-essay" ng-class="{'content-post-reduce': detail.reduce}" bind-html='detail.content'>
         </div>
         <h5 ng-click="detail.reduce = false" ng-if="detail.reduce" class="text-center content-post-reduce-more"><a href="#" class="">Xem thêm</a></h5>
         <h5 ng-if="!detail.reduce && !loading && detail.reduceBack" class="text-center"><a ng-click="detail.reduce = true" href="#" class="">Ẩn bớt</a></h5>

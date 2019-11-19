@@ -2,7 +2,7 @@
     <a href="/essay/{{detail.post._id}}" class="btn btn-default"><i class='fa fa-arrow-left'></i> Trở về chi tiết</a>
     <h3 ng-if="detail.post" ng-bind="detail.post.title"></h3>
     <div style="position: relative;">
-        <div class="content-essay" ng-class="{'content-post-reduce': detail.post.reduce}" ng-bind-html='detail.post.content'>
+        <div class="content-essay" ng-class="{'content-post-reduce': detail.post.reduce}" bind-html='detail.post.content'>
         </div>
         <h5 ng-click="detail.post.reduce = false" ng-if="detail.post.reduce" class="text-center content-post-reduce-more"><a href="#" class="">Xem thêm</a></h5>
         <h5 ng-if="!detail.post.reduce && !loading && detail.post.reduceBack" class="text-center"><a ng-click="detail.post.reduce = true" href="#" class="">Ẩn bớt</a></h5>
@@ -18,9 +18,9 @@
                     style="font-size:16px; color: rgb(255, 187, 0);"></i>
                     <a href="#" ng-click="detail.showCommentEvaluate = !detail.showCommentEvaluate">Nhận xét <i class="fa fa-caret-down"></i></a>
                 </p>
-                <div ng-if="detail.showCommentEvaluate" class="well" ng-bind-html="detail.comment"></div>
+                <div ng-if="detail.showCommentEvaluate" class="well" bind-html="detail.comment"></div>
             </div>
-            <div class="content-post-group" ng-bind-html="detail.content">
+            <div class="content-post-group" bind-html="detail.content">
             </div>
         </div>
     </div>

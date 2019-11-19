@@ -3,7 +3,7 @@
     <h3>Làm bài</h3>
     <h4 ng-bind='detail.title'></h4>
     <div style="position: relative;">
-        <div class="content-essay" ng-class="{'content-post-reduce': detail.reduce}" ng-bind-html='detail.content'>
+        <div class="content-essay" ng-class="{'content-post-reduce': detail.reduce}" bind-html='detail.content'>
         </div>
         <h5 ng-click="detail.reduce = false" ng-if="detail.reduce" class="text-center content-post-reduce-more"><a href="#" class="">Xem thêm</a></h5>
     </div>
@@ -29,7 +29,7 @@
         <h4 class="text-center"><strong>Câu trả lời của bạn</strong></h4>
         <div class="panel panel-default">
             <div class="panel-body">
-                <div class="content-post-group" ng-bind-html="detail.answer.content">
+                <div class="content-post-group" bind-html="detail.answer.content">
                     
                 </div>
             </div>

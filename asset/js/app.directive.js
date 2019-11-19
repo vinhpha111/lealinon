@@ -147,3 +147,17 @@ app.directive('enterSubmit', function () {
     }
   }
 });
+
+app.directive('bindHtml', function() {
+  var refresh = function(element) {
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub, element]);
+  };
+  return {
+    link: function(scope, element, attrs) {
+      scope.$watch(attrs.bindHtml, function(newValue, oldValue) {
+        element.html(newValue);
+        refresh(element[0]);
+      });
+    }
+  };
+});
