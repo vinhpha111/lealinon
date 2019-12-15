@@ -290,6 +290,14 @@ h1 {
 }
 /* end reduce post */
 
+.content-question-quiz * {
+    max-width: 100%;
+}
+
+.content-question-quiz img {
+    height: auto !important;
+}
+
 /* On small screens, set height to 'auto' for sidenav and grid */
 @media screen and (max-width: 767px) {
     .sidenav {

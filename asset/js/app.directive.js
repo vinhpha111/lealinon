@@ -61,6 +61,7 @@ app.directive('ckEditorQuestionQuiz', function() {
         toolbarGroups : [
           { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
           { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+          { name: 'insert', groups: ['simage'] },
           { name: 'others' },
         ],
           height: 100

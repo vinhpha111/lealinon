@@ -1,5 +1,6 @@
 <div class="panel-heading" style="position: relative; padding-right: 70px;">
-    {{ post.user_created.name }} đã tạo bài thi trắc nghiệm. {{ post.start_at | timeChatBox }}
+    <a href="/user/{{ post.user_created._id }}">{{ post.user_created.name }}</a><a style="color: rgb(51, 51, 51)" href="/quiz/{{post._id}}"> đã tạo bài thi trắc nghiệm. {{ post.start_at | timeChatBox }}</a>
+    <a class="btn btn-info btn-xs" href="/quiz/{{post._id}}">Chi tiết <i class='fa fa-share'></i></a>
     <a ng-if="post.role.doQuiz" href="#" class="btn btn-success btn-sm do-exam">Làm bài <i class='fa fa-angle-double-right'></i></a>
     <a ng-if="post.role.setNotify" href="#" class="btn btn-success btn-sm set-notify-btn">Đặt lịch <i class="fa fa-bell"></i></a>
 </div>

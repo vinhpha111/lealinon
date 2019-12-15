@@ -387,4 +387,29 @@ app.addEvaluateEssayAnswer = async (req, res) => {
     return res.json(answer);
 }
 
+app.getDetailQuiz = async (req, res) => {
+    let detail = await Post.getModel().findOne({_id: req.params.id, type: Post.TYPE('QUIZ')});
+    let data = null;
+    let group = await Post.getGroupByPost(req.params.id);
+    let userId = req.user ? req.user._id : null;
+    if (!group || ! await detail.checkRole(await group.roleInGroup(userId), 'view', userId)) {
+        return res.status(403).send();
+    }
+    if (detail && group) {
+        data = detail.toJSON();
+        data.role = await detail.getRole(await group.roleInGroup(userId), userId);
+        data.group = group.toJSON();
+    }
+    if (data) {
+        return res.json(data);
+    }
+    return res.status(404).send();
+}
+
+app.getDetailQuizListQuestion = async (req, res) => {
+    let postId = req.params.id;
+    let list = await quizModel.getListQuizQuestion(postId);
+    return res.json(list);
+}
+
 module.exports = app;

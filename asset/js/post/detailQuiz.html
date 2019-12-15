@@ -1,0 +1,75 @@
+<div ng-if="detail" style="padding-top: 10px;">
+    <a href="/group/{{detail.group._id}}" class="btn btn-default"><i class='fa fa-arrow-left'></i> {{ detail.group.name }}</a>
+    <h2 ng-if="detail">{{detail.title}} <a class='btn btn-default btn-sm' ng-if='detail.role.edit' href="/quiz/{{detail._id}}/edit">chỉnh sửa <i class="fa">&#xf08e;</i></a></h2>
+    <div style="position: relative;">
+        <div class="content-quiz" ng-class="{'content-post-reduce': detail.reduce}" bind-html='detail.content'>
+        </div>
+        <h5 ng-click="detail.reduce = false" ng-if="detail.reduce" class="text-center content-post-reduce-more"><a href="#" class="">Xem thêm</a></h5>
+        <h5 ng-if="!detail.reduce && !loading && detail.reduceBack" class="text-center"><a ng-click="detail.reduce = true" href="#" class="">Ẩn bớt</a></h5>
+    </div>
+    <a style="margin-top: 10px;" ng-if="detail.role.doQuiz" href="/quiz/{{detail._id}}/do" class="btn btn-success btn-block">Làm bài <i class='fa fa-angle-double-right'></i></a>
+    <h4 style="cursor: pointer;" ng-click="showComment()">Bình luận <i ng-class="{'fa-arrow-circle-o-down': detail.hasShowComment, 'fa-arrow-circle-o-right': !detail.hasShowComment}" class='fa'></i></h4>
+    <comment-post-box ng-show="detail.hasShowComment"></comment-post-box>
+    <div ng-if='detail.role.viewListAnswer'>
+        <h4>Danh sách câu trả lời</h4>
+        <div style="max-height: 210px; overflow-y: auto; border: 1px solid #ccc;" class="list-group">
+            <a ng-repeat="answer in detail.listAnswer" href="/essay_answer/{{ answer._id }}" class="list-group-item">{{ answer.user.name }} <i style="font-size: 10px">{{answer.created_at | formatDateTime}}</i><span ng-class="{'not_evaluate_span': !(answer.score >= 0), 'has_evaluate_span': answer.score >= 0}" class="badge">{{ answer.score ? answer.score : 'chưa đánh giá' }}</span></a>
+            <a ng-if="detail.loadListAnswer" href="#" class="list-group-item text-center"><i>Loading...</i></a>
+            <a ng-if="!detail.loadListAnswer && detail.listAnswer.length === 0" href="#" class="list-group-item text-center"><i>Chưa có bài làm nào</i></a>
+        </div>
+    </div>
+    <div class="content-question-quiz" ng-if='detail.role.edit'>
+        <h4>Câu hỏi</h4>
+        <ul ng-repeat="question in detail.listQuizQuestion">
+            <li bind-html="question.content"></li>
+            <li ng-repeat="option in question.options" bind-html="option.content"></li>
+        </ul>
+    </div>
+</div>
+
+<div ng-if="status === 404">
+    <h3>Bài kiểm tra này không tồn tại</h3>
+</div>
+<h3 ng-if='loading' class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i></h3>
+<div ng-show="(!loading && detail && !detail.role.view) || status === 403">
+    <h3>bạn không có quyền thực hiện thao tác này!</h3>
+</div>
+<style>
+    .content-quiz * {
+        max-width: 100%;
+    }
+    
+    .content-post-reduce {
+        height: 200px;
+        overflow-y: hidden;
+    }
+    
+    .content-post-reduce::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 70px;
+        bottom: 0px;
+        left: 0px;
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
+    }
+    
+    .content-post-reduce-more{
+        position: absolute;
+        width: 100%;
+        bottom: 0px;
+        left: 0px;
+    }
+    
+    .content-post-reduce-more a{
+        color: white;
+    }
+
+    .not_evaluate_span {
+        background-color: rgba(255, 123, 0, 0.747);
+    }
+
+    .has_evaluate_span {
+        background-color: rgb(94, 156, 0);
+    }
+</style>

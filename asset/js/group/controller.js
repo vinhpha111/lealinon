@@ -467,7 +467,7 @@ app.controller('managementGroup', function($scope, $routeParams, $http, Scopes, 
             }
         })
         .then(function(res){
-            for (const i in $scope.members) {
+            for (let i in $scope.members) {
                 if ($scope.members[i] === $scope.removeMember) {
                     $scope.members.splice(i, 1);
                 }

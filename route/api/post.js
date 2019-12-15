@@ -18,4 +18,7 @@ route.get('/get_detail_essay_answer/:id', validCommon, postController.getDetailE
 route.post('/add_evaluate_essay_answer/:id', 
     validCommon.concat(require('./../../controller/Request/client/post/addEvaluateEssayAnswer')), postController.addEvaluateEssayAnswer)
 
+route.get('/:id/get_quiz', validCommon, postController.getDetailQuiz);
+route.get('/:id/get_list_quiz_question', postController.getDetailQuizListQuestion);
+
 module.exports = route;

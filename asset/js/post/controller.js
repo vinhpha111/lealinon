@@ -26,7 +26,7 @@ app.controller('doEssay', function($scope, $routeParams, $route, $http, seoInfo)
         $scope.loading = false;
     });
 
-    $scope.sendAnswer = function(isDraft = false){
+    $scope.sendAnswer = function(isDraft){
         console.log($scope.answer);
         $scope.errors = null;
         $scope.detail.sending = true;
@@ -145,3 +145,76 @@ app.controller('detailEssayAnswer', function($scope, $routeParams, $route, $http
         })
     }
 });
+
+app.controller('detailQuiz', function($scope, $routeParams, $http, seoInfo, Scopes){
+    $scope.id = $routeParams.id;
+    $scope.answer = {};
+    $scope.errors = null;
+    $scope.loading = true;
+
+    $http.get('/api/post/'+$scope.id+'/get_quiz')
+    .then(function(res){
+        $scope.detail = res.data;
+        if (res.data.answer) {
+            $scope.answer = res.data.answer;   
+        }
+        if (res.data.role.viewListAnswer) {
+            $scope.detail.listAnswer = [];
+        }
+        if (res.data.role.edit) getQuizQuestion();
+        seoInfo.setTitle($scope.detail.title);
+        $scope.loading = false;
+        setTimeout(function(){
+            let height = $('.content-quiz')[0].scrollHeight;
+            if (height > 200) {
+                $scope.$apply(function(){
+                    $scope.detail.reduce = true;
+                    $scope.detail.reduceBack = true;
+                });
+            }
+        }, 200);
+    }, function(err){
+        $scope.status = err.status;
+        $scope.loading = false;
+    });
+
+    $scope.showComment = function() {
+        $scope.detail.hasShowComment = !$scope.detail.hasShowComment;
+        if (!$scope.hasLoadComment) {
+            Scopes.get('scopeCommentPostBox').init($scope.detail._id, $scope.detail.group._id)
+            $scope.hasLoadComment = true;
+        }
+    }
+
+    function getQuizQuestion() {
+        $http.get('/api/post/'+$scope.id+'/get_list_quiz_question')
+        .then(function(res){
+            $scope.detail.listQuizQuestion = res.data;
+        })
+    }
+});
+
+app.controller('doQuiz', function($scope, $routeParams, $http, seoInfo, Scopes){
+    $scope.id = $routeParams.id;
+    $http.get('/api/post/'+$scope.id+'/get_quiz')
+    .then(function(res){
+        $scope.detail = res.data;
+
+        seoInfo.setTitle($scope.detail.title);
+        $scope.loading = false;
+
+        getListQuestionQuiz(function(listQuestion){
+            $scope.detail.listQuestion = listQuestion;
+        })
+    }, function(err){
+        $scope.status = err.status;
+        $scope.loading = false;
+    });
+
+    function getListQuestionQuiz(cb) {
+        $http.get('/api/post/'+$scope.id+'/get_list_quiz_question')
+        .then(function(res) {
+            cb(res.data);
+        })
+    }
+})

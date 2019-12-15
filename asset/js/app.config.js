@@ -106,6 +106,26 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
         }
     })
 
+    .when('/quiz/:id', {
+        templateUrl: 'js/post/detailQuiz.html',
+        controller: 'detailQuiz',
+        resolve : {
+            current_user : function($auth){
+                return $auth.getUser();
+            },
+        }
+    })
+
+    .when('/quiz/:id/do', {
+        templateUrl: 'js/post/doQuiz.html',
+        controller: 'doQuiz',
+        resolve : {
+            current_user : function($auth){
+                return $auth.getUser();
+            },
+        }
+    })
+
     .when('/user/:id', {
         templateUrl: 'js/user/profile.html',
         controller: 'profileUser',

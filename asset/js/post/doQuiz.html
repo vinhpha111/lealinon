@@ -1,0 +1,90 @@
+<div ng-if='detail.role.doQuiz' style="padding-top: 10px;">
+    <a href="/quiz/{{detail._id}}" class="btn btn-default"><i class='fa fa-arrow-left'></i> Trở về chi tiết</a>
+    <h3>Làm bài</h3>
+    <h4 ng-bind='detail.title'></h4>
+    <div style="position: relative;">
+        <div class="content-quiz" ng-class="{'content-post-reduce': detail.reduce}" bind-html='detail.content'>
+        </div>
+        <h5 ng-click="detail.reduce = false" ng-if="detail.reduce" class="text-center content-post-reduce-more"><a href="#" class="">Xem thêm</a></h5>
+    </div>
+    <div ng-if='!detail.answer || detail.answer.is_draft'>
+        <div class="form-group" ng-repeat="(index, question) in detail.listQuestion">
+            <label>Câu {{ index + 1 }}:</label>
+            <div bind-html="question.content">
+            </div>
+            <ul>
+                <li ng-repeat="option in question.options">
+                    <input ng-model="question.chooseAnswer" value="{{option.number_sort}}" type="radio" style="float: left;"> <p bind-html="option.content"></p>
+                </li>
+            </ul>
+        </div>
+        <p class="error-msg" ng-repeat="error in errors" ng-if="error.param == 'has_exist'">{{error.msg}}</p>
+        <h5 ng-if='detail.sending' class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i></h5>
+        <div class="btn-group btn-group-justified">
+            <div style="padding-right: 10px;" class="btn-group">
+                <button ng-click='sendAnswer(true)' ng-disabled='detail.sending' type="button" class="btn btn-default">Lưu tạm</button>
+            </div>
+            <div style="padding-left: 10px;" class="btn-group">
+                <button ng-disabled='detail.sending' type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirm-send">Gửi bài</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="confirm-send" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Xác nhận</h4>
+            </div>
+            <div class="modal-body">
+                <p>Sau khi gửi bài thì bạn không thể sửa lại. bạn chắc chứ?</p>
+            </div>
+            <div class="modal-footer">
+                <button ng-click='sendAnswer()' type="button" class="btn btn-primary" data-dismiss="modal">Gửi</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div ng-if="status === 404">
+    <h3>Bài kiểm tra này không tồn tại</h3>
+</div>
+<h3 ng-if='loading' class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i></h3>
+<div ng-show="(!loading && !detail.role.doQuiz) || status === 403">
+    <h3>bạn không có quyền thực hiện thao tác này!</h3>
+</div>
+
+<style>
+    .content-quiz * {
+        max-width: 100%;
+    }
+    
+    .content-post-reduce {
+        height: 200px;
+        overflow-y: hidden;
+    }
+    
+    .content-post-reduce::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 70px;
+        bottom: 0px;
+        left: 0px;
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
+    }
+    
+    .content-post-reduce-more {
+        position: absolute;
+        width: 100%;
+        bottom: 0px;
+        left: 0px;
+    }
+    
+    .content-post-reduce-more a {
+        color: white;
+    }
+</style>

@@ -3,7 +3,7 @@ app.component('chatBox', {
     controller: 'chatBoxController',
 });
 
-app.controller('chatBoxController', async function($scope, $rootScope, $http, Scopes, $auth, socket, $sce){
+app.controller('chatBoxController', function($scope, $rootScope, $http, Scopes, $auth, socket, $sce){
 
     $scope.listMessage = [];
     $scope.msg = {content: ''};
@@ -27,7 +27,7 @@ app.controller('chatBoxController', async function($scope, $rootScope, $http, Sc
     $scope.loadMore = function(){
         let oldHeight = $('.chat-box .panel-body')[0].scrollHeight;
         getListMessage().then(function(){
-            setTimeout(() => {
+            setTimeout(function() {
                 let newHeight = $('.chat-box .panel-body')[0].scrollHeight;
                 $('.chat-box .panel-body').scrollTop(newHeight - oldHeight);
             }, 50);
@@ -53,7 +53,7 @@ app.controller('chatBoxController', async function($scope, $rootScope, $http, Sc
         $scope.right = $('list-friend').position();
         $scope.show = true;
         getListMessage().then(function(data){
-            setTimeout(() => {
+            setTimeout(function() {
                 updateScroll();
             }, 500);
         });
@@ -69,7 +69,7 @@ app.controller('chatBoxController', async function($scope, $rootScope, $http, Sc
     function listenMessage(message) {
         if ($scope.listMessage.indexOf(message) === -1 && message.from === $scope.user._id) {
             $scope.listMessage.push(message);
-            setTimeout(() => {
+            setTimeout(function() {
                 updateScroll();
             }, 500);   
             }
@@ -88,7 +88,7 @@ app.controller('chatBoxController', async function($scope, $rootScope, $http, Sc
                 message: message,
             }).then(function(res) {
                 $scope.listMessage.push(res.data);
-                setTimeout(() => {
+                setTimeout(function() {
                     updateScroll();
                 }, 100);
             }, function(err) {
