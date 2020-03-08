@@ -14,7 +14,7 @@ global.io = require('./socket')(http)
 require('dotenv').config();
 
 global.mongoose = require('mongoose');
-mongoose.connect('mongodb+srv://vinhpha:vinhpha111@cluster0-2i0en.gcp.mongodb.net/test?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://mongo/test', {useNewUrlParser: true, useUnifiedTopology: true});
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));

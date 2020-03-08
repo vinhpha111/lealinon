@@ -6,7 +6,7 @@ function config($routeProvider, $locationProvider, datetimePlaceholder) {
 
     $routeProvider
     .when('/', {
-        template: "<h1>Hello! this is index</h1>"
+        template: "<h1>Hello! this is index page</h1>"
     })
 
     .when('/test-seo', {
